@@ -15,6 +15,7 @@
             line-height: 1.6;
             display: flex;
         }
+    
         .sidebar {
             width: 250px;
             background-color: #000;
@@ -25,49 +26,60 @@
             scrollbar-width: thin;
             scrollbar-color: #D4AF37 #000;
         }
+    
         .sidebar::-webkit-scrollbar {
             width: 8px;
         }
+    
         .sidebar::-webkit-scrollbar-track {
             background: #000;
         }
+    
         .sidebar::-webkit-scrollbar-thumb {
             background-color: #D4AF37;
             border-radius: 20px;
             border: 3px solid #000;
         }
+    
         .sidebar h2 {
             color: #D4AF37;
             border-bottom: 1px solid #D4AF37;
             padding-bottom: 10px;
             margin-top: 20px;
         }
+    
         .sidebar ul {
             list-style-type: none;
             padding: 0;
         }
+    
         .sidebar ul li {
             margin-bottom: 10px;
         }
+    
         .sidebar ul li a {
             color: #FFF;
             text-decoration: none;
             transition: color 0.3s, transform 0.3s;
             display: inline-block;
         }
+    
         .sidebar ul li a:hover {
             color: #D4AF37;
             transform: translateX(5px);
         }
+    
         .main-content {
             margin-left: 250px;
             flex: 1;
         }
+    
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
+    
         header {
             text-align: center;
             padding: 50px 0;
@@ -76,6 +88,7 @@
             position: relative;
             overflow: hidden;
         }
+    
         #particles-js {
             position: absolute;
             top: 0;
@@ -83,6 +96,7 @@
             width: 100%;
             height: 100%;
         }
+    
         h1 {
             font-size: 3em;
             margin-bottom: 2px;
@@ -91,23 +105,27 @@
             position: relative;
             z-index: 1;
         }
+    
         h1 span {
             font-family: 'Lora', serif;
             font-style: italic;
             text-transform: none;
             font-size: 0.8em;
         }
+    
         h2 {
             font-size: 2em;
             color: #FFF;
             border-bottom: 1px solid #D4AF37;
             padding-bottom: 10px;
         }
+    
         h3 {
             font-family: 'Lora', serif;
             font-size: 1em;
             color: #FFF;
         }
+    
         .author {
             font-style: italic;
             margin-bottom: 20px;
@@ -115,58 +133,119 @@
             position: relative;
             z-index: 1;
         }
+    
         .book-images {
             display: flex;
             justify-content: space-between;
             max-width: 800px;
             margin: 40px auto;
         }
+    
         .book-image {
             flex: 1;
             margin: 0 10px;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
+    
         .book-image img {
             width: 100%;
             height: auto;
             display: block;
         }
+    
         .description {
             text-align: justify;
             margin-bottom: 30px;
             font-size: 1.1em;
         }
+    
         .content-list {
             list-style-type: none;
             padding-left: 0;
         }
+    
         .content-list li {
             margin-bottom: 15px;
             padding-left: 20px;
             position: relative;
         }
+    
         .content-list li::before {
             content: "•";
             color: #FFD700;
             position: absolute;
             left: 0;
         }
-        .content-list > li {
+    
+        .content-list>li {
             font-weight: bold;
             font-size: 1.1em;
             margin-bottom: 20px;
         }
-        .content-list > li > ul {
+    
+        .content-list>li>ul {
             font-weight: normal;
             font-size: 0.95em;
             margin-top: 10px;
         }
+    
         footer {
             text-align: center;
             padding: 20px 0;
             background-color: #000;
             border-top: 2px solid #D4AF37;
             margin-top: 50px;
+        }
+    
+        /* Checklist Styles */
+        .checklist {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+    
+        .checklist h2 {
+            border-bottom: 1px solid #D4AF37;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+    
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+    
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            color: #FFF;
+        }
+    
+        .checklist-item input[type="checkbox"] {
+            margin-right: 10px;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #D4AF37;
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+    
+        .checklist-item input[type="checkbox"]:checked {
+            background-color: #D4AF37;
+            position: relative;
+        }
+    
+        .checklist-item input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #000;
         }
     </style>
 </head>
@@ -690,6 +769,12 @@
             <li>Career Paths in Cyber Security</li>
             </section>
             
+            <section class="checklist">
+                <h2>Notes For The Book Checklist</h2>
+                <div id="checklist-grid" class="checklist-grid">
+                </div>
+            </section>
+
             <section>
                 <h2>Stay Tuned</h2>
                 <p>
@@ -708,44 +793,207 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        particlesJS('particles-js', {
-            particles: {
-                number: { value: 80, density: { enable: true, value_area: 800 } },
-                color: { value: '#D4AF37' },
-                shape: { type: 'circle' },
-                opacity: { value: 0.5, random: false },
-                size: { value: 3, random: true },
-                line_linked: {
-                    enable: true,
-                    distance: 150,
-                    color: '#D4AF37',
-                    opacity: 0.4,
-                    width: 1
-                },
-                move: {
-                    enable: true,
-                    speed: 2,
-                    direction: 'none',
-                    random: false,
-                    straight: false,
-                    out_mode: 'out',
-                    bounce: false,
+
+        document.addEventListener('DOMContentLoaded', function () {
+            var checklistItems = [
+                "Console Hacks",
+                "Mod Chips",
+                "Backdoor Sales",
+                "Cloud/AWS",
+                "Active vs Passive",
+                "IPS vs IDS",
+                "NRU vs NCD",
+                "Bell-La Padula Model",
+                "Business Continuity Plans",
+                "Pivoting",
+                "Stdout/Stdin",
+                "File Descriptors",
+                "File Permissions",
+                "Assembly",
+                "Morse Code",
+                "Ad buying/Link promotion",
+                "Email Analysis",
+                "Segfault ID",
+                "Hacker Movies",
+                "Metasploit/Rapid7",
+                "Typical HTTP Requests",
+                "Ransomware",
+                "VPNs/IPSec/Proxies/Socks",
+                "Chain Phishing - First 4 one week etc",
+                "URI's",
+                "BOF in Applications",
+                "Argparse",
+                "Hacking groups",
+                "CIA",
+                "Finding Application Specific URL's/Param & Vulns",
+                "File integrity hashes/virus total",
+                "Fuzzing machine code",
+                "Arp poisoning/Spoofing",
+                "LD_Preload",
+                "North Korean Jobs",
+                "MiTM",
+                "Cheat Engine",
+                "Wav/Steg/Mp3 etc",
+                "Log Poisoning & Lfi/Ftp/Ssh/ Application specific",
+                "TTP's/APT's",
+                "Mitre ATT&CK",
+                "Social Engineering",
+                "SEO",
+                "Idaas",
+                "ALE - SLO x ARO",
+                "EOL",
+                "Planned Obsolesence",
+                "2fa / things you - have, are, know",
+                "RTFM/FOSS/DWTFL",
+                "Http Options",
+                "Binary Overview",
+                "Warm Site/Cold Site",
+                "Case Sensitivity",
+                "Router Vulns",
+                "Regex/Awk/Sed",
+                "Swakas",
+                "KPI's",
+                "OWASP",
+                "Opsec",
+                "Debugging",
+                "Arp vs DNS Spoofing",
+                "Website Console/Devtools",
+                "Homelabs",
+                "QR Codes/Zbar etc",
+                "Qualatitive vs Quantitive",
+                "OSI",
+                "motw",
+                "SS7",
+                "Network Segmentation",
+                "Application Injection",
+                "WiFi Hacking Web Admins for Access",
+                "IDOR",
+                "XXE",
+                "Living off the land",
+                "Nano/Vim shortcuts etc",
+                "Tech Support",
+                "Hex/Ascii and UTF Encoding *UTF-8/7",
+                "SSL & TLS",
+                "Kubernetes",
+                "Active Directory",
+                "Certs",
+                "SIEM's",
+                "Filetypes",
+                "Clusters",
+                "Snyk.io/semgrep etc",
+                "Find/which/apropos etc",
+                "Handshakes & Asymmetric Encryption",
+                "Reading errors",
+                "Scambaiting",
+                "Rise of AI/LLM's",
+                "Dorking/Google-fu",
+                "Hydra",
+                "Con folders and other folder types",
+                "Curl converter",
+                "PHP filters",
+                "Sniffing dogs",
+                "Nc/Telnet/Rlwrap & shells etc",
+                "Wireshark/Tshark etc",
+                "UART & Pins",
+                "Memory Dumping",
+                "Firmware Dumping",
+                "How XOR Works",
+                "PSU voltage splicing/recovery",
+                "Hardware & love level",
+                "Ring 0, ring 2 etc etc",
+                "Geospatial",
+                "Censys/FOFA etc",
+                "Param Fuzzing",
+                "Kernel Execution Software",
+                "Subnet Classes",
+                "SYN Flood vs UDP ",
+                "Cold Boot Attacks",
+                "Null-Byte Poisoning",
+                "Playbooks & Incident Response",
+                "Ransomware Reverse Engineering",
+                "Hardware Hacking",
+                "Web App Hacking with MQTT and Video Feed Manipulation",
+                "Video Game Hacking",
+                "Threat Hunting with KQL",
+                "SIM/SEM Analysis",
+                "Mobile App Penetration Testing",
+                "OSINT via Drone Path Analysis",
+                "Web Exploration with cURL",
+                "PowerShell for Cyber Defense",
+                "Honeypots",
+                "Shit where you eat"
+            ];
+
+            function createChecklist() {
+                var grid = document.getElementById("checklist-grid");
+
+                // Check if grid exists before proceeding
+                if (!grid) {
+                    console.error("Checklist grid element not found");
+                    return;
                 }
-            },
-            interactivity: {
-                detect_on: 'canvas',
-                events: {
-                    onhover: { enable: true, mode: 'grab' },
-                    onclick: { enable: true, mode: 'push' },
-                    resize: true
-                },
-                modes: {
-                    grab: { distance: 140, line_linked: { opacity: 1 } },
-                    push: { particles_nb: 4 }
-                }
-            },
-            retina_detect: true
+
+                checklistItems.forEach(function (item, index) {
+                    var div = document.createElement("div");
+                    div.className = "checklist-item";
+
+                    var checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.id = "item-" + index;
+                    checkbox.checked = true;
+
+                    var label = document.createElement("label");
+                    label.htmlFor = "item-" + index;
+                    label.textContent = item;
+
+                    div.appendChild(checkbox);
+                    div.appendChild(label);
+
+                    grid.appendChild(div);
+                });
+            }
+            console.log("Creating checklist...");
+            createChecklist();
         });
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { value: '#D4AF37' },
+                    shape: { type: 'circle' },
+                    opacity: { value: 0.5, random: false },
+                    size: { value: 3, random: true },
+                    line_linked: {
+                        enable: true,
+                        distance: 150,
+                        color: '#D4AF37',
+                        opacity: 0.4,
+                        width: 1
+                    },
+                    move: {
+                        enable: true,
+                        speed: 2,
+                        direction: 'none',
+                        random: false,
+                        straight: false,
+                        out_mode: 'out',
+                        bounce: false,
+                    }
+                },
+                interactivity: {
+                    detect_on: 'canvas',
+                    events: {
+                        onhover: { enable: true, mode: 'grab' },
+                        onclick: { enable: true, mode: 'push' },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 1 } },
+                        push: { particles_nb: 4 }
+                    }
+                },
+                retina_detect: true
+            });
+
     </script>
 </body>
 </html>
