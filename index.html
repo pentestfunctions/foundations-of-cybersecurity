@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Foundations of Cybersecurity - The Definitive Compendium</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:ital@1&display=swap"
+        rel="stylesheet">
     <style>
         body {
             font-family: 'Playfair Display', serif;
@@ -15,7 +17,7 @@
             line-height: 1.6;
             display: flex;
         }
-    
+
         .sidebar {
             width: 250px;
             background-color: #000;
@@ -26,60 +28,60 @@
             scrollbar-width: thin;
             scrollbar-color: #D4AF37 #000;
         }
-    
+
         .sidebar::-webkit-scrollbar {
             width: 8px;
         }
-    
+
         .sidebar::-webkit-scrollbar-track {
             background: #000;
         }
-    
+
         .sidebar::-webkit-scrollbar-thumb {
             background-color: #D4AF37;
             border-radius: 20px;
             border: 3px solid #000;
         }
-    
+
         .sidebar h2 {
             color: #D4AF37;
             border-bottom: 1px solid #D4AF37;
             padding-bottom: 10px;
             margin-top: 20px;
         }
-    
+
         .sidebar ul {
             list-style-type: none;
             padding: 0;
         }
-    
+
         .sidebar ul li {
             margin-bottom: 10px;
         }
-    
+
         .sidebar ul li a {
             color: #FFF;
             text-decoration: none;
             transition: color 0.3s, transform 0.3s;
             display: inline-block;
         }
-    
+
         .sidebar ul li a:hover {
             color: #D4AF37;
             transform: translateX(5px);
         }
-    
+
         .main-content {
             margin-left: 250px;
             flex: 1;
         }
-    
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-    
+
         header {
             text-align: center;
             padding: 50px 0;
@@ -88,7 +90,7 @@
             position: relative;
             overflow: hidden;
         }
-    
+
         #particles-js {
             position: absolute;
             top: 0;
@@ -96,7 +98,7 @@
             width: 100%;
             height: 100%;
         }
-    
+
         h1 {
             font-size: 3em;
             margin-bottom: 2px;
@@ -105,27 +107,27 @@
             position: relative;
             z-index: 1;
         }
-    
+
         h1 span {
             font-family: 'Lora', serif;
             font-style: italic;
             text-transform: none;
             font-size: 0.8em;
         }
-    
+
         h2 {
             font-size: 2em;
             color: #FFF;
             border-bottom: 1px solid #D4AF37;
             padding-bottom: 10px;
         }
-    
+
         h3 {
             font-family: 'Lora', serif;
             font-size: 1em;
             color: #FFF;
         }
-    
+
         .author {
             font-style: italic;
             margin-bottom: 20px;
@@ -133,62 +135,62 @@
             position: relative;
             z-index: 1;
         }
-    
+
         .book-images {
             display: flex;
             justify-content: space-between;
             max-width: 800px;
             margin: 40px auto;
         }
-    
+
         .book-image {
             flex: 1;
             margin: 0 10px;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
-    
+
         .book-image img {
             width: 100%;
             height: auto;
             display: block;
         }
-    
+
         .description {
             text-align: justify;
             margin-bottom: 30px;
             font-size: 1.1em;
         }
-    
+
         .content-list {
             list-style-type: none;
             padding-left: 0;
         }
-    
+
         .content-list li {
             margin-bottom: 15px;
             padding-left: 20px;
             position: relative;
         }
-    
+
         .content-list li::before {
             content: "•";
             color: #FFD700;
             position: absolute;
             left: 0;
         }
-    
+
         .content-list>li {
             font-weight: bold;
             font-size: 1.1em;
             margin-bottom: 20px;
         }
-    
+
         .content-list>li>ul {
             font-weight: normal;
             font-size: 0.95em;
             margin-top: 10px;
         }
-    
+
         footer {
             text-align: center;
             padding: 20px 0;
@@ -196,7 +198,7 @@
             border-top: 2px solid #D4AF37;
             margin-top: 50px;
         }
-    
+
         /* Checklist Styles */
         .checklist {
             background-color: #1a1a1a;
@@ -204,25 +206,25 @@
             border-radius: 5px;
             margin-bottom: 30px;
         }
-    
+
         .checklist h2 {
             border-bottom: 1px solid #D4AF37;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
-    
+
         .checklist-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 15px;
         }
-    
+
         .checklist-item {
             display: flex;
             align-items: center;
             color: #FFF;
         }
-    
+
         .checklist-item input[type="checkbox"] {
             margin-right: 10px;
             appearance: none;
@@ -233,12 +235,12 @@
             outline: none;
             cursor: pointer;
         }
-    
+
         .checklist-item input[type="checkbox"]:checked {
             background-color: #D4AF37;
             position: relative;
         }
-    
+
         .checklist-item input[type="checkbox"]:checked::after {
             content: '✓';
             position: absolute;
@@ -249,6 +251,7 @@
         }
     </style>
 </head>
+
 <body>
     <aside class="sidebar">
         <h2>Learning Platforms</h2>
@@ -259,7 +262,7 @@
             <li><a href="https://www.vulnhub.com" target="_blank">VulnHub</a></li>
             <li><a href="https://portswigger.net/web-security" target="_blank">PortSwigger Web Security Academy</a></li>
         </ul>
-        
+
         <h2>Tools & Databases</h2>
         <ul>
             <li><a href="https://www.exploit-db.com" target="_blank">Exploit Database</a></li>
@@ -271,7 +274,7 @@
             <li><a href="https://www.kali.org" target="_blank">Kali Linux</a></li>
             <li><a href="https://river.bz/" target="_blank">Leaked Databases</a></li>
         </ul>
-        
+
         <h2>Resources & Tools</h2>
         <ul>
             <li><a href="https://www.pentester.com" target="_blank">Pentester.com</a></li>
@@ -288,21 +291,22 @@
             <li><a href="https://hashes.com/" target="_blank">Hashes.com</a></li>
             <li><a href="https://www.kali.org/tools/" target="_blank">List of Kali Tools</a></li>
             <li><a href="https://blackarch.org/tools.html" target="_blank">List of Blackarch Tools</a></li>
-            <li><a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" target="_blank">LLM leaderboard</a></li>
+            <li><a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" target="_blank">LLM
+                    leaderboard</a></li>
             <li><a href="https://paperswithcode.com/sota" target="_blank">State of the Art AI</a></li>
             <li><a href="https://lmstudio.ai/" target="_blank">LM Studio</a></li>
             <li><a href="https://claude.ai/new" target="_blank">Claude AI</a></li>
             <li><a href="https://github.com/comfyanonymous/ComfyUI" target="_blank">ComfyUI</a></li>
             <li><a href="https://joplinapp.org/" target="_blank">Joplin</a></li>
         </ul>
-        
+
         <h2>News & Communities</h2>
         <ul>
             <li><a href="https://thehackernews.com" target="_blank">The Hacker News</a></li>
             <li><a href="https://www.reddit.com/r/netsec/" target="_blank">r/netsec</a></li>
             <li><a href="https://www.infosecnews.org" target="_blank">InfoSec News</a></li>
         </ul>
-        
+
         <h2>Certifications</h2>
         <ul>
             <li><a href="https://www.comptia.org/certifications/security" target="_blank">CompTIA Security+</a></li>
@@ -315,11 +319,13 @@
         <header>
             <div id="particles-js"></div>
             <div class="container">
-                <h1>Foundations</h1> <h3>of</h3> <h1>Cybersecurity</h1>
+                <h1>Foundations</h1>
+                <h3>of</h3>
+                <h1>Cybersecurity</h1>
                 <p class="author">The Definitive Compendium by Robot</p>
             </div>
         </header>
-        
+
         <main class="container">
             <div class="book-images">
                 <div class="book-image">
@@ -329,20 +335,28 @@
                     <img src="mockup2.png" alt="Foundations of Cybersecurity Book Preview">
                 </div>
             </div>
-            
+
             <section class="description">
                 <h2>About the Book</h2>
                 <p>
-                    "Foundations of Cybersecurity" is a comprehensive guide currently in development, designed to take readers from cybersecurity novices to knowledgeable practitioners. This book will cover a wide range of topics, from basic concepts to advanced techniques, making it an invaluable resource for both beginners and seasoned professionals in the field.
+                    "Foundations of Cybersecurity" is a comprehensive guide currently in development, designed to take
+                    readers from cybersecurity novices to knowledgeable practitioners. This book will cover a wide range
+                    of topics, from basic concepts to advanced techniques, making it an invaluable resource for both
+                    beginners and seasoned professionals in the field.
                 </p>
                 <p>
-                    Written by the expert Robot, this book aims to combine theoretical knowledge with practical insights, ensuring readers gain a deep understanding of the cybersecurity landscape. While the book is still being written, this website serves as a preview of its contents, allowing you to explore the topics that will be covered while still being worked on.
+                    Written by the expert Robot, this book aims to combine theoretical knowledge with practical
+                    insights, ensuring readers gain a deep understanding of the cybersecurity landscape. While the book
+                    is still being written, this website serves as a preview of its contents, allowing you to explore
+                    the topics that will be covered while still being worked on.
                 </p>
                 <p>
-                    While this isn't everything inside the book, it'll hopefully help guide you on what's to come and where you can start improving your own knowledge.
+                    While this isn't everything inside the book, it'll hopefully help guide you on what's to come and
+                    where you can start improving your own knowledge.
                 </p>
 
-                <p>Finally, note that at the time of this writing there are 286 listed 'sections' below, and the book is less than 1,000 pages. I have compressed as much data as possible to streamline your learning.</p>
+                <p>Finally, note that at the time of this writing there are 286 listed 'sections' below, and the book is
+                    less than 1,000 pages. I have compressed as much data as possible to streamline your learning.</p>
             </section>
 
             <section>
@@ -352,147 +366,719 @@
                     <li>Understanding basic terminology and words</li>
                     <li>Awareness for Employees & Business Owners
                         <ul>
-                            <li>Scam Messages and Phishing Attacks</li>
-                            <li>Importance of 2FA/Multi-Factor Authentication</li>
-                            <li>Software and Operating System Updates</li>
-                            <li>Device Resetting and Disposal</li>
-                            <li>Watering Hole Attacks Explained</li>
-                            <li>WiFi Security and Vulnerabilities</li>
-                            <li>Physical Security Measures(RFID, NFC, Vehicle Security)</li>
-                            <li>Hidden Recording Devices</li>
-                            <li>Credential Reuse and Database Breaches</li>
-                            <li>OSINT and Doxing</li>
-                            <li>Understanding Sim Swapping, SWATTING and Emergency Data Requests</li>
-                            <li>Employee VPN Access Best Practices</li>
-                            <li>Bluetooth Hijacking Risks</li>
-                            <li>Face detection and location from images</li>
-                            <li>Ransomware and RATs</li>
+                            <li>Scam Messages and Phishing Attacks
+                                <ul>
+                                    <li>How to identify phishing emails</li>
+                                    <li>Understanding spear-phishing</li>
+                                    <li>Preventing business email compromise (BEC)</li>
+                                </ul>
+                            </li>
+                            <li>Importance of 2FA/Multi-Factor Authentication
+                                <ul>
+                                    <li>Benefits of 2FA</li>
+                                    <li>Common 2FA methods</li>
+                                    <li>Securing backup codes</li>
+                                </ul>
+                            </li>
+                            <li>Software and Operating System Updates
+                                <ul>
+                                    <li>Why updates are critical</li>
+                                    <li>Risks of using outdated software</li>
+                                    <li>Enabling automatic updates</li>
+                                </ul>
+                            </li>
+                            <li>Device Resetting and Disposal
+                                <ul>
+                                    <li>Secure data wiping methods</li>
+                                    <li>Risks of improper disposal</li>
+                                    <li>Using certified recycling services</li>
+                                </ul>
+                            </li>
+                            <li>Watering Hole Attacks Explained
+                                <ul>
+                                    <li>Definition and examples</li>
+                                    <li>How attackers target websites</li>
+                                    <li>Prevention techniques</li>
+                                </ul>
+                            </li>
+                            <li>WiFi Security and Vulnerabilities
+                                <ul>
+                                    <li>Securing home and office WiFi</li>
+                                    <li>Understanding WPA3 encryption</li>
+                                    <li>Risks of public WiFi networks</li>
+                                </ul>
+                            </li>
+                            <li>Physical Security Measures (RFID, NFC, Vehicle Security)
+                                <ul>
+                                    <li>Protecting RFID-enabled cards</li>
+                                    <li>Securing NFC devices</li>
+                                    <li>Vehicle hacking and prevention</li>
+                                </ul>
+                            </li>
+                            <li>Red Team Engagements
+                                <ul>
+                                    <li>What is red teaming?</li>
+                                    <li>Simulating real-world attacks</li>
+                                    <li>Benefits for organizational security</li>
+                                </ul>
+                            </li>
+                            <li>Spy Cameras & Listening Devices
+                                <ul>
+                                    <li>How to detect hidden devices</li>
+                                    <li>Using RF detectors</li>
+                                    <li>Legal implications</li>
+                                </ul>
+                            </li>
+                            <li>Credential Reuse and Database Breaches
+                                <ul>
+                                    <li>Risks of reusing passwords</li>
+                                    <li>How breaches occur</li>
+                                    <li>Using password managers</li>
+                                </ul>
+                            </li>
+                            <li>OSINT and Doxing
+                                <ul>
+                                    <li>What is OSINT?</li>
+                                    <li>How attackers gather information</li>
+                                    <li>Protecting personal data online</li>
+                                </ul>
+                            </li>
+                            <li>Understanding SIM Swapping, SWATTING, and Emergency Data Requests
+                                <ul>
+                                    <li>How SIM swapping occurs</li>
+                                    <li>Preventing SWATTING incidents</li>
+                                    <li>Recognizing fake data requests</li>
+                                </ul>
+                            </li>
+                            <li>Employee VPN Access Best Practices
+                                <ul>
+                                    <li>Choosing a secure VPN</li>
+                                    <li>Setting up split tunneling</li>
+                                    <li>Monitoring VPN usage</li>
+                                </ul>
+                            </li>
+                            <li>Bluetooth Hijacking Risks
+                                <ul>
+                                    <li>How attackers exploit Bluetooth</li>
+                                    <li>Preventing unauthorized access</li>
+                                    <li>Securing Bluetooth-enabled devices</li>
+                                </ul>
+                            </li>
+                            <li>Face Detection and Location from Images
+                                <ul>
+                                    <li>How face detection works</li>
+                                    <li>Metadata risks in photos</li>
+                                    <li>Preventing location leaks</li>
+                                </ul>
+                            </li>
+                            <li>Ransomware and RATs
+                                <ul>
+                                    <li>How ransomware spreads</li>
+                                    <li>Recognizing RAT infections</li>
+                                    <li>Protecting critical data</li>
+                                </ul>
+                            </li>
+                            <li>How Can I Trace My Own Digital Fingerprint?
+                                <ul>
+                                    <li>Tools for self-auditing</li>
+                                    <li>Removing personal data from sites</li>
+                                    <li>Maintaining anonymity online</li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
-                    <li>Protecting yourself first
+                    <li>Protecting Yourself First
                         <ul>
-                            <li>Defanging a URL</li>
-                            <li>IP Loggers</li>
-                            <li>Online Information Exposure</li>
-                            <li>EXIF Data in Images</li>
-                            <li>Facial Recognition Programs/Websites</li>
-                            <li>Browser Fingerprinting</li>
-                            <li>Cookie Tracking</li>
-                            <li>Device Access Through Applications</li>
-                            <li>Keyboard Eavesdropping</li>
-                            <li>Infected Files/File Extensions</li>
-                            <li>Sandboxing</li>
-                            <li>Malicious Software Updates</li>
-                            <li>Typosquatting</li>
-                            <li>Social Engineering</li>
-                            <li>Phishing (Browser in Browser attacks)</li>
-                            <li>Targeting Friends & Family</li>
-                            <li>RFID Cloning</li>
-                            <li>Rubber Duckies</li>
-                            <li>USB Killer</li>
-                            <li>Physical Security (Locks, Lighting, Privacy Screensf)</li>
-                            <li>WiFi Cloning and Man in the Middle Attacks</li>
-                            <li>Time Zones and User Activity Tracking</li>
-                            <li>Vulnerable Associates</li>
-                            <li>Harassment Campaigns</li>
-                            <li>EGO Exposure</li>
-                            <li>Sim Swapping</li>
-                            <li>Rabbit Holes & False Traps</li>
-                            <li>Voice Cloning (Vishing)</li>
-                            <li>IP History and Registration IP vs Most Recent</li>
-                            <li>Password Reuse and Storage</li>
-                            <li>Out-of-Date Software Exposure</li>
-                            <li>Peer to Peer Sniffing</li>
-                            <li>Common techniques to remove malware from a computer</li>
-                        </ul>
-                    </li>
-                    <li>Introduction to computer hardware
-                        <ul>
-                            <li>Peripherals and their functions</li>
-                            <li>Heat production and management</li>
-                            <li>Binary system basics</li>
-                            <li>Building a PC from scratch</li>
-                            <li>Sourcing computer parts</li>
-                            <li>Troubleshooting common hardware issues</li>
-                            <li>Understanding drivers and BIOS</li>
-                            <li>Cable types and their uses</li>
-                            <li>Niche hardware components</li>
-                            <li>Hardware lifespan and types</li>
+                            <li>Defanging a URL
+                                <ul>
+                                    <li>How to safely view and share URLs</li>
+                                    <li>Tools and techniques for defanging</li>
+                                </ul>
+                            </li>
+                            <li>IP Loggers
+                                <ul>
+                                    <li>Recognizing and avoiding IP loggers</li>
+                                    <li>Risks of exposing your IP</li>
+                                </ul>
+                            </li>
+                            <li>Online Information Exposure
+                                <ul>
+                                    <li>Understanding your digital footprint</li>
+                                    <li>Steps to minimize exposure</li>
+                                </ul>
+                            </li>
+                            <li>EXIF Data in Images/Files & Images in PDFs
+                                <ul>
+                                    <li>What is EXIF data?</li>
+                                    <li>Removing EXIF data for privacy</li>
+                                </ul>
+                            </li>
+                            <li>Facial Recognition Programs/Websites
+                                <ul>
+                                    <li>Privacy concerns with facial recognition</li>
+                                    <li>How to avoid exposure</li>
+                                </ul>
+                            </li>
+                            <li>Browser Fingerprinting
+                                <ul>
+                                    <li>What is browser fingerprinting?</li>
+                                    <li>Techniques to reduce fingerprinting</li>
+                                </ul>
+                            </li>
+                            <li>Cookie Tracking
+                                <ul>
+                                    <li>How cookies track your activity</li>
+                                    <li>Managing and blocking cookies</li>
+                                </ul>
+                            </li>
+                            <li>Device Access Through Applications
+                                <ul>
+                                    <li>Permissions management</li>
+                                    <li>Preventing unauthorized access</li>
+                                </ul>
+                            </li>
+                            <li>Keyboard Eavesdropping
+                                <ul>
+                                    <li>Threats from keyloggers</li>
+                                    <li>Using virtual keyboards and encryption</li>
+                                </ul>
+                            </li>
+                            <li>Infected Files/File Extensions
+                                <ul>
+                                    <li>Identifying and avoiding malicious files</li>
+                                    <li>Common file extension tricks</li>
+                                </ul>
+                            </li>
+                            <li>Sandboxing
+                                <ul>
+                                    <li>What is sandboxing?</li>
+                                    <li>Using sandboxes to test files safely</li>
+                                </ul>
+                            </li>
+                            <li>Malicious Software Updates
+                                <ul>
+                                    <li>Recognizing fake updates</li>
+                                    <li>Safe update practices</li>
+                                </ul>
+                            </li>
+                            <li>Typosquatting
+                                <ul>
+                                    <li>What is typosquatting?</li>
+                                    <li>How to spot and avoid it</li>
+                                </ul>
+                            </li>
+                            <li>Social Engineering
+                                <ul>
+                                    <li>Common tactics used in social engineering</li>
+                                    <li>How to defend against manipulation</li>
+                                </ul>
+                            </li>
+                            <li>Phishing (Browser in Browser Attacks)
+                                <ul>
+                                    <li>Understanding browser-in-browser phishing</li>
+                                    <li>How to verify legitimate login screens</li>
+                                </ul>
+                            </li>
+                            <li>Targeting Friends & Family
+                                <ul>
+                                    <li>Risks to close associates</li>
+                                    <li>How to educate and protect them</li>
+                                </ul>
+                            </li>
+                            <li>RFID Cloning
+                                <ul>
+                                    <li>What is RFID cloning?</li>
+                                    <li>Steps to secure RFID cards</li>
+                                </ul>
+                            </li>
+                            <li>Rubber Duckies
+                                <ul>
+                                    <li>What are USB Rubber Duckies?</li>
+                                    <li>How to mitigate risks from malicious USBs</li>
+                                </ul>
+                            </li>
+                            <li>USB Killer
+                                <ul>
+                                    <li>Understanding the USB Killer threat</li>
+                                    <li>Preventing physical USB attacks</li>
+                                </ul>
+                            </li>
+                            <li>Physical Security (Locks, Lighting, Privacy Screens)
+                                <ul>
+                                    <li>Improving physical access control</li>
+                                    <li>Enhancing workspace privacy</li>
+                                </ul>
+                            </li>
+                            <li>WiFi Cloning and Man-in-the-Middle Attacks
+                                <ul>
+                                    <li>Recognizing cloned networks</li>
+                                    <li>How to secure your WiFi connections</li>
+                                </ul>
+                            </li>
+                            <li>Time Zones and User Activity Tracking
+                                <ul>
+                                    <li>How time zones can expose user behavior</li>
+                                    <li>Steps to anonymize activity patterns</li>
+                                </ul>
+                            </li>
+                            <li>Vulnerable Associates
+                                <ul>
+                                    <li>Risks from weak security practices in others</li>
+                                    <li>How to collaborate securely</li>
+                                </ul>
+                            </li>
+                            <li>Harassment Campaigns
+                                <ul>
+                                    <li>Identifying harassment tactics</li>
+                                    <li>Resources and steps to counter harassment</li>
+                                </ul>
+                            </li>
+                            <li>EGO Exposure
+                                <ul>
+                                    <li>How oversharing can lead to risks</li>
+                                    <li>Managing public information exposure</li>
+                                </ul>
+                            </li>
+                            <li>Sim Swapping
+                                <ul>
+                                    <li>What is SIM swapping?</li>
+                                    <li>Preventing SIM-based account takeovers</li>
+                                </ul>
+                            </li>
+                            <li>Rabbit Holes & False Traps
+                                <ul>
+                                    <li>Avoiding distractions and misinformation</li>
+                                    <li>Staying focused on verified threats</li>
+                                </ul>
+                            </li>
+                            <li>Voice Cloning (Vishing)
+                                <ul>
+                                    <li>Threats from voice cloning technology</li>
+                                    <li>Detecting and countering vishing attempts</li>
+                                </ul>
+                            </li>
+                            <li>IP History and Registration IP vs Most Recent
+                                <ul>
+                                    <li>Analyzing IP address patterns</li>
+                                    <li>Using registration data for threat analysis</li>
+                                </ul>
+                            </li>
+                            <li>Password Reuse and Storage
+                                <ul>
+                                    <li>Risks of password reuse</li>
+                                    <li>Best practices for secure password management</li>
+                                </ul>
+                            </li>
+                            <li>Out-of-Date Software Exposure
+                                <ul>
+                                    <li>Risks of running outdated software</li>
+                                    <li>Steps to stay updated securely</li>
+                                </ul>
+                            </li>
+                            <li>Peer-to-Peer Sniffing
+                                <ul>
+                                    <li>How peer-to-peer networks can be exploited</li>
+                                    <li>Steps to secure P2P usage</li>
+                                </ul>
+                            </li>
+                            <li>Common Techniques to Remove Malware from a Computer
+                                <ul>
+                                    <li>Steps to identify and remove malware</li>
+                                    <li>Using tools and best practices</li>
+                                </ul>
+                            </li>
+                            <li>File Encryption/Ransomware (NoMoreRansom/Pivoting)
+                                <ul>
+                                    <li>Understanding ransomware and encryption</li>
+                                    <li>Tools and steps for decryption and recovery</li>
+                                </ul>
+                            </li>
+                            <li>Devices on Your Network
+                                <ul>
+                                    <li>Identifying devices on the network</li>
+                                    <li>Securing networked devices</li>
+                                </ul>
+                            </li>
+                            <li>Browser Exploits
+                                <ul>
+                                    <li>How browser vulnerabilities are exploited</li>
+                                    <li>Steps to secure browser use</li>
+                                </ul>
+                            </li>
+                            <li>Data Exfiltration
+                                <ul>
+                                    <li>How data is stolen from systems</li>
+                                    <li>Preventing and detecting exfiltration</li>
+                                </ul>
+                            </li>
+                            <li>Open Source Packages
+                                <ul>
+                                    <li>Risks in using open-source software</li>
+                                    <li>Steps to verify and secure packages</li>
+                                </ul>
+                            </li>
+                            <li>Steam Exploits/Game ACE/RCE
+                                <ul>
+                                    <li>Gaming-related vulnerabilities</li>
+                                    <li>Protecting against ACE and RCE attacks</li>
+                                </ul>
+                            </li>
+                            <li>WiFi Hacking Protection PSA
+                                <ul>
+                                    <li>Common WiFi hacking techniques</li>
+                                    <li>Tips to secure wireless networks</li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li>Common Cybersecurity Terms
                         <ul>
-                            <li>Dorking</li>
-                            <li>Linux</li>
-                            <li>Exploit</li>
-                            <li>Payload</li>
-                            <li>Zero-Day</li>
-                            <li>Backdoor</li>
-                            <li>Phishing</li>
-                            <li>Social Engineering</li>
-                            <li>DDoS/DoS</li>
-                            <li>Botnet</li>
-                            <li>Rootkit</li>
-                            <li>Brute Force Attack</li>
-                            <li>SQL Injection</li>
-                            <li>etc...</li>
+                            <!-- Techniques and Methods -->
+                            <li>Techniques and Methods
+                                <ul>
+                                    <li>Dorking</li>
+                                    <li>Phishing</li>
+                                    <li>Social Engineering</li>
+                                    <li>SQL Injection</li>
+                                    <li>Man-in-the-Middle Attack (MITM)</li>
+                                    <li>DDoS/DoS</li>
+                                    <li>War Driving</li>
+                                    <li>OSINT/OPSEC</li>
+                                </ul>
+                            </li>
+
+                            <!-- Types of Malware -->
+                            <li>Types of Malware
+                                <ul>
+                                    <li>Exploit</li>
+                                    <li>Payload</li>
+                                    <li>Zero-Day</li>
+                                    <li>Backdoor</li>
+                                    <li>Botnet</li>
+                                    <li>Rootkit</li>
+                                    <li>Ransomware</li>
+                                    <li>Trojan</li>
+                                    <li>Spyware</li>
+                                    <li>Adware</li>
+                                    <li>Worm</li>
+                                    <li>Keyloggers</li>
+                                    <li>Fileless Malware</li>
+                                    <li>Cryptojacking</li>
+                                    <li>Wallet Drainers</li>
+                                </ul>
+                            </li>
+
+                            <!-- Attacks -->
+                            <li>Attack Techniques
+                                <ul>
+                                    <li>Brute Force Attack</li>
+                                    <li>Bot Herder</li>
+                                    <li>Doxing</li>
+                                    <li>Cracking</li>
+                                    <li>RAT (Remote Access Trojan)</li>
+                                </ul>
+                            </li>
+
+                            <!-- Cybersecurity Concepts -->
+                            <li>Cybersecurity Concepts
+                                <ul>
+                                    <li>Firewall</li>
+                                    <li>IDS/IPS</li>
+                                    <li>SIEM Tools</li>
+                                    <li>Honeypot</li>
+                                </ul>
+                            </li>
+
+                            <!-- User Roles and Personas -->
+                            <li>User Roles and Personas
+                                <ul>
+                                    <li>Script Kiddie (Skid)</li>
+                                    <li>White Hat</li>
+                                    <li>Black Hat</li>
+                                    <li>Grey Hat</li>
+                                    <li>Hacktivism</li>
+                                </ul>
+                            </li>
+
+                            <!-- Networking and Tools -->
+                            <li>Networking and Tools
+                                <ul>
+                                    <li>Databases</li>
+                                    <li>Router/Modem</li>
+                                    <li>Github</li>
+                                    <li>VM/Virtual Machine</li>
+                                    <li>Cryptocurrency</li>
+                                    <li>Shell</li>
+                                    <li>Root</li>
+                                    <li>Owned</li>
+                                </ul>
+                            </li>
+
+                            <!-- Miscellaneous Terms -->
+                            <li>Miscellaneous Terms
+                                <ul>
+                                    <li>Pwn</li>
+                                    <li>1337 (Leet) Speak</li>
+                                    <li>Malvertising</li>
+                                    <li>Viruses</li>
+                                    <li>Section on Example RATS (Back Orifice through Plugx etc)</li>
+                                    <li>Understanding Firewalls, IDS and IPS</li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
                     <li>Understanding Firewalls, IDS & IPS
-                    </li>
-                    <li>Computers & Understanding Them
                         <ul>
-                            <li>What is a CPU? PGA, LGA, BGA</li>
-                            <li>Understanding the GPU</li>
-                            <li>Integrated Graphics</li>
-                            <li>What is RAM? ECC/DDR/SO-DIMM etc</li>
-                            <li>What is a PSU? Voltages and modularity</li>
-                            <li>BIOS vs UEFI</li>
-                            <li>What is Input and Output (I/O)</li>
-                            <li>Storage Types - Sata, IDE etc</li>
-                            <li>PCIE Lanes</li>
-                            <li>Peripherals & Cable types</li>
-                            <li>Airflow and expected temperatures</li>
-                            <li>Binary & Computer Related Units</li>
-                            <li>IoT and it's place</li>
-                            <li>Benchmarking your setup</li>
-                            <li>Secret mods you can implement</li>
-                            <li>Using laptop RAM in Desktop PCs</li>
-                            <li>OLED, Digitizers and LCD</li>
-                            <li>Sourcing & Building Computers</li>
-                            <li>Customization & Tweaks to improve your workflow</li>
-                            <li>Keyboard shortcuts & Alt Codes</li>
-                            <li>Customizing user experience</li>
-                            <li>Efficient internet access techniques</li>
-                            <li>Effective note-taking strategies</li>
+                            <li>What are Firewalls?</li>
+                            <li>Types of Firewalls
+                                <ul>
+                                    <li>Packet-Filtering Firewalls</li>
+                                    <li>Stateful Firewalls</li>
+                                    <li>Proxy Firewalls</li>
+                                    <li>Next-Generation Firewalls (NGFW)</li>
+                                </ul>
+                            </li>
+                            <li>Understanding Intrusion Detection Systems (IDS)
+                                <ul>
+                                    <li>Signature-Based IDS</li>
+                                    <li>Anomaly-Based IDS</li>
+                                    <li>Host-Based IDS (HIDS)</li>
+                                    <li>Network-Based IDS (NIDS)</li>
+                                </ul>
+                            </li>
+                            <li>Understanding Intrusion Prevention Systems (IPS)
+                                <ul>
+                                    <li>How IPS Works</li>
+                                    <li>IDS vs. IPS</li>
+                                    <li>IPS Deployment Models</li>
+                                </ul>
+                            </li>
+                            <li>Configuring Firewalls, IDS, and IPS</li>
+                            <li>Best Practices for Security Monitoring</li>
                         </ul>
                     </li>
-                    <li>Command-line scripting
-                        <ul>
-                            <li>Understanding your terminal</li>
-                            <li>Introduction to Batch scripting</li>
-                            <li>Creating menus, Loops and Quick Access</li>
-                            <li>Accessing the internet via Batch</li>
-                        </ul>
-                    </li>
-                    <li>Understanding System Paths & Environment Variables
-                        <ul>
-                            <li>Introduction to PowerShell</li>
-                            <li>Basic PowerShell scripting</li>
-                            <li>Powershell ISE</li>
-                            <li>Creating menus in PowerShell</li>
-                            <li>Understanding Cmdlets</li>
-                            <li>Internet access using PowerShell</li>
-                        </ul>
-                    </li>
-                    <li>Debloating your Operating System</li>
-                    <li>Understanding hashes
-                        <ul>
-                            <li>Introduction to hash functions</li>
-                            <li>File integrity verification</li>
-                            <li>Basic overview of hash cracking</li>
-                        </ul>
-                    </li>
+                    <ul>
+                        <li>Computers and Understanding them
+                            <ul>
+                                <li>What is a CPU?
+                                    <ul>
+                                        <li>Introduction to CPU</li>
+                                        <li>LGA vs. PGA sockets</li>
+                                        <li>Understanding VGA in relation to CPUs</li>
+                                    </ul>
+                                </li>
+                                <li>Understanding the GPU (Graphics Processing Unit)
+                                    <ul>
+                                        <li>Types of GPUs (Integrated vs. Dedicated)</li>
+                                        <li>How GPUs process graphics</li>
+                                        <li>Gaming vs. Professional GPUs</li>
+                                    </ul>
+                                </li>
+                                <li>What is RAM?
+                                    <ul>
+                                        <li>Types of RAM (DDR, SDRAM, etc.)</li>
+                                        <li>RAM frequency and latency</li>
+                                        <li>How RAM impacts performance</li>
+                                    </ul>
+                                </li>
+                                <li>What is a PSU?
+                                    <ul>
+                                        <li>PSU wattage and efficiency ratings</li>
+                                        <li>Modular vs. Non-modular PSUs</li>
+                                        <li>Importance of PSU in system stability</li>
+                                    </ul>
+                                </li>
+                                <li>What is Input and Output (I/O) & Heat Production
+                                    <ul>
+                                        <li>Understanding I/O devices</li>
+                                        <li>Heat generation in computing</li>
+                                        <li>Cooling solutions (air vs. liquid)</li>
+                                    </ul>
+                                </li>
+                                <li>Storage Types: SATA/IDE etc
+                                    <ul>
+                                        <li>Differences between HDD and SSD</li>
+                                        <li>What is NVMe?</li>
+                                        <li>RAID setups and their uses</li>
+                                    </ul>
+                                </li>
+                                <li>PCIE Lanes
+                                    <ul>
+                                        <li>What are PCIE lanes?</li>
+                                        <li>Uses of PCIE lanes for GPUs and other components</li>
+                                        <li>Version differences (e.g., PCIE 3.0 vs. 4.0)</li>
+                                    </ul>
+                                </li>
+                                <li>Extra Peripherals and their Functions
+                                    <ul>
+                                        <li>Keyboards and mice</li>
+                                        <li>Monitors and resolutions</li>
+                                        <li>Printers and scanners</li>
+                                    </ul>
+                                </li>
+                                <li>Binary and Computer Related Units
+                                    <ul>
+                                        <li>Understanding binary numbers</li>
+                                        <li>Data storage units (KB, MB, GB, etc.)</li>
+                                        <li>Hexadecimal and its uses in computing</li>
+                                    </ul>
+                                </li>
+                                <li>Benchmarking
+                                    <ul>
+                                        <li>Why benchmarking is important</li>
+                                        <li>Popular benchmarking tools</li>
+                                        <li>Interpreting benchmark results</li>
+                                    </ul>
+                                </li>
+                                <li>Sourcing and Building a Computer
+                                    <ul>
+                                        <li>Choosing components</li>
+                                        <li>Compatibility checks</li>
+                                        <li>Step-by-step assembly</li>
+                                    </ul>
+                                </li>
+                                <li>Driver Installation
+                                    <ul>
+                                        <li>Why drivers are necessary</li>
+                                        <li>Finding and installing the right drivers</li>
+                                        <li>Keeping drivers up to date</li>
+                                    </ul>
+                                </li>
+                                <li>Keyboard Shortcuts & ALT Codes
+                                    <ul>
+                                        <li>Commonly used shortcuts</li>
+                                        <li>Using ALT codes for special characters</li>
+                                        <li>Customizing shortcuts</li>
+                                    </ul>
+                                </li>
+                                <li>Customizing and Understanding your OS
+                                    <ul>
+                                        <li>Changing system settings</li>
+                                        <li>Personalizing appearance</li>
+                                        <li>Using advanced OS features</li>
+                                    </ul>
+                                </li>
+                                <li>Note-Taking Tools and Software
+                                    <ul>
+                                        <li>Popular note-taking applications</li>
+                                        <li>Integrating notes with cloud storage</li>
+                                        <li>Organizing and sharing notes</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>The Windows Command Line and Tools
+                            <ul>
+                                <li>Understanding your Terminal
+                                    <ul>
+                                        <li>Basics of command-line navigation</li>
+                                        <li>File and folder management</li>
+                                        <li>Using built-in commands</li>
+                                    </ul>
+                                </li>
+                                <li>Coding in Batch
+                                    <ul>
+                                        <li>Introduction to batch files</li>
+                                        <li>Common batch commands</li>
+                                        <li>Debugging batch scripts</li>
+                                    </ul>
+                                </li>
+                                <li>Creating your First BAT File
+                                    <ul>
+                                        <li>Basic structure of a BAT file</li>
+                                        <li>Executing a BAT file</li>
+                                        <li>Adding loops and conditions</li>
+                                    </ul>
+                                </li>
+                                <li>Accessing the Internet via Batch
+                                    <ul>
+                                        <li>Using curl in batch scripts</li>
+                                        <li>Automating downloads</li>
+                                        <li>Handling network errors</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Understanding System Paths & Environment Variables
+                            <ul>
+                                <li>Coding in PowerShell
+                                    <ul>
+                                        <li>PowerShell syntax basics</li>
+                                        <li>Executing commands</li>
+                                        <li>Using variables</li>
+                                    </ul>
+                                </li>
+                                <li>Basic PowerShell Scripting
+                                    <ul>
+                                        <li>Writing your first script</li>
+                                        <li>Using loops and conditions</li>
+                                        <li>Error handling</li>
+                                    </ul>
+                                </li>
+                                <li>PowerShell ISE
+                                    <ul>
+                                        <li>Introduction to the ISE environment</li>
+                                        <li>Creating and testing scripts</li>
+                                        <li>Debugging in ISE</li>
+                                    </ul>
+                                </li>
+                                <li>Creating Menus in PowerShell
+                                    <ul>
+                                        <li>Designing a simple menu</li>
+                                        <li>Handling user input</li>
+                                        <li>Adding submenus</li>
+                                    </ul>
+                                </li>
+                                <li>Creating your First PowerShell Script
+                                    <ul>
+                                        <li>Setting up the script environment</li>
+                                        <li>Executing the script</li>
+                                        <li>Automating tasks with scripts</li>
+                                    </ul>
+                                </li>
+                                <li>Understanding Cmdlets
+                                    <ul>
+                                        <li>What are cmdlets?</li>
+                                        <li>Commonly used cmdlets</li>
+                                        <li>Customizing cmdlets</li>
+                                    </ul>
+                                </li>
+                                <li>Internet Access using PowerShell
+                                    <ul>
+                                        <li>Using Invoke-WebRequest</li>
+                                        <li>Downloading files</li>
+                                        <li>Interacting with APIs</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Debloating your Operating System</li>
+                        <li>Understanding Hashes
+                            <ul>
+                                <li>Introduction to Hash Functions
+                                    <ul>
+                                        <li>What are hash functions?</li>
+                                        <li>Common hashing algorithms</li>
+                                        <li>Applications of hashes</li>
+                                    </ul>
+                                </li>
+                                <li>File Integrity Verification
+                                    <ul>
+                                        <li>Using hashes to verify files</li>
+                                        <li>Tools for hash verification</li>
+                                        <li>Checking digital signatures</li>
+                                    </ul>
+                                </li>
+                                <li>Basic Overview of Hash Cracking
+                                    <ul>
+                                        <li>Understanding hash cracking</li>
+                                        <li>Common tools for hash cracking</li>
+                                        <li>Ethics and legal considerations</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
                     <li>Introduction to Python
                         <ul>
                             <li>Installing Python</li>
@@ -501,6 +1087,7 @@
                             <li>Internet access and data retrieval with Python</li>
                         </ul>
                     </li>
+                    <li>Visual Studio Code Introduction</li>
                     <li>Getting Started in CyberSecurity</li>
                     <li>Web development basics
                         <ul>
@@ -538,22 +1125,6 @@
                             <li>CH341A/CH347 Programmer</li>
                         </ul>
                     </li>
-                    <li>Internet infrastructure
-                        <ul>
-                            <li>Domain Name System (DNS)</li>
-                            <li>Secure Sockets Layer (SSL) and HTTPS</li>
-                            <li>Subdomains and their significance</li>
-                            <li>Virtual hosts (Vhosts)</li>
-                            <li>HTTP OPTIONS method</li>
-                        </ul>
-                    </li>
-                    <li>Browser DevTools
-                        <ul>
-                            <li>Inspecting network requests</li>
-                            <li>Converting browser requests to Python code (Curlconverter)</li>
-                            <li>Debugging with devtools console</li>
-                        </ul>
-                    </li>
                     <li>Virtual machines
                         <ul>
                             <li>Understanding Virtualization & Enabling</li>
@@ -581,15 +1152,32 @@
                         </ul>
                     </li>
                     <li>WSL and its future in windows</li>
+                    <li>Internet infrastructure
+                        <ul>
+                            <li>Domain Name System (DNS)</li>
+                            <li>Secure Sockets Layer (SSL) and HTTPS</li>
+                            <li>Subdomains and their significance</li>
+                            <li>Virtual hosts (Vhosts)</li>
+                            <li>HTTP OPTIONS method</li>
+                        </ul>
+                    </li>
                     <li>Internet Service Providers (ISPs) and networking
                         <ul>
                             <li>How ISPs work</li>
                             <li>Understanding Autonomous System Numbers (ASNs)</li>
                             <li>Calculating subnets, IP ranges and packets</li>
-                            <li>TCP/IP</li>
+                            <li>TCP/IP & UDP</li>
                             <li>WAN/LAN/CAN</li>
                             <li>Physical Internet Mediums (Fiber/DSL/Copper/RF/Satellite/Cellular)</li>
                             <li>Subnetting</li>
+                            <li>Public vs Private IPs (LAN VS WAN)</li>
+                        </ul>
+                    </li>
+                    <li>Browser DevTools
+                        <ul>
+                            <li>Inspecting network requests</li>
+                            <li>Converting browser requests to Python code (Curlconverter)</li>
+                            <li>Debugging with devtools console</li>
                         </ul>
                     </li>
                     <li>OSI model overview</li>
@@ -602,10 +1190,23 @@
                     </li>
                     <li>Data formats
                         <ul>
-                            <li>Markup languages (XML, HTML)</li>
+                            <li>Markup languages (XML, HTML, YAML,)</li>
                             <li>Markdown for documentation</li>
                             <li>JSON for data interchange</li>
                             <li>Python pickle for object serialization</li>
+                        </ul>
+                    </li>
+                    <li>Website OSINT (Open Source Intelligence)
+                        <ul>
+                            <li>Passive OSINT techniques</li>
+                            <li>Interactive website OSINT methods</li>
+                        </ul>
+                    </li>
+                    <li>Basic Cybersecurity Concepts
+                        <ul>
+                            <li>Port Scanning</li>
+                            <li>Directory Scanning</li>
+                            <li>IDOR</li>
                         </ul>
                     </li>
                     <li>WiFi hacking
@@ -621,12 +1222,6 @@
                             <li>Traffic monitoring and analysis</li>
                         </ul>
                     </li>
-                    <li>Website OSINT (Open Source Intelligence)
-                        <ul>
-                            <li>Passive OSINT techniques</li>
-                            <li>Interactive website OSINT methods</li>
-                        </ul>
-                    </li>
                     <li>CVEs and MITRE
                         <ul>
                             <li>Understanding Common Vulnerabilities and Exposures (CVEs)</li>
@@ -634,61 +1229,48 @@
                             <li>CIA triad in information security</li>
                         </ul>
                     </li>
-                    <li>Cybersecurity misconceptions
-                        <ul>
-                            <li>Things you have, Things you know, Things you are</li>
-                            <li>Debunking common myths</li>
-                            <li>Understanding real threats vs. fear-mongering</li>
-                            <li>Zero-click exploits</li>
-                            <li>Browser drive-by attacks</li>
-                            <li>Exploit kits and browser kits</li>
-                            <li>Botnets and their operations</li>
-                            <li>Ransomware threats</li>
-                            <li>Crypters and their role in malware</li>
-                        </ul>
-                    </li>
                     <li>Pentesting Methodology</li>
-                        <ul>
-                            <li>Passive/Active reconnaissance</li>
-                            <li>Vulnerability Analysis</li>
-                            <li>Exploitation</li>
-                            <li>Post-Exploitation</li>
-                            <li>Reporting</li>
-                        </ul>
+                    <ul>
+                        <li>Passive/Active reconnaissance</li>
+                        <li>Vulnerability Analysis</li>
+                        <li>Exploitation</li>
+                        <li>Post-Exploitation</li>
+                        <li>Reporting</li>
+                    </ul>
                     <li>Advanced Cybersecurity Concepts & Putting it into Practice</li>
-                        <ul>
-                            <li>Resources and links</li>
-                            <li>Order of actions</li>
-                            <li>Dynamic on the fly feedback</li>
-                        </ul>
+                    <ul>
+                        <li>Resources and links</li>
+                        <li>Order of actions</li>
+                        <li>Dynamic on the fly feedback</li>
+                    </ul>
                     <li>List of tools used in the stories to come</li>
-                        <ul>
-                            <li>Nmap/Rustscan/Masscan</li>
-                            <li>Wfuzz/Dirbuster/Gobuster/Feroxbuster</li>
-                            <li>Burpsuite/ZAP Proxy</li>
-                            <li>Metasploit/ExploitDB</li>
-                            <li>Wireshark/tcpdump</li>
-                            <li>Hydra/Medusa/Patator</li>
-                            <li>John the Ripper/hashcat</li>
-                            <li>Sqlmap/NoSQLMap</li>
-                            <li>Maltego/Recon-ng</li>
-                            <li>Arachni/Acunetix</li>
-                            <li>Aircrack-ng/Reaver/Wifite</li>
-                            <li>OWASP Amass/Sublist3r</li>
-                            <li>Shodan/Censys/ZoomEye</li>
-                            <li>OpenVAS/Nessus/QualysGuard</li>
-                            <li>Enum4linux/Smbclient</li>
-                            <li>msfvenom/Shellter</li>
-                            <li>Netcat/Socat</li>
-                            <li>Beef/XSSer</li>
-                            <li>Snort/Suricata</li>
-                            <li>TheHarvester/Assetfinder</li>
-                            <li>Binwalk/Foremost</li>
-                            <li>Radare2/Ghidra/IDA Pro</li>
-                            <li>Docker/Podman</li>
-                            <li>RustScan/Masscan</li>
-                            <li>etc...</li>
-                        </ul>
+                    <ul>
+                        <li>Nmap/Rustscan/Masscan</li>
+                        <li>Wfuzz/Dirbuster/Gobuster/Feroxbuster</li>
+                        <li>Burpsuite/ZAP Proxy</li>
+                        <li>Metasploit/ExploitDB</li>
+                        <li>Wireshark/tcpdump</li>
+                        <li>Hydra/Medusa/Patator</li>
+                        <li>John the Ripper/hashcat</li>
+                        <li>Sqlmap/NoSQLMap</li>
+                        <li>Maltego/Recon-ng</li>
+                        <li>Arachni/Acunetix</li>
+                        <li>Aircrack-ng/Reaver/Wifite</li>
+                        <li>OWASP Amass/Sublist3r</li>
+                        <li>Shodan/Censys/ZoomEye</li>
+                        <li>OpenVAS/Nessus/QualysGuard</li>
+                        <li>Enum4linux/Smbclient</li>
+                        <li>msfvenom/Shellter</li>
+                        <li>Netcat/Socat</li>
+                        <li>Beef/XSSer</li>
+                        <li>Snort/Suricata</li>
+                        <li>TheHarvester/Assetfinder</li>
+                        <li>Binwalk/Foremost</li>
+                        <li>Radare2/Ghidra/IDA Pro</li>
+                        <li>Docker/Podman</li>
+                        <li>RustScan/Masscan</li>
+                        <li>etc...</li>
+                    </ul>
                     <li>Real-world hacking techniques and bug bounties
                         <ul>
                             <li>Directory traversal and path traversal</li>
@@ -741,34 +1323,48 @@
                             <li>HTML injection techniques</li>
                             <li>DNS Poisoning</li>
                             <li>Null-byte poisoning</li>
+                            <li>Hacking a webadmin through OSINT & Physical Entry</li>
                         </ul>
                     </li>
                 </ul>
-            <li>CTF level techniques that are important to master
-                <ul>
-                    <li>FTP</li>
-                    <li>Ciphers (Rot, Morse, Substition, etc)</li>
-                    <li>Stegseek</li>
-                    <li>Zip/Rar/7z etc hashcracking</li>
-                </ul>
-            </li>
-            <li>Secure Coding Practices
-                <ul>
-                    <li>Snyk</li>
-                    <li>Semgrep</li>
-                </ul>
-            </li>
-            <li>Mobile Security Testing</li>
-            <li>A brief overview on Assembly and machine code</li>
-            <li>Segfaults and BoF</li>
-            <li>Bonus Material
-                <ul>
-                    <li>Stories and techniques not often seen but are good showcases</li>
-                </ul>
-            </li>
-            <li>Career Paths in Cyber Security</li>
+                <li>CTF level techniques that are important to master
+                    <ul>
+                        <li>FTP</li>
+                        <li>Ciphers (Rot, Morse, Substition, etc)</li>
+                        <li>Stegseek</li>
+                        <li>Zip/Rar/7z etc hashcracking</li>
+                    </ul>
+                </li>
+                <li>Secure Coding Practices
+                    <ul>
+                        <li>Snyk</li>
+                        <li>Semgrep</li>
+                    </ul>
+                </li>
+                <li>Mobile Security Testing</li>
+                <li>A brief overview on Assembly and machine code</li>
+                <li>Segfaults and BoF</li>
+                <li>Bonus Material
+                    <ul>
+                        <li>Stories and techniques not often seen but are good showcases</li>
+                    </ul>
+                </li>
+                    <li>Cybersecurity misconceptions
+                        <ul>
+                            <li>Things you have, Things you know, Things you are</li>
+                            <li>Debunking common myths</li>
+                            <li>Understanding real threats vs. fear-mongering</li>
+                            <li>Zero-click exploits</li>
+                            <li>Browser drive-by attacks</li>
+                            <li>Exploit kits and browser kits</li>
+                            <li>Botnets and their operations</li>
+                            <li>Ransomware threats</li>
+                            <li>Crypters and their role in malware</li>
+                        </ul>
+                    </li>    
+                <li>Career Paths in Cyber Security</li>
             </section>
-            
+
             <section class="checklist">
                 <h2>Notes For The Book Checklist</h2>
                 <div id="checklist-grid" class="checklist-grid">
@@ -778,11 +1374,13 @@
             <section>
                 <h2>Stay Tuned</h2>
                 <p>
-                    This book is currently in development. Check back regularly for updates on the writing progress and release information. In the meantime, feel free to explore the topics listed above to guide your cybersecurity learning journey.
+                    This book is currently in development. Check back regularly for updates on the writing progress and
+                    release information. In the meantime, feel free to explore the topics listed above to guide your
+                    cybersecurity learning journey.
                 </p>
             </section>
         </main>
-        
+
         <footer>
             <div class="container">
                 <p>&copy; 2024 Robot. All rights reserved.</p>
@@ -1032,45 +1630,46 @@
             console.log("Creating checklist...");
             createChecklist();
         });
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: '#D4AF37' },
-                    shape: { type: 'circle' },
-                    opacity: { value: 0.5, random: false },
-                    size: { value: 3, random: true },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: '#D4AF37',
-                        opacity: 0.4,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 2,
-                        direction: 'none',
-                        random: false,
-                        straight: false,
-                        out_mode: 'out',
-                        bounce: false,
-                    }
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: '#D4AF37' },
+                shape: { type: 'circle' },
+                opacity: { value: 0.5, random: false },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: '#D4AF37',
+                    opacity: 0.4,
+                    width: 1
                 },
-                interactivity: {
-                    detect_on: 'canvas',
-                    events: {
-                        onhover: { enable: true, mode: 'grab' },
-                        onclick: { enable: true, mode: 'push' },
-                        resize: true
-                    },
-                    modes: {
-                        grab: { distance: 140, line_linked: { opacity: 1 } },
-                        push: { particles_nb: 4 }
-                    }
+                move: {
+                    enable: true,
+                    speed: 2,
+                    direction: 'none',
+                    random: false,
+                    straight: false,
+                    out_mode: 'out',
+                    bounce: false,
+                }
+            },
+            interactivity: {
+                detect_on: 'canvas',
+                events: {
+                    onhover: { enable: true, mode: 'grab' },
+                    onclick: { enable: true, mode: 'push' },
+                    resize: true
                 },
-                retina_detect: true
-            });
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 1 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
 
     </script>
 </body>
+
 </html>
