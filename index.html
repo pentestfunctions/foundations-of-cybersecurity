@@ -362,8 +362,22 @@
             <section>
                 <h2>Book Contents</h2>
                 <ul class="content-list">
-                    <li>What is hacking</li>
-                    <li>Understanding basic terminology and words</li>
+                    // First Section
+                    <li>Dedication</li>
+ 
+                    // Second Section
+                    <li>Foreword</li>
+
+                    // Third Section
+                    <li>Introduction
+                        <ul>
+                            <li>Why cybersecurity is important</li>
+                            <li>Overview on zero trust/trust but verify</li>
+                            <li>What is hacking</li>
+                        </ul>
+                        </li>
+
+                    // Fourth Section
                     <li>Awareness for Employees & Business Owners
                         <ul>
                             <li>Scam Messages and Phishing Attacks
@@ -371,13 +385,31 @@
                                     <li>How to identify phishing emails</li>
                                     <li>Understanding spear-phishing</li>
                                     <li>Preventing business email compromise (BEC)</li>
+                                    <li>What the backend might look like for a phishing panel</li>
+                                    <li>Spear, Whaling, Smishing, Vishing</li>
+                                    <li>AI use case in phishing (Automation, English, Voice cloning)</li>
+                                    <li>Open Redirects in Phishing</li>
+                                    <li>How phishing can be targeted due to your interests</li>
+                                    <li>Browser Autofill & Hidden fields (Might require subsection)</li>
                                 </ul>
                             </li>
                             <li>Importance of 2FA/Multi-Factor Authentication
                                 <ul>
                                     <li>Benefits of 2FA</li>
-                                    <li>Common 2FA methods</li>
-                                    <li>Securing backup codes</li>
+                                    <li>Things you have, Things you are, Things you know</li>
+                                    <li>Common 2FA & MFA Methods
+                                        <ul>
+                                            <li>SMS-based verification</li>
+                                            <li>Authenticator apps (Google Authenticator, Authy)</li>
+                                            <li>Hardware tokens (YubiKey)</li>
+                                            <li>Biometric methods (fingerprint, facial recognition)</li>
+                                        </ul>
+                                    </li>
+                                    <li>Securing Backup Codes</li>
+                                    <li>Risks of Not Using 2FA</li>
+                                    <li>Phishing and 2FA & Cookies/VPN's</li>
+                                    <li>Implementation Tips</li>
+                                    <li>Emerging Technologies in Authentication</li>
                                 </ul>
                             </li>
                             <li>Software and Operating System Updates
@@ -385,11 +417,17 @@
                                     <li>Why updates are critical</li>
                                     <li>Risks of using outdated software</li>
                                     <li>Enabling automatic updates</li>
+                                    <li>End of life support</li>
+                                    <li>Update servers</li>
                                 </ul>
                             </li>
                             <li>Device Resetting and Disposal
                                 <ul>
+                                    <li>Overview on formatting</li>
+                                    <li>Introduction to bytes and data storage</li>
                                     <li>Secure data wiping methods</li>
+                                    <li>Old devices/Stolen devices & Storage Units</li>
+                                    <li>Data recovery and corrupted data</li>
                                     <li>Risks of improper disposal</li>
                                     <li>Using certified recycling services</li>
                                 </ul>
@@ -397,55 +435,89 @@
                             <li>Watering Hole Attacks Explained
                                 <ul>
                                     <li>Definition and examples</li>
+                                    <li>OSINT and privacy</li>
                                     <li>How attackers target websites</li>
                                     <li>Prevention techniques</li>
+                                </ul>
+                            </li>
+                            <li>Password Managers
+                                <ul>
+                                    <li>Risk & Trust</li>
                                 </ul>
                             </li>
                             <li>WiFi Security and Vulnerabilities
                                 <ul>
                                     <li>Securing home and office WiFi</li>
+                                    <li>Handshakes, WPS, Reaver, MiTM</li>
+                                    <li>Evil Twin Attacks</li>
+                                    <li>Wardriving</li>
+                                    <li>Deauthentication & Jamming</li>
                                     <li>Understanding WPA3 encryption</li>
                                     <li>Risks of public WiFi networks</li>
                                 </ul>
                             </li>
                             <li>Physical Security Measures (RFID, NFC, Vehicle Security)
                                 <ul>
+                                    <li>NFC cloning</li>
+                                    <li>Replay attacks, Enumeration attacks & Sniffing</li>
                                     <li>Protecting RFID-enabled cards</li>
                                     <li>Securing NFC devices</li>
-                                    <li>Vehicle hacking and prevention</li>
+                                    <li>Vehicle hacking (Key FOB attacks) and prevention</li>
                                 </ul>
                             </li>
                             <li>Red Team Engagements
                                 <ul>
                                     <li>What is red teaming?</li>
+                                    <li>TTPs, APTs</li>
+                                    <li>Lock Picking, Tamper Detection</li>
+                                    <li>Corporate Offices, Gated Communities, Automative Security</li>
                                     <li>Simulating real-world attacks</li>
                                     <li>Benefits for organizational security</li>
+                                    <li>Cameras and Privacy</li>
+                                    <li>Laws and regulations/NDAs and when to use them</li>
                                 </ul>
                             </li>
                             <li>Spy Cameras & Listening Devices
                                 <ul>
                                     <li>How to detect hidden devices</li>
-                                    <li>Using RF detectors</li>
+                                    <li>Smoke detectors, Clocks, Screws, Lightbulbs, Clothing buttons, USB chargers - Etc</li>
+                                    <li>Using RF detectors & Physical Inspection, Lens Detection</li>
+                                    <li>Shielded areas, Regular Sweeps, Policy and Training</li>
+                                    <li>Listening devices (bugs), Smart TV's, Speakers, Airpods/Wireless headphones</li>
+                                    <li>Audio Sweeping, Non-Linear Junction Detection, Thermal Imaging, IR/RF (Time based data sending over RF) SRT-107/SRN-58</li>
+                                    <li>Sound Masking, Secure Communication</li>
+                                    <li>Planted devices (Rubber Duckies, O.MG Cable, Screen Crab, Raspberry Pi & Exposed USB)</li>
                                     <li>Legal implications</li>
                                 </ul>
                             </li>
                             <li>Credential Reuse and Database Breaches
                                 <ul>
                                     <li>Risks of reusing passwords</li>
+                                    <li>Combo Lists</li>
+                                    <li>Single point of failure, Automated attacks (SentryMBA/OpenBullet etc)</li>
+                                    <li>Proxy lists (early explanation)</li>
                                     <li>How breaches occur</li>
+                                    <li>The impact of Database Breaches(IP, User/Pass, Email, Home Address, Phone, Card details, First and Last name, Recovery Questions)</li>
+                                    <li>OSINT & further recon/blackmail and other attacks based on breaches</li>
+                                    <li>Database lookup sites, downloading and legal ownership</li>
                                     <li>Using password managers</li>
                                 </ul>
                             </li>
                             <li>OSINT and Doxing
                                 <ul>
                                     <li>What is OSINT?</li>
+                                    <li>Hacking, Blackmail, Harassment, Identity Theft Campaigns</li>
                                     <li>How attackers gather information</li>
                                     <li>Protecting personal data online</li>
+                                    <li>Mitigation strategies always rely/depend on seeing how the info is obtained</li>
                                 </ul>
                             </li>
                             <li>Understanding SIM Swapping, SWATTING, and Emergency Data Requests
                                 <ul>
                                     <li>How SIM swapping occurs</li>
+                                    <li>The Rise of EDR's</li>
+                                    <li>Wealth and OG usernames</li>
+                                    <li>Crying babies, urgency</li>
                                     <li>Preventing SWATTING incidents</li>
                                     <li>Recognizing fake data requests</li>
                                 </ul>
@@ -453,20 +525,27 @@
                             <li>Employee VPN Access Best Practices
                                 <ul>
                                     <li>Choosing a secure VPN</li>
+                                    <li>Using company controlled VPN's, Proxies and tunnels</li>
                                     <li>Setting up split tunneling</li>
+                                    <li>Setting up keys/refreshing keys</li>
+                                    <li>Leaked OVPN files (dorking/exposed webservers)</li>
                                     <li>Monitoring VPN usage</li>
                                 </ul>
                             </li>
                             <li>Bluetooth Hijacking Risks
                                 <ul>
                                     <li>How attackers exploit Bluetooth</li>
+                                    <li>CVE-2023-45866 and others</li>
+                                    <li>Controlling/Broadcasting attacks via Bluetooth protocol</li>
                                     <li>Preventing unauthorized access</li>
                                     <li>Securing Bluetooth-enabled devices</li>
                                 </ul>
                             </li>
                             <li>Face Detection and Location from Images
                                 <ul>
-                                    <li>How face detection works</li>
+                                    <li>How face detection works (pimeyes/facecheck/dating apps)</li>
+                                    <li>North Korea finding insiders (leveraging income)</li>
+                                    <li>Company retreats, badge cloning/creation</li>
                                     <li>Metadata risks in photos</li>
                                     <li>Preventing location leaks</li>
                                 </ul>
@@ -474,66 +553,109 @@
                             <li>Ransomware and RATs
                                 <ul>
                                     <li>How ransomware spreads</li>
+                                    <li>Leaked methods/chatlogs ransomware.live examples</li>
+                                    <li>nomoreransom.org</li>
+                                    <li>Stats on ransomware/targets</li>
+                                    <li>NCSC, Europol and pipelines</li>
+                                    <li>Insider threats</li>
+                                    <li>FUD, Crypters, Persistence, Anti-VM, Signatures, Hashes</li>
                                     <li>Recognizing RAT infections</li>
                                     <li>Protecting critical data</li>
                                 </ul>
                             </li>
                             <li>How Can I Trace My Own Digital Fingerprint?
                                 <ul>
-                                    <li>Tools for self-auditing</li>
+                                    <li>Tools for self-auditing, dorking, osint.industries, hibp, database services, mx records, catchall emails</li>
                                     <li>Removing personal data from sites</li>
                                     <li>Maintaining anonymity online</li>
                                 </ul>
                             </li>
+                            <li>Can someone hack me from just my IP Address?
+                                <ul>
+                                    <li>EDR, Database breaches, Phising based on torrent history, abuseipdb, social engineering</li>
+                                    <li>Router exploits, firmware patches, open ports</li>
+                                    <li>IP Cameras, Services, Shodan/Fofa/Censys, Exif</li>
+                                </ul>
+                            </li>
                         </ul>
                     </li>
+                    // Fifth Section
                     <li>Protecting Yourself First
                         <ul>
+                            <li>Understand some of the following topics:</li>
+                                <ul>
+                                    <li>Find the most common misconceptions when it comes to X</li>
+                                    <li>Find an uncommon fact about X</li>
+                                    <li>How might a hacker use X</li>
+                                    <li>How might a defender use X</li>
+                                    <li>What is an example use case of X being used in a positive way</li>
+                                    <li>How many different types of X are there?</li>
+                                </ul>
                             <li>Defanging a URL
                                 <ul>
                                     <li>How to safely view and share URLs</li>
+                                    <li>Embedds and why we defang</li>
                                     <li>Tools and techniques for defanging</li>
                                 </ul>
                             </li>
                             <li>IP Loggers
                                 <ul>
                                     <li>Recognizing and avoiding IP loggers</li>
+                                    <li>All websites are IP loggers</li>
+                                    <li>Other things IP loggers can detect</li>
+                                    <li>WebRTC, Peer-to-peer, Javascript</li>
                                     <li>Risks of exposing your IP</li>
+                                    <li>Legitimate uses</li>
                                 </ul>
                             </li>
                             <li>Online Information Exposure
                                 <ul>
                                     <li>Understanding your digital footprint</li>
                                     <li>Steps to minimize exposure</li>
+                                    <li>Social media examples of vacation posts, house sitting requests etc</li>
                                 </ul>
                             </li>
                             <li>EXIF Data in Images/Files & Images in PDFs
                                 <ul>
                                     <li>What is EXIF data?</li>
+                                    <li>PDF/Word file image extraction and analysis</li>
+                                    <li>Types of information that can be leveraged</li>
                                     <li>Removing EXIF data for privacy</li>
+                                    <li>Using screenshot of photos or snipping tool for example to remove exif easily</li>
+                                    <li>Pokemon GO 2016 and EXIF/GPS</li>
                                 </ul>
                             </li>
+                            <li>Advertiser IDs and location tracking (Databrokers & Case studies)</li>
                             <li>Facial Recognition Programs/Websites
                                 <ul>
                                     <li>Privacy concerns with facial recognition</li>
+                                    <li>Facecheck, Cheater checking, Pimeyes</li>
+                                    <li>Using lookalikes as alternates to yourself</li>
+                                    <li>Live deepface</li>
                                     <li>How to avoid exposure</li>
                                 </ul>
                             </li>
                             <li>Browser Fingerprinting
                                 <ul>
                                     <li>What is browser fingerprinting?</li>
-                                    <li>Techniques to reduce fingerprinting</li>
+                                    <li>Fonts, IP address, Browser versions, OS, Screen size, battery life, orientation, monitors, potential other sites you are logged into, upload/download speeds, other devices on your home network, zoom size, graphics card</li>
+                                    <li>Techniques to reduce fingerprinting</li>m
+                                    <li>Summary on how VPNs don't protect you against fingerprinting alone</li>
                                 </ul>
                             </li>
                             <li>Cookie Tracking
                                 <ul>
                                     <li>How cookies track your activity</li>
+                                    <li>Local storage, Preferences, login status, cart balance etc</li>
+                                    <li>EU GDPR implications and consumer privacy/protection</li>
                                     <li>Managing and blocking cookies</li>
                                 </ul>
                             </li>
                             <li>Device Access Through Applications
                                 <ul>
                                     <li>Permissions management</li>
+                                    <li>When you access a website it might ask for location, camera etc ensure you don't allow these unless wanted</li>
+                                    <li>Online camera for example might actually be recording not just taking a picture</li>
                                     <li>Preventing unauthorized access</li>
                                 </ul>
                             </li>
@@ -541,35 +663,50 @@
                                 <ul>
                                     <li>Threats from keyloggers</li>
                                     <li>Using virtual keyboards and encryption</li>
+                                    <li>Shoulder Surfing</li>
+                                    <li>Camera positions when using your devices</li>
+                                    <li>Screen Privacy Filters</li>
                                 </ul>
                             </li>
                             <li>Infected Files/File Extensions
                                 <ul>
                                     <li>Identifying and avoiding malicious files</li>
+                                    <li>Email attatchment, double extension, zero width, invisible characters, extension width</li>
                                     <li>Common file extension tricks</li>
                                 </ul>
                             </li>
                             <li>Sandboxing
                                 <ul>
                                     <li>What is sandboxing?</li>
+                                    <li>Just because a file isn't detected DOESN'T MAKE IT SAFE</li>
+                                    <li>Any.run, Design purpose to avoid main AV's</li>
+                                    <li>Sandbox escapes, network access and VPNs etc</li>
                                     <li>Using sandboxes to test files safely</li>
                                 </ul>
                             </li>
                             <li>Malicious Software Updates
                                 <ul>
                                     <li>Recognizing fake updates</li>
+                                    <li>Supply chain attacks</li>
+                                    <li>Mimic legit sites or find vulnerable endpoints for updates which broadcast to it's users (software)</li>
+                                    <li>Javascript inject (fake browser update)</li>
                                     <li>Safe update practices</li>
                                 </ul>
                             </li>
                             <li>Typosquatting
                                 <ul>
                                     <li>What is typosquatting?</li>
+                                    <li>When are you most at Risk</li>
+                                    <li>Python (pip packages) external package managers</li>
+                                    <li>Dnstwister, hyphens, dots, dashes.</li>
+                                    <li>Chinese characters, unicode, etc and give explanations for each</li>
                                     <li>How to spot and avoid it</li>
                                 </ul>
                             </li>
                             <li>Social Engineering
                                 <ul>
                                     <li>Common tactics used in social engineering</li>
+                                    <li>Urgency, tech support, Control over your devices, Partial information over a period of time</li>
                                     <li>How to defend against manipulation</li>
                                 </ul>
                             </li>
@@ -582,18 +719,21 @@
                             <li>Targeting Friends & Family
                                 <ul>
                                     <li>Risks to close associates</li>
+                                    <li>Use of social engineering in this tactic (Example of obituary to get link clicked)</li>
                                     <li>How to educate and protect them</li>
                                 </ul>
                             </li>
                             <li>RFID Cloning
                                 <ul>
                                     <li>What is RFID cloning?</li>
-                                    <li>Steps to secure RFID cards</li>
+                                    <li>Replay, Eavesdropping, Tag Spoofing, Relay, Skimming, Side-Channel, Tag Cloning, DoS, Frequency Jamming, Forward Prediction, Voltage Manipulation, Electromagnetic Interference</li>
+                                    <li>Steps to secure RFID cards (Rolling codes, farrady wallets etc)</li>
                                 </ul>
                             </li>
                             <li>Rubber Duckies
                                 <ul>
                                     <li>What are USB Rubber Duckies?</li>
+                                    <li>Use cases, plants and WiFi control</li>
                                     <li>How to mitigate risks from malicious USBs</li>
                                 </ul>
                             </li>
@@ -606,13 +746,25 @@
                             <li>Physical Security (Locks, Lighting, Privacy Screens)
                                 <ul>
                                     <li>Improving physical access control</li>
+                                    <li>Cable locks, Privacy Screens, Security Cameras, Lighting, Physical Barriers, Security Guards, Least privilege access</li>
+                                    <li>WiFi Camera Crashing</li>
+                                    <li>Disclosing your security openly (photo's of offices or discussing brand sponsorships etc)</li>
+                                    <li>If someone knows your security system due to stickers on buildings or photos, they can find flaws to utilize</li>
                                     <li>Enhancing workspace privacy</li>
                                 </ul>
                             </li>
                             <li>WiFi Cloning and Man-in-the-Middle Attacks
                                 <ul>
                                     <li>Recognizing cloned networks</li>
-                                    <li>How to secure your WiFi connections</li>
+                                    <li>Verify SSID and connection info when using public WiFi</li>
+                                    <li>Never install custom certificates or software when using internet you don't control</li>
+                                    <li>Dauth attacks, WPS, MiTM, Cloning</li>
+                                    <li>How to secure your WiFi connections (VPNs, monitoring other devices, antivirus, firewall, sharing/shared folders, check for system updates against knew attacks such as LAN based or lateral movement)</li>
+                                </ul>
+                            </li>
+                            <li>Dumpster Diving
+                                <ul>
+                                    <li>Finding passwords, security system boxes, access cards, payment information (social engineering)</li>
                                 </ul>
                             </li>
                             <li>Time Zones and User Activity Tracking
@@ -731,6 +883,8 @@
                             </li>
                         </ul>
                     </li>
+
+                    // Sixth Section
                     <li>Common Cybersecurity Terms
                         <ul>
                             <!-- Techniques and Methods -->
@@ -744,6 +898,20 @@
                                     <li>DDoS/DoS</li>
                                     <li>War Driving</li>
                                     <li>OSINT/OPSEC</li>
+                                    <li>CSINT</li>
+                                    <li>HUMINT</li>
+                                    <li>SIGINT</li>
+                                    <li>IMINT</li>
+                                    <li>GEOINT</li>
+                                    <li>MASINT</li>
+                                    <li>CYBINT</li>
+                                    <li>SOCMINT</li>
+                                    <li>TECHINT</li>
+                                    <li>ACINT</li>
+                                    <li>DARKINT</li>
+                                    <li>NATINT</li>
+                                    <li>MEDINT</li>
+                                    <li>DOCINT</li>
                                 </ul>
                             </li>
 
@@ -827,6 +995,8 @@
                             </li>
                         </ul>
                     </li>
+
+                    // Seventh Section
                     <li>Understanding Firewalls, IDS & IPS
                         <ul>
                             <li>What are Firewalls?</li>
@@ -858,6 +1028,7 @@
                         </ul>
                     </li>
                     <ul>
+                       // Seventh Section
                         <li>Computers and Understanding them
                             <ul>
                                 <li>What is a CPU?
@@ -967,6 +1138,7 @@
                                 </li>
                             </ul>
                         </li>
+                        // Eigth Section
                         <li>The Windows Command Line and Tools
                             <ul>
                                 <li>Understanding your Terminal
@@ -1052,7 +1224,11 @@
                                 </li>
                             </ul>
                         </li>
+
+                        // Ninth Section
                         <li>Debloating your Operating System</li>
+
+                        // Tenth Section
                         <li>Understanding Hashes
                             <ul>
                                 <li>Introduction to Hash Functions
@@ -1079,6 +1255,8 @@
                             </ul>
                         </li>
                     </ul>
+
+                    // Eleventh Section
                     <li>Introduction to Python
                         <ul>
                             <li>Installing Python</li>
@@ -1087,8 +1265,14 @@
                             <li>Internet access and data retrieval with Python</li>
                         </ul>
                     </li>
+
+                    // Twelth Section
                     <li>Visual Studio Code Introduction</li>
+                    
+                    // Thirteenth Section
                     <li>Getting Started in CyberSecurity</li>
+
+                    // Seventeenth Section
                     <li>Web development basics
                         <ul>
                             <li>HTML fundamentals</li>
@@ -1097,6 +1281,8 @@
                             <li>Using Python to host a simple website</li>
                         </ul>
                     </li>
+
+                    // Eighteenth Section
                     <li>Awesome hardware & Tools
                         <ul>
                             <li>0.mg Cables</li>
@@ -1125,6 +1311,8 @@
                             <li>CH341A/CH347 Programmer</li>
                         </ul>
                     </li>
+
+                    // Nineteenth Section
                     <li>Virtual machines
                         <ul>
                             <li>Understanding Virtualization & Enabling</li>
@@ -1134,7 +1322,11 @@
                             <li>Using Microsoft Hyper-V</li>
                         </ul>
                     </li>
+
+                    // Twentieth Section
                     <li>Linux distros and names, Kali, Parrot, Arch, Ubuntu, Debian - what are they?</li>
+
+                    // Twenty-first Section
                     <li>Linux customization
                         <ul>
                             <li>Understanding your terminal</li>
@@ -1151,7 +1343,11 @@
                             <li>Sharing folders between host and VM</li>
                         </ul>
                     </li>
+
+                    // Twenty-second Section
                     <li>WSL and its future in windows</li>
+
+                    // Twenty-third Section
                     <li>Internet infrastructure
                         <ul>
                             <li>Domain Name System (DNS)</li>
@@ -1161,6 +1357,8 @@
                             <li>HTTP OPTIONS method</li>
                         </ul>
                     </li>
+
+                    // Twenty-fourth Section
                     <li>Internet Service Providers (ISPs) and networking
                         <ul>
                             <li>How ISPs work</li>
@@ -1173,6 +1371,8 @@
                             <li>Public vs Private IPs (LAN VS WAN)</li>
                         </ul>
                     </li>
+
+                    // Twenty-fifth Section
                     <li>Browser DevTools
                         <ul>
                             <li>Inspecting network requests</li>
@@ -1180,7 +1380,11 @@
                             <li>Debugging with devtools console</li>
                         </ul>
                     </li>
+
+                    // Twenty-sixth Section
                     <li>OSI model overview</li>
+
+                    // Twenty-seventh Section
                     <li>Network analysis
                         <ul>
                             <li>Using Wireshark and Tshark</li>
@@ -1188,6 +1392,8 @@
                             <li>UDP protocol explained</li>
                         </ul>
                     </li>
+
+                    // Twenty-eigth Section
                     <li>Data formats
                         <ul>
                             <li>Markup languages (XML, HTML, YAML,)</li>
@@ -1196,12 +1402,16 @@
                             <li>Python pickle for object serialization</li>
                         </ul>
                     </li>
+
+                    // Twenty-ninth Section
                     <li>Website OSINT (Open Source Intelligence)
                         <ul>
                             <li>Passive OSINT techniques</li>
                             <li>Interactive website OSINT methods</li>
                         </ul>
                     </li>
+
+                    // Thirtieth Section
                     <li>Basic Cybersecurity Concepts
                         <ul>
                             <li>Port Scanning</li>
@@ -1209,12 +1419,16 @@
                             <li>IDOR</li>
                         </ul>
                     </li>
+
+                    // Thirty-first Section
                     <li>WiFi hacking
                         <ul>
                             <li>WiFi hacking techniques</li>
                             <li>Wireless network adapters for penetration testing</li>
                         </ul>
                     </li>
+
+                    // Thirty-second Section
                     <li>Attacking host machines
                         <ul>
                             <li>Network mapping with Nmap</li>
@@ -1222,6 +1436,8 @@
                             <li>Traffic monitoring and analysis</li>
                         </ul>
                     </li>
+
+                    // Thirty-third Section
                     <li>CVEs and MITRE
                         <ul>
                             <li>Understanding Common Vulnerabilities and Exposures (CVEs)</li>
@@ -1229,6 +1445,8 @@
                             <li>CIA triad in information security</li>
                         </ul>
                     </li>
+
+                    // Thirty-fourth Section
                     <li>Pentesting Methodology</li>
                     <ul>
                         <li>Passive/Active reconnaissance</li>
@@ -1237,12 +1455,16 @@
                         <li>Post-Exploitation</li>
                         <li>Reporting</li>
                     </ul>
+
+                    // Thirty-fifth Section
                     <li>Advanced Cybersecurity Concepts & Putting it into Practice</li>
                     <ul>
                         <li>Resources and links</li>
                         <li>Order of actions</li>
                         <li>Dynamic on the fly feedback</li>
                     </ul>
+
+                    // Thirty-sixth Section
                     <li>List of tools used in the stories to come</li>
                     <ul>
                         <li>Nmap/Rustscan/Masscan</li>
@@ -1271,6 +1493,8 @@
                         <li>RustScan/Masscan</li>
                         <li>etc...</li>
                     </ul>
+
+                    // Thirty-seventh Section
                     <li>Real-world hacking techniques and bug bounties
                         <ul>
                             <li>Directory traversal and path traversal</li>
@@ -1327,6 +1551,8 @@
                         </ul>
                     </li>
                 </ul>
+
+                // Thirty-eigth Section
                 <li>CTF level techniques that are important to master
                     <ul>
                         <li>FTP</li>
@@ -1335,33 +1561,47 @@
                         <li>Zip/Rar/7z etc hashcracking</li>
                     </ul>
                 </li>
+
+                // Thirty-ninth Section
                 <li>Secure Coding Practices
                     <ul>
                         <li>Snyk</li>
                         <li>Semgrep</li>
                     </ul>
                 </li>
+
+                // Fourtieth Section
                 <li>Mobile Security Testing</li>
+
+                // Fourty-first Section
                 <li>A brief overview on Assembly and machine code</li>
+
+                // Fourty-second Section
                 <li>Segfaults and BoF</li>
+
+                // Fourty-third Section
                 <li>Bonus Material
                     <ul>
                         <li>Stories and techniques not often seen but are good showcases</li>
                     </ul>
                 </li>
-                    <li>Cybersecurity misconceptions
-                        <ul>
-                            <li>Things you have, Things you know, Things you are</li>
-                            <li>Debunking common myths</li>
-                            <li>Understanding real threats vs. fear-mongering</li>
-                            <li>Zero-click exploits</li>
-                            <li>Browser drive-by attacks</li>
-                            <li>Exploit kits and browser kits</li>
-                            <li>Botnets and their operations</li>
-                            <li>Ransomware threats</li>
-                            <li>Crypters and their role in malware</li>
-                        </ul>
-                    </li>    
+
+                // Fourty-fourth Section
+                <li>Cybersecurity misconceptions
+                    <ul>
+                        <li>Things you have, Things you know, Things you are</li>
+                        <li>Debunking common myths</li>
+                        <li>Understanding real threats vs. fear-mongering</li>
+                        <li>Zero-click exploits</li>
+                        <li>Browser drive-by attacks</li>
+                        <li>Exploit kits and browser kits</li>
+                        <li>Botnets and their operations</li>
+                        <li>Ransomware threats</li>
+                        <li>Crypters and their role in malware</li>
+                    </ul>
+                </li>
+
+                // Fourty-fifth Section
                 <li>Career Paths in Cyber Security</li>
             </section>
 
