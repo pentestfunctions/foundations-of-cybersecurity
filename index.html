@@ -933,6 +933,10 @@
                                     <li>Fileless Malware</li>
                                     <li>Cryptojacking</li>
                                     <li>Wallet Drainers</li>
+                                    <li>Bootkits</li>
+                                    <li>Staged</li>
+                                    <li>Stageless</li>
+                                    <li>Listener/Bind/Reverse</li>
                                 </ul>
                             </li>
 
@@ -944,6 +948,8 @@
                                     <li>Doxing</li>
                                     <li>Cracking</li>
                                     <li>RAT (Remote Access Trojan)</li>
+                                    <li>Gh0st, Back Orifice, Sub7, DarkComet, Poison Ivy, Blackshades, nJrat, Redline, etc</li>
+                                    <li>Droppers vs Payload etc</li>
                                 </ul>
                             </li>
 
@@ -981,6 +987,7 @@
                                     <li>Owned</li>
                                 </ul>
                             </li>
+                            <li>Jeff Bezos 2018 (Kaspersky)</li>
 
                             <!-- Miscellaneous Terms -->
                             <li>Miscellaneous Terms
@@ -995,11 +1002,17 @@
                             </li>
                         </ul>
                     </li>
+                    <li>Key Concepts: Threats, Vulnerabilities and Risks
+                        <ul>
+                            <li>Security Posture, Pimeyes, Facial Reconigition example, Expired business domains/emails (face to username to password)</li>
+                        </ul>
+                    </li>
 
                     // Seventh Section
                     <li>Understanding Firewalls, IDS & IPS
                         <ul>
-                            <li>What are Firewalls?</li>
+                            <li>What are Firewalls? (Bouncers at clubs etc examples)</li>
+                            <li>Section explaining that this brief Introduction to firewalls is just to get the basics before moving forward as there's a lot to them.</li>
                             <li>Types of Firewalls
                                 <ul>
                                     <li>Packet-Filtering Firewalls</li>
@@ -1023,54 +1036,75 @@
                                     <li>IPS Deployment Models</li>
                                 </ul>
                             </li>
-                            <li>Configuring Firewalls, IDS, and IPS</li>
+                            <li>Configuring Firewalls, IDS, and IPS (Types of tools to use, not an indepth guide)</li>
                             <li>Best Practices for Security Monitoring</li>
                         </ul>
                     </li>
                     <ul>
-                       // Seventh Section
+                       // Eigth Section
                         <li>Computers and Understanding them
                             <ul>
                                 <li>What is a CPU?
                                     <ul>
                                         <li>Introduction to CPU</li>
-                                        <li>LGA vs. PGA sockets</li>
+                                        <li>Thermal Paste</li>
+                                        <li>Active and Passive Radiators</li>
+                                        <li>LGA vs. BGA vs. PGA sockets (embedded systems etc)</li>
                                         <li>Understanding VGA in relation to CPUs</li>
                                     </ul>
                                 </li>
                                 <li>Understanding the GPU (Graphics Processing Unit)
                                     <ul>
                                         <li>Types of GPUs (Integrated vs. Dedicated)</li>
+                                        <li>Advantages and disadvantages of Integrated and Dedicated (machine types etc)</li>
                                         <li>How GPUs process graphics</li>
                                         <li>Gaming vs. Professional GPUs</li>
+                                        <li>External GPU's</li>
+                                        <li>Notebook vs Gaming laptop and marketing words</li>
+                                        <li>Automatic Graphics Switching (battery saving etc)</li>
                                     </ul>
                                 </li>
                                 <li>What is RAM?
                                     <ul>
-                                        <li>Types of RAM (DDR, SDRAM, etc.)</li>
-                                        <li>RAM frequency and latency</li>
+                                        <li>Types of RAM (DDR, SDRAM, DRAM, DDR SDRAM, ECC RAM, SO-DIMM etc.)</li>
+                                        <li>RAM vs Storage Memory</li>
+                                        <li>RAM frequency and latency (Aswell as DDR3, DDR4, DDR5 etc)</li>
                                         <li>How RAM impacts performance</li>
+                                        <li>Advantages and disadvantages of RAM types</li>
+                                        <li>Running machines with the OS in memory instead of storage</li>
+                                        <li>Mixing and matching ram stick sizes, brands, frequency and latency</li>
+                                        <li>SO-DIMM to DDR4 (Laptop RAM adapters for  Desktop)</li>
+                                        <li>Overclocking/Underclocking advantages and disadvantages</li>
                                     </ul>
                                 </li>
                                 <li>What is a PSU?
                                     <ul>
-                                        <li>PSU wattage and efficiency ratings</li>
+                                        <li>PSU wattage/voltage and efficiency ratings</li>
+                                        <li>Gold, Platinum, etc (Discuss DC/AC etc)</li>
                                         <li>Modular vs. Non-modular PSUs</li>
+                                        <li>Connectors and Cables</li>
                                         <li>Importance of PSU in system stability</li>
+                                        <li>Monitors, Laptops and their power bricks</li>
+                                        <li>UPS (Universal Power Supply)</li>
+                                        <li>Risks of using incorrect adapters/Polarity</li>
+                                        <li>CMOS batteries</li>
                                     </ul>
                                 </li>
-                                <li>What is Input and Output (I/O) & Heat Production
+                                <li>What is Input and Output (I/O) & Heat Production/Airflow inside a computer
                                     <ul>
                                         <li>Understanding I/O devices</li>
-                                        <li>Heat generation in computing</li>
+                                        <li>Heat generation in computing (What is a high workload and expected temperatures)</li>
                                         <li>Cooling solutions (air vs. liquid)</li>
                                     </ul>
                                 </li>
                                 <li>Storage Types: SATA/IDE etc
                                     <ul>
                                         <li>Differences between HDD and SSD</li>
+                                        <li>IDE, SSD, SATA, NVMe</li>
                                         <li>What is NVMe?</li>
                                         <li>RAID setups and their uses</li>
+                                        <li>Lifespan on disk drives and how to read labels</li>
+                                        <li>Disk2VHD VM creation</li>
                                     </ul>
                                 </li>
                                 <li>PCIE Lanes
@@ -1078,48 +1112,97 @@
                                         <li>What are PCIE lanes?</li>
                                         <li>Uses of PCIE lanes for GPUs and other components</li>
                                         <li>Version differences (e.g., PCIE 3.0 vs. 4.0)</li>
+                                        <li>GPU risers (mining rigs or custom setups)</li>
                                     </ul>
                                 </li>
                                 <li>Extra Peripherals and their Functions
                                     <ul>
+                                        <li>Connecting USB/AUDIO case ports</li>
                                         <li>Keyboards and mice</li>
                                         <li>Monitors and resolutions</li>
                                         <li>Printers and scanners</li>
+                                        <li>Headphones, DAC's, Microphones</li>
+                                    </ul>
+                                </li>
+                                <li>BIOS and UEFI
+                                    <ul>
+                                        <li>POST and EFI (NVRAM)</li>
+                                        <li>Fan SPEED and curve</li>
+                                        <li>Dual Boot</li>
+                                        <li>MHZ (RAM) voltage etc</li>
+                                        <li>What is the bootup process (From button press to attempting to load OS)</li>
+                                    </ul>
+                                </li>
+                                <li>Cords, Cables and Connectors
+                                    <ul>
+                                        <li>Cat, USB, Pin, RJ45, etc</li>
+                                        <li>Ribbon Cables (laptops)</li>
+                                        <li>24 pin double sided USB connectors</li>
+                                        <li>2.0,3.0,3.1,4 connections</li>
+                                        <li>USB-C Powered monitors and limitations</li>
+                                        <li>Lightning Cables from Apple (8-pin digital signals)</li>
+                                        <li>DB-9,DE-9 RS232</li>
+                                        <li>HDMI, displayport, VGA</li>
+                                        <li>3.5mm jacks</li>
+                                        <li>Docking Stations</li>
+                                        <li>Raid Storage</li>
                                     </ul>
                                 </li>
                                 <li>Binary and Computer Related Units
                                     <ul>
                                         <li>Understanding binary numbers</li>
+                                        <li>What is a unit?</li>
                                         <li>Data storage units (KB, MB, GB, etc.)</li>
                                         <li>Hexadecimal and its uses in computing</li>
+                                        <li>Bits vs Bytes</li>
                                     </ul>
                                 </li>
+                                <li>Comparing IOT/Laptops/Desktop</li>
                                 <li>Benchmarking
                                     <ul>
                                         <li>Why benchmarking is important</li>
                                         <li>Popular benchmarking tools</li>
                                         <li>Interpreting benchmark results</li>
+                                        <li>Stress testing</li>
                                     </ul>
                                 </li>
                                 <li>Sourcing and Building a Computer
                                     <ul>
-                                        <li>Choosing components</li>
+                                        <li>Choosing components (pcpartpicker, youtube, benchmarks)</li>
                                         <li>Compatibility checks</li>
                                         <li>Step-by-step assembly</li>
+                                        <li>Fixing computers (hardware) ifixit, teardown videos</li>
+                                    </ul>
+                                </li>
+                                <li>Bonus components
+                                    <ul>
+                                        <li>WiFi cards</il>
+                                        <li>Replacing CD trays with harddrives(laptops)</li>
+                                        <li>Inside a portable HDD</li>
+                                        <li>Ubtek 3D Xpoint DC P4800X</li>
+                                        <li>Liquid Crystal Displays (LCD vs OLED (CCFL, LED-backlit) etc)</li>
+                                        <li>Digitizers</li>
                                     </ul>
                                 </li>
                                 <li>Driver Installation
                                     <ul>
                                         <li>Why drivers are necessary</li>
                                         <li>Finding and installing the right drivers</li>
-                                        <li>Keeping drivers up to date</li>
+                                        <li>Keeping drivers up to date (devmgmt.msc)</li>
+                                        <li>Manufacturer Installs</li>
+                                        <li>Windows updates</li>
+                                        <li>POST required drivers, BIOS</li>
                                     </ul>
                                 </li>
                                 <li>Keyboard Shortcuts & ALT Codes
                                     <ul>
                                         <li>Commonly used shortcuts</li>
                                         <li>Using ALT codes for special characters</li>
+                                        <li>Emojis</li>
                                         <li>Customizing shortcuts</li>
+                                        <li>Windows + R showcase (shell:RecycleBinFolder)</li>
+                                        <li>F2 Renaming files</li>
+                                        <li>Shift select, ctrl selection</li>
                                     </ul>
                                 </li>
                                 <li>Customizing and Understanding your OS
@@ -1127,6 +1210,13 @@
                                         <li>Changing system settings</li>
                                         <li>Personalizing appearance</li>
                                         <li>Using advanced OS features</li>
+                                        <li>Windows Sandbox</li>
+                                        <li>Virtual Desktops</li>
+                                        <li>Snip and sketch</li>
+                                        <li>Focus Assist</li>
+                                        <li>Dynamic Lock</li>
+                                        <li>Clipboard History</li>
+                                        <li>Flow Launcher, Treesize, Everything, Windows God Mode</li>
                                     </ul>
                                 </li>
                                 <li>Note-Taking Tools and Software
@@ -1138,7 +1228,7 @@
                                 </li>
                             </ul>
                         </li>
-                        // Eigth Section
+                        // Ninth Section
                         <li>The Windows Command Line and Tools
                             <ul>
                                 <li>Understanding your Terminal
@@ -1225,10 +1315,10 @@
                             </ul>
                         </li>
 
-                        // Ninth Section
+                        // Tenth Section
                         <li>Debloating your Operating System</li>
 
-                        // Tenth Section
+                        // Eleventh Section
                         <li>Understanding Hashes
                             <ul>
                                 <li>Introduction to Hash Functions
@@ -1256,7 +1346,7 @@
                         </li>
                     </ul>
 
-                    // Eleventh Section
+                    // Twelth Section
                     <li>Introduction to Python
                         <ul>
                             <li>Installing Python</li>
@@ -1266,13 +1356,14 @@
                         </ul>
                     </li>
 
-                    // Twelth Section
-                    <li>Visual Studio Code Introduction</li>
-                    
                     // Thirteenth Section
+                    <li>Visual Studio Code Introduction</li>
+                    <li>Obfuscation and minified code</li>
+
+                    // Fourteenth Section
                     <li>Getting Started in CyberSecurity</li>
 
-                    // Seventeenth Section
+                    // Fifteenth Section
                     <li>Web development basics
                         <ul>
                             <li>HTML fundamentals</li>
@@ -1282,7 +1373,7 @@
                         </ul>
                     </li>
 
-                    // Eighteenth Section
+                    // Sixteenth Section
                     <li>Awesome hardware & Tools
                         <ul>
                             <li>0.mg Cables</li>
@@ -1312,7 +1403,7 @@
                         </ul>
                     </li>
 
-                    // Nineteenth Section
+                    // Seventeenth Section
                     <li>Virtual machines
                         <ul>
                             <li>Understanding Virtualization & Enabling</li>
@@ -1323,10 +1414,10 @@
                         </ul>
                     </li>
 
-                    // Twentieth Section
+                    // Eighteenth Section
                     <li>Linux distros and names, Kali, Parrot, Arch, Ubuntu, Debian - what are they?</li>
 
-                    // Twenty-first Section
+                    // Nineteenth Section
                     <li>Linux customization
                         <ul>
                             <li>Understanding your terminal</li>
@@ -1344,10 +1435,10 @@
                         </ul>
                     </li>
 
-                    // Twenty-second Section
+                    // Twentieth Section
                     <li>WSL and its future in windows</li>
 
-                    // Twenty-third Section
+                    // Twenty-first Section
                     <li>Internet infrastructure
                         <ul>
                             <li>Domain Name System (DNS)</li>
@@ -1358,7 +1449,7 @@
                         </ul>
                     </li>
 
-                    // Twenty-fourth Section
+                    // Twenty-second Section
                     <li>Internet Service Providers (ISPs) and networking
                         <ul>
                             <li>How ISPs work</li>
@@ -1372,7 +1463,7 @@
                         </ul>
                     </li>
 
-                    // Twenty-fifth Section
+                    // Twenty-third Section
                     <li>Browser DevTools
                         <ul>
                             <li>Inspecting network requests</li>
@@ -1381,10 +1472,10 @@
                         </ul>
                     </li>
 
-                    // Twenty-sixth Section
+                    // Twenty-fourth Section
                     <li>OSI model overview</li>
 
-                    // Twenty-seventh Section
+                    // Twenty-fifth Section
                     <li>Network analysis
                         <ul>
                             <li>Using Wireshark and Tshark</li>
@@ -1393,7 +1484,7 @@
                         </ul>
                     </li>
 
-                    // Twenty-eigth Section
+                    // Twenty-sixth Section
                     <li>Data formats
                         <ul>
                             <li>Markup languages (XML, HTML, YAML,)</li>
@@ -1403,7 +1494,7 @@
                         </ul>
                     </li>
 
-                    // Twenty-ninth Section
+                    // Twenty-seventh Section
                     <li>Website OSINT (Open Source Intelligence)
                         <ul>
                             <li>Passive OSINT techniques</li>
@@ -1411,7 +1502,7 @@
                         </ul>
                     </li>
 
-                    // Thirtieth Section
+                    // Twenty-eigth Section
                     <li>Basic Cybersecurity Concepts
                         <ul>
                             <li>Port Scanning</li>
@@ -1420,7 +1511,7 @@
                         </ul>
                     </li>
 
-                    // Thirty-first Section
+                    // Twenty-ninth Section
                     <li>WiFi hacking
                         <ul>
                             <li>WiFi hacking techniques</li>
@@ -1428,7 +1519,7 @@
                         </ul>
                     </li>
 
-                    // Thirty-second Section
+                    // Thirtieth Section
                     <li>Attacking host machines
                         <ul>
                             <li>Network mapping with Nmap</li>
@@ -1437,7 +1528,7 @@
                         </ul>
                     </li>
 
-                    // Thirty-third Section
+                    // Thirty-first Section
                     <li>CVEs and MITRE
                         <ul>
                             <li>Understanding Common Vulnerabilities and Exposures (CVEs)</li>
@@ -1446,7 +1537,7 @@
                         </ul>
                     </li>
 
-                    // Thirty-fourth Section
+                    // Thirty-second Section
                     <li>Pentesting Methodology</li>
                     <ul>
                         <li>Passive/Active reconnaissance</li>
@@ -1456,7 +1547,7 @@
                         <li>Reporting</li>
                     </ul>
 
-                    // Thirty-fifth Section
+                    // Thirty-third Section
                     <li>Advanced Cybersecurity Concepts & Putting it into Practice</li>
                     <ul>
                         <li>Resources and links</li>
@@ -1464,7 +1555,7 @@
                         <li>Dynamic on the fly feedback</li>
                     </ul>
 
-                    // Thirty-sixth Section
+                    // Thirty-fourth Section
                     <li>List of tools used in the stories to come</li>
                     <ul>
                         <li>Nmap/Rustscan/Masscan</li>
@@ -1494,7 +1585,7 @@
                         <li>etc...</li>
                     </ul>
 
-                    // Thirty-seventh Section
+                    // Thirty-fifth Section
                     <li>Real-world hacking techniques and bug bounties
                         <ul>
                             <li>Directory traversal and path traversal</li>
@@ -1552,7 +1643,7 @@
                     </li>
                 </ul>
 
-                // Thirty-eigth Section
+                // Thirty-sixth Section
                 <li>CTF level techniques that are important to master
                     <ul>
                         <li>FTP</li>
@@ -1562,7 +1653,7 @@
                     </ul>
                 </li>
 
-                // Thirty-ninth Section
+                // Thirty-seventh Section
                 <li>Secure Coding Practices
                     <ul>
                         <li>Snyk</li>
@@ -1570,23 +1661,23 @@
                     </ul>
                 </li>
 
-                // Fourtieth Section
+                // Thirty-eigth Section
                 <li>Mobile Security Testing</li>
 
-                // Fourty-first Section
+                // Thirty-ninth Section
                 <li>A brief overview on Assembly and machine code</li>
 
-                // Fourty-second Section
+                // Fourtieth Section
                 <li>Segfaults and BoF</li>
 
-                // Fourty-third Section
+                // Fourty-first Section
                 <li>Bonus Material
                     <ul>
                         <li>Stories and techniques not often seen but are good showcases</li>
                     </ul>
                 </li>
 
-                // Fourty-fourth Section
+                // Fourty-second Section
                 <li>Cybersecurity misconceptions
                     <ul>
                         <li>Things you have, Things you know, Things you are</li>
@@ -1601,7 +1692,7 @@
                     </ul>
                 </li>
 
-                // Fourty-fifth Section
+                // Fourty-third Section
                 <li>Career Paths in Cyber Security</li>
             </section>
 
