@@ -887,6 +887,266 @@
         margin-bottom: 2rem;
         }
     }
+
+  .rotating-facts {
+    margin: 0 0 0;
+    padding: 0.8rem 1.2rem;
+    background-color: rgba(216, 177, 115, 0.1);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .rotating-facts::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%23cb9139' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    z-index: -1;
+  }
+  
+  .fact-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .fact-prefix {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--primary);
+    font-size: 0.9rem;
+  }
+  
+  .fact-text {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    transition: opacity 0.5s ease;
+  }
+  
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(5px); }
+    10% { opacity: 1; transform: translateY(0); }
+    90% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-5px); }
+  }
+
+/* Pricing & Retailers Section Styles */
+.pricing-section {
+    margin: 4rem 0;
+}
+
+.pricing-container {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Price Card Styles */
+.price-card {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(135deg, var(--panel) 0%, rgba(28, 36, 32, 0.9) 100%);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.price-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%23cb9139' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+    opacity: 0.3;
+    z-index: 0;
+}
+
+.price-badge {
+    position: absolute;
+    top: 0;
+    right: 2rem;
+    background-color: var(--primary);
+    color: var(--bg-darker);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.price-amount {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 1rem 0;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.price-cents {
+    font-size: 2rem;
+    vertical-align: super;
+}
+
+.price-description {
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.price-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    position: relative;
+    z-index: 1;
+}
+
+.price-features li {
+    margin-bottom: 0.8rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: var(--text-muted);
+}
+
+.price-features li::before {
+    content: "✓";
+    color: var(--primary);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+/* Retailers Container Styles */
+.retailers-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.retailers-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.retailers-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 3px;
+    background-color: var(--primary);
+}
+
+.retailers-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    flex-grow: 1;
+}
+
+.retailer-card {
+    background-color: var(--panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.retailer-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    border-color: var(--primary);
+}
+
+.retailer-logo {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(203, 145, 57, 0.1);
+    border-radius: 50%;
+    margin-bottom: 1rem;
+}
+
+.retailer-icon {
+    width: 30px;
+    height: 30px;
+    color: var(--primary);
+}
+
+.retailer-name {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.retailer-status {
+    font-size: 0.8rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+.retailer-status.available {
+    background-color: rgba(39, 174, 96, 0.2);
+    color: #2ecc71;
+}
+
+.retailer-status.coming-soon {
+    background-color: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+    .pricing-container {
+        flex-direction: column;
+    }
+    
+    .price-card {
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .retailers-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
     </style>
 
 </head>
@@ -966,7 +1226,13 @@
                     </div>
                 </div>
             </header>
-
+                <div class="rotating-facts">
+                    <div class="fact-container">
+                        <span class="fact-prefix">Did you know?</span>
+                        <span class="fact-text" id="fact-text">You can use laptop RAM inside a desktop PC if it has the right socket
+                            type.</span>
+                    </div>
+                </div>
             <div class="search-container">
                 <div class="search-panel">
                     <h3>Topic Search</h3>
@@ -1008,6 +1274,7 @@
                             compendium distills
                             essential cybersecurity knowledge into its most efficient form, streamlining your learning
                             journey.</p>
+                        <p>Not everything is listed below in depth for each word, term or other that is covered, this page is mainly for my own point of reference and to help others learn while I am working on this</p>
                     </div>
                 </div>
 
@@ -1025,6 +1292,73 @@
                         <div class="stat-card">
                             <div class="stat-number">900+</div>
                             <div class="stat-label">Practical Examples</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="pricing-section">
+                    <h2>Pricing & Availability</h2>
+
+                    <div class="pricing-container">
+                        <div class="price-card">
+                            <div class="price-badge">Hardcover</div>
+                            <div class="price-amount">$49<span class="price-cents">99</span></div>
+                            <div class="price-description">Premium quality hardcover with gold colored embossing accents</div>
+                            <ul class="price-features">
+                                <li>1000+ pages of comprehensive content</li>
+                                <li>Full-color diagrams and illustrations</li>
+                                <li>Quality assured copies</li>
+                                <li>Beginner friendly</li>
+                            </ul>
+                        </div>
+
+                        <div class="retailers-container">
+                            <h3 class="retailers-title">Available At</h3>
+                            <div class="retailers-grid">
+                                <div class="retailer-card">
+                                    <div class="retailer-logo">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" class="retailer-icon">
+                                            <path
+                                                d="M12.14 2a9.5 9.5 0 0 0-9.51 9.5c0 5.24 4.25 9.5 9.51 9.5 5.24 0 9.5-4.26 9.5-9.5 0-5.25-4.26-9.5-9.5-9.5zm0 2.87c.85 0 1.53.68 1.53 1.53s-.68 1.53-1.53 1.53-1.53-.68-1.53-1.53.68-1.53 1.53-1.53zm2.59 6.53c-.15.44-.43.87-.76 1.27l-1.62 1.96c-.13.16-.22.35-.27.57-.04.21-.06.39-.06.57v.25h-1.94c-.01-.3 0-.6.03-.89.04-.29.14-.58.29-.85.15-.26.35-.5.58-.69l1.01-1.13c.24-.29.42-.53.53-.73.12-.19.18-.39.18-.58 0-.3-.1-.53-.3-.71-.2-.18-.46-.28-.79-.28-.41 0-.73.14-.97.42-.23.28-.33.64-.3 1.08h-2.07c.02-.83.31-1.48.87-1.97.56-.49 1.29-.74 2.21-.74.91 0 1.64.21 2.17.64s.8 1.05.8 1.85c0 .3-.05.59-.15.89zm-3.8 4.02h2.17v1.96h-2.17v-1.96z" />
+                                        </svg>
+                                    </div>
+                                    <div class="retailer-name">Amazon</div>
+                                    <div class="retailer-status coming-soon">Coming Soon</div>
+                                </div>
+
+                                <div class="retailer-card">
+                                    <div class="retailer-logo">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" class="retailer-icon">
+                                            <path
+                                                d="M5.79 6.67 4.5 15.82h1.57l.67-5.03h.05l1.8 5.03h1.12l1.8-5.03h.06l.66 5.03h1.58L12.65 6.67h-1.6l-1.81 5.63h-.05L7.4 6.67h-1.6ZM18.3 6.67V8.3h3.25v1.08H18.3v5.36h-1.54V6.67h1.54Z" />
+                                        </svg>
+                                    </div>
+                                    <div class="retailer-name">Barnes & Noble</div>
+                                    <div class="retailer-status coming-soon">Coming Soon</div>
+                                </div>
+
+                                <div class="retailer-card">
+                                    <div class="retailer-logo">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" class="retailer-icon">
+                                            <path
+                                                d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z" />
+                                        </svg>
+                                    </div>
+                                    <div class="retailer-name">Bookshop.org</div>
+                                    <div class="retailer-status coming-soon">Coming Soon</div>
+                                </div>
+
+                                <div class="retailer-card">
+                                    <div class="retailer-logo">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" class="retailer-icon">
+                                            <path
+                                                d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 4h2v5l-1-.75L9 9V4zm9 16H6V4h1v9l3-2.25L13 13V4h5v16z" />
+                                        </svg>
+                                    </div>
+                                    <div class="retailer-name">Indiebound</div>
+                                    <div class="retailer-status coming-soon">Coming Soon</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -2914,4 +3248,100 @@
     document.addEventListener('DOMContentLoaded', function () {
         initializeSearch();
     });
+
+    // Wait for the DOM to be fully loaded before executing
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the fact text element once
+        const factText = document.getElementById('fact-text');
+
+        // List of cybersecurity facts
+        const facts = [
+            "You can use laptop RAM inside a desktop PC if it has the right socket type.",
+            "The first computer virus was created in 1983 and was called the 'Elk Cloner'.",
+            "The term 'bug' in computing originated when a moth caused a malfunction in the Harvard Mark II computer in 1947.",
+            "The average cost of a data breach in 2023 exceeded $4.35 million globally.",
+            "Over 95% of successful cyber attacks are the result of human error.",
+            "WannaCry ransomware attack in 2017 affected more than 200,000 computers across 150 countries.",
+            "The password '123456' still remains one of the most commonly used passwords despite its vulnerability.",
+            "A 'white hat' hacker is an ethical computer hacker who helps organizations improve their security.",
+            "The world's first ethical hacking course was offered at Stanford University in 1971.",
+            "The security of a blockchain comes from its decentralized nature and cryptographic hash functions.",
+            "Social engineering attacks manipulate people into breaking security procedures rather than finding technical vulnerabilities.",
+            "Two-factor authentication can prevent up to 99.9% of automated attacks.",
+            "Stuxnet was one of the first publicly identified malware that targeted industrial control systems.",
+            "Many cybersecurity experts recommend using password managers instead of trying to remember complex passwords.",
+            "The concept of 'zero trust' security assumes that threats exist both inside and outside traditional network boundaries.",
+            "Cryptojacking is a type of cyberattack where hackers mine cryptocurrency using victims' computing resources.",
+            "The dark web makes up only about 5% of the total internet.",
+            "Some ATMs can be hacked in under 20 minutes with specialized malware.",
+            "Biometric security systems can be fooled with high-resolution photos or 3D-printed models.",
+            "The largest DDoS attack ever recorded peaked at 2.54 Tbps against Google services in 2017.",
+            "The KRACK attack discovered in 2017 exposed a fundamental flaw in the WPA2 Wi-Fi protocol.",
+            "Hackers can use acoustic analysis to determine what you're typing based on the sound of keystrokes.",
+            "A hardware keylogger can be as small as a USB adapter and nearly undetectable to unsuspecting users.",
+            "Some advanced malware can hide in your computer's UEFI firmware, surviving even complete operating system reinstallation.",
+            "Air-gapped computers (physically isolated from unsecured networks) can still be hacked using methods like electromagnetic radiation or acoustic manipulation.",
+            "The first documented ransomware attack occurred in 1989 using floppy disks."
+        ];
+
+        // Set up an array to track which facts have been used
+        let usedFactIndices = [];
+
+        // Function to get a random fact that hasn't been shown recently
+        function getRandomFact() {
+            // If we've used all facts, reset the tracking array
+            if (usedFactIndices.length >= facts.length) {
+                usedFactIndices = [];
+            }
+
+            // Keep generating random indices until we find one not in our used list
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * facts.length);
+            } while (usedFactIndices.includes(randomIndex));
+
+            // Mark this fact as used
+            usedFactIndices.push(randomIndex);
+
+            return facts[randomIndex];
+        }
+
+        // Set the initial fact once, outside of any animation or interval
+        let displayedFact = getRandomFact();
+        factText.textContent = displayedFact;
+
+        // Single interval for changing facts
+        const factInterval = setInterval(rotateFact, 8000);
+
+        // Flag to prevent multiple animations from running simultaneously
+        let isAnimating = false;
+
+        // Function to handle the fact rotation
+        function rotateFact() {
+            // Skip if already animating
+            if (isAnimating) return;
+
+            // Set the flag to prevent multiple animations
+            isAnimating = true;
+
+            // Fade out
+            factText.style.opacity = 0;
+
+            // Wait for fade out to complete before changing text
+            setTimeout(() => {
+                // Get a new random fact
+                displayedFact = getRandomFact();
+                factText.textContent = displayedFact;
+
+                // Fade in
+                factText.style.opacity = 1;
+
+                // Reset animation flag after fade in completes
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 600);
+            }, 600);
+        }
+    });
+
 </script>
