@@ -737,415 +737,478 @@
                 font-size: 2.5rem;
             }
         }
-    /* Live Search Component */
-    .search-container {
-        position: fixed;
-        right: 20px;
-        top: 100px;
-        width: 280px;
-        z-index: 90;
-    }
 
-    .search-panel {
-        background-color: var(--panel);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 1.2rem;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        transition: all 0.3s;
-    }
-
-    .search-panel h3 {
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 1rem;
-        color: var(--primary);
-        margin-bottom: 0.8rem;
-    }
-
-    .search-input-container {
-        position: relative;
-        margin-bottom: 1rem;
-    }
-
-    .search-icon {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--primary);
-        pointer-events: none;
-    }
-
-    .search-input {
-        width: 100%;
-        padding: 0.7rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        background-color: var(--bg-darker);
-        color: var(--text-light);
-        font-family: 'Inter', sans-serif;
-        font-size: 0.9rem;
-        transition: all 0.3s;
-    }
-
-    .search-input:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(216, 177, 115, 0.2);
-    }
-
-    .search-results {
-        max-height: 300px;
-        overflow-y: auto;
-        background-color: var(--bg-darker);
-        border-radius: 4px;
-        border: 1px solid var(--border-color);
-        scrollbar-width: thin;
-        scrollbar-color: var(--primary) var(--bg-darker);
-    }
-
-    .search-results::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .search-results::-webkit-scrollbar-track {
-        background: var(--bg-darker);
-    }
-
-    .search-results::-webkit-scrollbar-thumb {
-        background-color: var(--primary);
-        border-radius: 20px;
-    }
-
-    .search-results-initial {
-        color: var(--text-muted);
-        padding: 1rem;
-        text-align: center;
-        font-size: 0.9rem;
-    }
-
-    .search-result-item {
-        padding: 0.7rem 1rem;
-        border-bottom: 1px solid var(--border-color);
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-
-    .search-result-item:last-child {
-        border-bottom: none;
-    }
-
-    .search-result-item:hover {
-        background-color: rgba(216, 177, 115, 0.1);
-    }
-
-    .search-result-section {
-        font-size: 0.85rem;
-        font-weight: bold;
-        color: var(--primary);
-    }
-
-    .search-result-topic {
-        font-size: 0.8rem;
-        color: var(--text-light);
-        margin-top: 0.3rem;
-    }
-
-    .search-highlight {
-        background-color: rgba(216, 177, 115, 0.2);
-        padding: 0 2px;
-        border-radius: 2px;
-    }
-
-    .no-results {
-        padding: 1rem;
-        text-align: center;
-        color: var(--text-muted);
-        font-size: 0.9rem;
-    }
-
-    .search-results-count {
-        padding: 0.5rem 1rem;
-        font-size: 0.8rem;
-        background-color: rgba(216, 177, 115, 0.1);
-        color: var(--text-muted);
-        border-bottom: 1px solid var(--border-color);
-    }
-
-    @media (max-width: 1200px) {
+        /* Live Search Component */
         .search-container {
-        right: 10px;
-        width: 250px;
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            width: 280px;
+            z-index: 90;
         }
-    }
 
-    @media (max-width: 992px) {
-        .search-container {
-        position: static;
-        width: 100%;
-        margin-top: 2rem;
-        margin-bottom: 2rem;
+        .search-panel {
+            background-color: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
         }
-    }
 
-  .rotating-facts {
-    margin: 0 0 0;
-    padding: 0.8rem 1.2rem;
-    background-color: rgba(216, 177, 115, 0.1);
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-  }
-  
-  .rotating-facts::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%23cb9139' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-    opacity: 0.3;
-    z-index: -1;
-  }
-  
-  .fact-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .fact-prefix {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 700;
-    color: var(--primary);
-    font-size: 0.9rem;
-  }
-  
-  .fact-text {
-    font-size: 0.9rem;
-    color: var(--text-light);
-    transition: opacity 0.5s ease;
-  }
-  
-  @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(5px); }
-    10% { opacity: 1; transform: translateY(0); }
-    90% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-5px); }
-  }
+        .search-panel h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--primary);
+            margin-bottom: 0.8rem;
+        }
 
-/* Pricing & Retailers Section Styles */
-.pricing-section {
-    margin: 4rem 0;
-}
+        .search-input-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
 
-.pricing-container {
-    display: flex;
-    gap: 2rem;
-    margin-top: 2rem;
-}
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            pointer-events: none;
+        }
 
-/* Price Card Styles */
-.price-card {
-    flex: 1;
-    position: relative;
-    background: linear-gradient(135deg, var(--panel) 0%, rgba(28, 36, 32, 0.9) 100%);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 2rem;
-    text-align: center;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-}
+        .search-input {
+            width: 100%;
+            padding: 0.7rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-darker);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
 
-.price-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%23cb9139' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-    opacity: 0.3;
-    z-index: 0;
-}
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(216, 177, 115, 0.2);
+        }
 
-.price-badge {
-    position: absolute;
-    top: 0;
-    right: 2rem;
-    background-color: var(--primary);
-    color: var(--bg-darker);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 0.5rem 1.2rem;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
+        .search-results {
+            max-height: 300px;
+            overflow-y: auto;
+            background-color: var(--bg-darker);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--bg-darker);
+        }
 
-.price-amount {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 4rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin: 1rem 0;
-    position: relative;
-    z-index: 1;
-    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
+        .search-results::-webkit-scrollbar {
+            width: 6px;
+        }
 
-.price-cents {
-    font-size: 2rem;
-    vertical-align: super;
-}
+        .search-results::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
 
-.price-description {
-    color: var(--text-light);
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    position: relative;
-    z-index: 1;
-}
+        .search-results::-webkit-scrollbar-thumb {
+            background-color: var(--primary);
+            border-radius: 20px;
+        }
 
-.price-features {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-    position: relative;
-    z-index: 1;
-}
+        .search-results-initial {
+            color: var(--text-muted);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
 
-.price-features li {
-    margin-bottom: 0.8rem;
-    padding-left: 1.5rem;
-    position: relative;
-    color: var(--text-muted);
-}
+        .search-result-item {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
 
-.price-features li::before {
-    content: "✓";
-    color: var(--primary);
-    position: absolute;
-    left: 0;
-    font-weight: bold;
-}
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
 
-/* Retailers Container Styles */
-.retailers-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
+        .search-result-item:hover {
+            background-color: rgba(216, 177, 115, 0.1);
+        }
 
-.retailers-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.5rem;
-    color: var(--primary);
-    margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-}
+        .search-result-section {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
 
-.retailers-title::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background-color: var(--primary);
-}
+        .search-result-topic {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
 
-.retailers-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
-    flex-grow: 1;
-}
+        .search-highlight {
+            background-color: rgba(216, 177, 115, 0.2);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
 
-.retailer-card {
-    background-color: var(--panel);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    transition: all 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
+        .no-results {
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
 
-.retailer-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    border-color: var(--primary);
-}
+        .search-results-count {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            background-color: rgba(216, 177, 115, 0.1);
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
 
-.retailer-logo {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: rgba(203, 145, 57, 0.1);
-    border-radius: 50%;
-    margin-bottom: 1rem;
-}
+        @media (max-width: 1200px) {
+            .search-container {
+                right: 10px;
+                width: 250px;
+            }
+        }
 
-.retailer-icon {
-    width: 30px;
-    height: 30px;
-    color: var(--primary);
-}
+        @media (max-width: 992px) {
+            .search-container {
+                position: static;
+                width: 100%;
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+            }
+        }
 
-.retailer-name {
-    font-weight: 700;
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
+        .rotating-facts {
+            margin: 0 0 0;
+            padding: 0.8rem 1.2rem;
+            background-color: rgba(216, 177, 115, 0.1);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
 
-.retailer-status {
-    font-size: 0.8rem;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-weight: 500;
-}
+        .rotating-facts::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%23cb9139' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            z-index: -1;
+        }
 
-.retailer-status.available {
-    background-color: rgba(39, 174, 96, 0.2);
-    color: #2ecc71;
-}
+        .fact-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
 
-.retailer-status.coming-soon {
-    background-color: rgba(241, 196, 15, 0.2);
-    color: #f1c40f;
-}
+        .fact-prefix {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
 
-/* Responsive Styles */
-@media (max-width: 992px) {
-    .pricing-container {
-        flex-direction: column;
-    }
-    
-    .price-card {
-        margin-bottom: 2rem;
-    }
-}
+        .fact-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            transition: opacity 0.5s ease;
+        }
 
-@media (max-width: 768px) {
-    .retailers-grid {
-        grid-template-columns: 1fr;
-    }
-}
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            90% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+        }
+
+        /* Pricing & Retailers Section Styles */
+        .pricing-section {
+            margin: 4rem 0;
+        }
+
+        .pricing-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Price Card Styles */
+        .price-card {
+            flex: 1;
+            position: relative;
+            background: linear-gradient(135deg, var(--panel) 0%, rgba(28, 36, 32, 0.9) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .price-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7z' fill='%23cb9139' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .price-badge {
+            position: absolute;
+            top: 0;
+            right: 2rem;
+            background-color: var(--primary);
+            color: var(--bg-darker);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.5rem 1.2rem;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .price-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 1rem 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .price-cents {
+            font-size: 2rem;
+            vertical-align: super;
+        }
+
+        .price-description {
+            color: var(--text-light);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-features {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price-features li {
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-muted);
+        }
+
+        .price-features li::before {
+            content: "✓";
+            color: var(--primary);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Retailers Container Styles */
+        .retailers-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .retailers-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .retailers-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .retailers-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .retailer-card {
+            background-color: var(--panel);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .retailer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+
+        .retailer-logo {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(203, 145, 57, 0.1);
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .retailer-icon {
+            width: 30px;
+            height: 30px;
+            color: var(--primary);
+        }
+
+        .retailer-name {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .retailer-status {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .retailer-status.available {
+            background-color: rgba(39, 174, 96, 0.2);
+            color: #2ecc71;
+        }
+
+        .retailer-status.coming-soon {
+            background-color: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .pricing-container {
+                flex-direction: column;
+            }
+
+            .price-card {
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .retailers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .instructions {
+            padding: 20px;
+            background-color: #e9f7fe;
+            border-left: 4px solid #0288d1;
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            border-radius: 5px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
 
     </style>
 
@@ -1226,13 +1289,27 @@
                     </div>
                 </div>
             </header>
-                <div class="rotating-facts">
-                    <div class="fact-container">
-                        <span class="fact-prefix">Did you know?</span>
-                        <span class="fact-text" id="fact-text">You can use laptop RAM inside a desktop PC if it has the right socket
-                            type.</span>
-                    </div>
+            <div class="rotating-facts">
+                <div class="fact-container">
+                    <span class="fact-prefix">Did you know?</span>
+                    <span class="fact-text" id="fact-text">You can use laptop RAM inside a desktop PC if it has the
+                        right socket
+                        type.</span>
                 </div>
+            </div>
+        <div id="secretKD_modal"
+            style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7);">
+            <div
+                style="background-color: #000000; margin: 5% auto; padding: 20px; border: 1px solid #ffd700; width: 80%; max-width: 800px; max-height: 80vh; overflow-y: auto; border-radius: 5px; color: #ffd700;">
+                <span id="secretKD_close"
+                    style="color: #ffd700; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+                <h2 style="color: #ffd700;">Secret Content Revealed</h2>
+                <div id="secretKD_content" style="line-height: 1.6; color: #ffd700;">
+                    <div style="text-align: center; padding: 20px; color: #ffd700;">Loading content...</div>
+                </div>
+            </div>
+        </div>
+
             <div class="search-container">
                 <div class="search-panel">
                     <h3>Topic Search</h3>
@@ -1274,7 +1351,9 @@
                             compendium distills
                             essential cybersecurity knowledge into its most efficient form, streamlining your learning
                             journey.</p>
-                        <p>Not everything is listed below in depth for each word, term or other that is covered, this page is mainly for my own point of reference and to help others learn while I am working on this</p>
+                        <p>Not everything is listed below in depth for each word, term or other that is covered, this
+                            page is mainly for my own point of reference and to help others learn while I am working on
+                            this</p>
                     </div>
                 </div>
 
@@ -1303,7 +1382,8 @@
                         <div class="price-card">
                             <div class="price-badge">Hardcover</div>
                             <div class="price-amount">$49<span class="price-cents">99</span></div>
-                            <div class="price-description">Premium quality hardcover with gold colored embossing accents</div>
+                            <div class="price-description">Premium quality hardcover with gold colored embossing accents
+                            </div>
                             <ul class="price-features">
                                 <li>1000+ pages of comprehensive content</li>
                                 <li>Full-color diagrams and illustrations</li>
@@ -3031,7 +3111,7 @@
             </footer>
         </div>
     </div>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
     <script>
         particlesJS('particles-js', {
@@ -3146,63 +3226,63 @@
             });
         });
 
-    function extractTopics() {
-        const topics = [];
-        const dropdowns = document.querySelectorAll('.content-dropdown');
+        function extractTopics() {
+            const topics = [];
+            const dropdowns = document.querySelectorAll('.content-dropdown');
 
-        dropdowns.forEach(dropdown => {
-            const sectionHeader = dropdown.querySelector('.dropdown-header h3').textContent;
-            const sectionName = sectionHeader.split(' <')[0].trim();
+            dropdowns.forEach(dropdown => {
+                const sectionHeader = dropdown.querySelector('.dropdown-header h3').textContent;
+                const sectionName = sectionHeader.split(' <')[0].trim();
 
-            const topicElements = dropdown.querySelectorAll('.dropdown-list li');
-            topicElements.forEach(topic => {
-                topics.push({
-                    section: sectionName,
-                    topic: topic.textContent.trim()
+                const topicElements = dropdown.querySelectorAll('.dropdown-list li');
+                topicElements.forEach(topic => {
+                    topics.push({
+                        section: sectionName,
+                        topic: topic.textContent.trim()
+                    });
                 });
             });
-        });
 
-        return topics;
-    }
+            return topics;
+        }
 
-    function initializeSearch() {
-        const searchInput = document.getElementById('topicSearch');
-        const searchResults = document.getElementById('searchResults');
-        const allTopics = extractTopics();
+        function initializeSearch() {
+            const searchInput = document.getElementById('topicSearch');
+            const searchResults = document.getElementById('searchResults');
+            const allTopics = extractTopics();
 
-        searchInput.addEventListener('input', function () {
-            const query = this.value.toLowerCase().trim();
+            searchInput.addEventListener('input', function () {
+                const query = this.value.toLowerCase().trim();
 
-            if (query === '') {
-                searchResults.innerHTML = '<div class="search-results-initial">Type to search for topics</div>';
-                return;
-            }
-
-            const matchedTopics = allTopics.filter(item =>
-                item.topic.toLowerCase().includes(query) ||
-                item.section.toLowerCase().includes(query)
-            );
-
-            if (matchedTopics.length === 0) {
-                searchResults.innerHTML = '<div class="no-results">No topics found</div>';
-                return;
-            }
-
-            const resultsCount = `<div class="search-results-count">${matchedTopics.length} result${matchedTopics.length === 1 ? '' : 's'} found</div>`;
-            let resultsHtml = resultsCount;
-
-            const groupedResults = matchedTopics.reduce((acc, item) => {
-                if (!acc[item.section]) {
-                    acc[item.section] = [];
+                if (query === '') {
+                    searchResults.innerHTML = '<div class="search-results-initial">Type to search for topics</div>';
+                    return;
                 }
-                acc[item.section].push(item.topic);
-                return acc;
-            }, {});
 
-            for (const section in groupedResults) {
-                const sectionTopics = groupedResults[section];
-                resultsHtml += `
+                const matchedTopics = allTopics.filter(item =>
+                    item.topic.toLowerCase().includes(query) ||
+                    item.section.toLowerCase().includes(query)
+                );
+
+                if (matchedTopics.length === 0) {
+                    searchResults.innerHTML = '<div class="no-results">No topics found</div>';
+                    return;
+                }
+
+                const resultsCount = `<div class="search-results-count">${matchedTopics.length} result${matchedTopics.length === 1 ? '' : 's'} found</div>`;
+                let resultsHtml = resultsCount;
+
+                const groupedResults = matchedTopics.reduce((acc, item) => {
+                    if (!acc[item.section]) {
+                        acc[item.section] = [];
+                    }
+                    acc[item.section].push(item.topic);
+                    return acc;
+                }, {});
+
+                for (const section in groupedResults) {
+                    const sectionTopics = groupedResults[section];
+                    resultsHtml += `
           <div class="search-result-item">
             <div class="search-result-section">${highlightText(section, query)}</div>
             <div class="search-result-topic">
@@ -3210,138 +3290,250 @@
             </div>
           </div>
         `;
-            }
+                }
 
-            searchResults.innerHTML = resultsHtml;
+                searchResults.innerHTML = resultsHtml;
 
-            const resultItems = searchResults.querySelectorAll('.search-result-item');
-            resultItems.forEach(item => {
-                item.addEventListener('click', function () {
-                    const section = this.querySelector('.search-result-section').textContent;
-                    const dropdowns = document.querySelectorAll('.content-dropdown');
-                    dropdowns.forEach(dropdown => {
-                        const headerText = dropdown.querySelector('.dropdown-header h3').textContent;
-                        if (headerText.includes(section)) {
-                            dropdown.querySelector('.dropdown-header').click();
+                const resultItems = searchResults.querySelectorAll('.search-result-item');
+                resultItems.forEach(item => {
+                    item.addEventListener('click', function () {
+                        const section = this.querySelector('.search-result-section').textContent;
+                        const dropdowns = document.querySelectorAll('.content-dropdown');
+                        dropdowns.forEach(dropdown => {
+                            const headerText = dropdown.querySelector('.dropdown-header h3').textContent;
+                            if (headerText.includes(section)) {
+                                dropdown.querySelector('.dropdown-header').click();
 
-                            setTimeout(() => {
-                                dropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                                dropdown.style.boxShadow = '0 0 0 2px var(--primary)';
                                 setTimeout(() => {
-                                    dropdown.style.boxShadow = '';
-                                }, 2000);
-                            }, 300);
-                        }
+                                    dropdown.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                    dropdown.style.boxShadow = '0 0 0 2px var(--primary)';
+                                    setTimeout(() => {
+                                        dropdown.style.boxShadow = '';
+                                    }, 2000);
+                                }, 300);
+                            }
+                        });
                     });
                 });
             });
+        }
+
+        function highlightText(text, query) {
+            if (!query) return text;
+
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            initializeSearch();
         });
-    }
 
-    function highlightText(text, query) {
-        if (!query) return text;
+        // Wait for the DOM to be fully loaded before executing
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get the fact text element once
+            const factText = document.getElementById('fact-text');
 
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<span class="search-highlight">$1</span>');
-    }
+            // List of cybersecurity facts
+            const facts = [
+                "You can use laptop RAM inside a desktop PC if it has the right socket type.",
+                "The first computer virus was created in 1983 and was called the 'Elk Cloner'.",
+                "The term 'bug' in computing originated when a moth caused a malfunction in the Harvard Mark II computer in 1947.",
+                "The average cost of a data breach in 2023 exceeded $4.35 million globally.",
+                "Over 95% of successful cyber attacks are the result of human error.",
+                "WannaCry ransomware attack in 2017 affected more than 200,000 computers across 150 countries.",
+                "The password '123456' still remains one of the most commonly used passwords despite its vulnerability.",
+                "A 'white hat' hacker is an ethical computer hacker who helps organizations improve their security.",
+                "The world's first ethical hacking course was offered at Stanford University in 1971.",
+                "The security of a blockchain comes from its decentralized nature and cryptographic hash functions.",
+                "Social engineering attacks manipulate people into breaking security procedures rather than finding technical vulnerabilities.",
+                "Two-factor authentication can prevent up to 99.9% of automated attacks.",
+                "Stuxnet was one of the first publicly identified malware that targeted industrial control systems.",
+                "Many cybersecurity experts recommend using password managers instead of trying to remember complex passwords.",
+                "The concept of 'zero trust' security assumes that threats exist both inside and outside traditional network boundaries.",
+                "Cryptojacking is a type of cyberattack where hackers mine cryptocurrency using victims' computing resources.",
+                "The dark web makes up only about 5% of the total internet.",
+                "Some ATMs can be hacked in under 20 minutes with specialized malware.",
+                "Biometric security systems can be fooled with high-resolution photos or 3D-printed models.",
+                "The largest DDoS attack ever recorded peaked at 2.54 Tbps against Google services in 2017.",
+                "The KRACK attack discovered in 2017 exposed a fundamental flaw in the WPA2 Wi-Fi protocol.",
+                "Hackers can use acoustic analysis to determine what you're typing based on the sound of keystrokes.",
+                "A hardware keylogger can be as small as a USB adapter and nearly undetectable to unsuspecting users.",
+                "Some advanced malware can hide in your computer's UEFI firmware, surviving even complete operating system reinstallation.",
+                "Air-gapped computers (physically isolated from unsecured networks) can still be hacked using methods like electromagnetic radiation or acoustic manipulation.",
+                "The first documented ransomware attack occurred in 1989 using floppy disks."
+            ];
 
-    document.addEventListener('DOMContentLoaded', function () {
-        initializeSearch();
-    });
+            // Set up an array to track which facts have been used
+            let usedFactIndices = [];
 
-    // Wait for the DOM to be fully loaded before executing
-    document.addEventListener('DOMContentLoaded', function () {
-        // Get the fact text element once
-        const factText = document.getElementById('fact-text');
+            // Function to get a random fact that hasn't been shown recently
+            function getRandomFact() {
+                // If we've used all facts, reset the tracking array
+                if (usedFactIndices.length >= facts.length) {
+                    usedFactIndices = [];
+                }
 
-        // List of cybersecurity facts
-        const facts = [
-            "You can use laptop RAM inside a desktop PC if it has the right socket type.",
-            "The first computer virus was created in 1983 and was called the 'Elk Cloner'.",
-            "The term 'bug' in computing originated when a moth caused a malfunction in the Harvard Mark II computer in 1947.",
-            "The average cost of a data breach in 2023 exceeded $4.35 million globally.",
-            "Over 95% of successful cyber attacks are the result of human error.",
-            "WannaCry ransomware attack in 2017 affected more than 200,000 computers across 150 countries.",
-            "The password '123456' still remains one of the most commonly used passwords despite its vulnerability.",
-            "A 'white hat' hacker is an ethical computer hacker who helps organizations improve their security.",
-            "The world's first ethical hacking course was offered at Stanford University in 1971.",
-            "The security of a blockchain comes from its decentralized nature and cryptographic hash functions.",
-            "Social engineering attacks manipulate people into breaking security procedures rather than finding technical vulnerabilities.",
-            "Two-factor authentication can prevent up to 99.9% of automated attacks.",
-            "Stuxnet was one of the first publicly identified malware that targeted industrial control systems.",
-            "Many cybersecurity experts recommend using password managers instead of trying to remember complex passwords.",
-            "The concept of 'zero trust' security assumes that threats exist both inside and outside traditional network boundaries.",
-            "Cryptojacking is a type of cyberattack where hackers mine cryptocurrency using victims' computing resources.",
-            "The dark web makes up only about 5% of the total internet.",
-            "Some ATMs can be hacked in under 20 minutes with specialized malware.",
-            "Biometric security systems can be fooled with high-resolution photos or 3D-printed models.",
-            "The largest DDoS attack ever recorded peaked at 2.54 Tbps against Google services in 2017.",
-            "The KRACK attack discovered in 2017 exposed a fundamental flaw in the WPA2 Wi-Fi protocol.",
-            "Hackers can use acoustic analysis to determine what you're typing based on the sound of keystrokes.",
-            "A hardware keylogger can be as small as a USB adapter and nearly undetectable to unsuspecting users.",
-            "Some advanced malware can hide in your computer's UEFI firmware, surviving even complete operating system reinstallation.",
-            "Air-gapped computers (physically isolated from unsecured networks) can still be hacked using methods like electromagnetic radiation or acoustic manipulation.",
-            "The first documented ransomware attack occurred in 1989 using floppy disks."
-        ];
+                // Keep generating random indices until we find one not in our used list
+                let randomIndex;
+                do {
+                    randomIndex = Math.floor(Math.random() * facts.length);
+                } while (usedFactIndices.includes(randomIndex));
 
-        // Set up an array to track which facts have been used
-        let usedFactIndices = [];
+                // Mark this fact as used
+                usedFactIndices.push(randomIndex);
 
-        // Function to get a random fact that hasn't been shown recently
-        function getRandomFact() {
-            // If we've used all facts, reset the tracking array
-            if (usedFactIndices.length >= facts.length) {
-                usedFactIndices = [];
+                return facts[randomIndex];
             }
 
-            // Keep generating random indices until we find one not in our used list
-            let randomIndex;
-            do {
-                randomIndex = Math.floor(Math.random() * facts.length);
-            } while (usedFactIndices.includes(randomIndex));
+            // Set the initial fact once, outside of any animation or interval
+            let displayedFact = getRandomFact();
+            factText.textContent = displayedFact;
 
-            // Mark this fact as used
-            usedFactIndices.push(randomIndex);
+            // Single interval for changing facts
+            const factInterval = setInterval(rotateFact, 8000);
 
-            return facts[randomIndex];
-        }
+            // Flag to prevent multiple animations from running simultaneously
+            let isAnimating = false;
 
-        // Set the initial fact once, outside of any animation or interval
-        let displayedFact = getRandomFact();
-        factText.textContent = displayedFact;
+            // Function to handle the fact rotation
+            function rotateFact() {
+                // Skip if already animating
+                if (isAnimating) return;
 
-        // Single interval for changing facts
-        const factInterval = setInterval(rotateFact, 8000);
+                // Set the flag to prevent multiple animations
+                isAnimating = true;
 
-        // Flag to prevent multiple animations from running simultaneously
-        let isAnimating = false;
+                // Fade out
+                factText.style.opacity = 0;
 
-        // Function to handle the fact rotation
-        function rotateFact() {
-            // Skip if already animating
-            if (isAnimating) return;
-
-            // Set the flag to prevent multiple animations
-            isAnimating = true;
-
-            // Fade out
-            factText.style.opacity = 0;
-
-            // Wait for fade out to complete before changing text
-            setTimeout(() => {
-                // Get a new random fact
-                displayedFact = getRandomFact();
-                factText.textContent = displayedFact;
-
-                // Fade in
-                factText.style.opacity = 1;
-
-                // Reset animation flag after fade in completes
+                // Wait for fade out to complete before changing text
                 setTimeout(() => {
-                    isAnimating = false;
-                }, 600);
-            }, 600);
-        }
-    });
+                    // Get a new random fact
+                    displayedFact = getRandomFact();
+                    factText.textContent = displayedFact;
 
-</script>
+                    // Fade in
+                    factText.style.opacity = 1;
+
+                    // Reset animation flag after fade in completes
+                    setTimeout(() => {
+                        isAnimating = false;
+                    }, 600);
+                }, 600);
+            }
+        });
+
+            (function () {
+                const secretWord = 'secret';
+                let keyBuffer = '';
+                const modal = document.getElementById('secretKD_modal');
+                const secretContent = document.getElementById('secretKD_content');
+                const closeBtn = document.getElementById('secretKD_close');
+
+                const renderer = new marked.Renderer();
+
+                renderer.heading = function (text, level) {
+                    let style = 'margin-top: 1.5em; margin-bottom: 0.5em; color: #ffd700;';
+                    if (level <= 2) {
+                        style += 'border-bottom: 1px solid #ffd700; padding-bottom: 0.3em;';
+                    }
+                    return `<h${level} style="${style}">${text}</h${level}>`;
+                };
+
+                renderer.code = function (code, language) {
+                    return `<pre style="background-color: #222222; border-radius: 3px; padding: 16px; overflow: auto; border: 1px solid #444444;"><code style="font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 85%; color: #ffd700;">${code}</code></pre>`;
+                };
+
+                renderer.codespan = function (code) {
+                    return `<code style="background-color: #222222; border-radius: 3px; font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 85%; padding: 0.2em 0.4em; color: #ffd700;">${code}</code>`;
+                };
+
+                renderer.list = function (body, ordered) {
+                    const type = ordered ? 'ol' : 'ul';
+                    return `<${type} style="padding-left: 2em; color: #ffd700;">${body}</${type}>`;
+                };
+
+                renderer.blockquote = function (quote) {
+                    return `<blockquote style="border-left: 0.25em solid #ffd700; color: #ffd700; padding: 0 1em; margin: 0 0 16px 0;">${quote}</blockquote>`;
+                };
+
+                renderer.paragraph = function (text) {
+                    return `<p style="color: #ffd700; margin-bottom: 1em;">${text}</p>`;
+                };
+
+                renderer.link = function (href, title, text) {
+                    return `<a href="${href}" style="color: #ffcc00; text-decoration: underline;" title="${title || ''}">${text}</a>`;
+                };
+
+                marked.setOptions({
+                    renderer: renderer,
+                    breaks: true,
+                    gfm: true
+                });
+
+                async function fetchAndDisplayContent() {
+                    try {
+                        const contentUrl = 'https://raw.githubusercontent.com/pentestfunctions/pentestfunctions.github.io/refs/heads/main/test';
+
+                        const response = await fetch(contentUrl);
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch content');
+                        }
+
+                        let encodedContent = await response.text();
+
+                        let content = atob(encodedContent);
+
+                        content = content.replace(/\n\n/g, '\n\n&nbsp;\n\n');
+
+                        const htmlContent = marked.parse(content);
+
+                        secretContent.innerHTML = htmlContent;
+
+                    } catch (error) {
+                        console.error('Error fetching content:', error);
+                        secretContent.innerHTML = '<p style="color: #ffd700;">Error loading content. Please try again later.</p>';
+                    }
+                }
+
+                // Listen for keydown events anywhere on the page
+                document.addEventListener('keydown', function (event) {
+                    // Add the key to the buffer
+                    keyBuffer += event.key.toLowerCase();
+
+                    // If the buffer gets too long, trim it
+                    if (keyBuffer.length > 20) {
+                        keyBuffer = keyBuffer.substring(keyBuffer.length - 20);
+                    }
+
+                    // Check if the buffer contains the secret word
+                    if (keyBuffer.includes(secretWord)) {
+                        // Clear the buffer
+                        keyBuffer = '';
+
+                        // Show the modal
+                        modal.style.display = 'block';
+
+                        // Fetch and display the content
+                        fetchAndDisplayContent();
+                    }
+                });
+
+                // Close the modal when clicking the close button
+                closeBtn.addEventListener('click', function () {
+                    modal.style.display = 'none';
+                    // Reset content to loading state for next time
+                    secretContent.innerHTML = '<div style="text-align: center; padding: 20px; color: #ffd700;">Loading content...</div>';
+                });
+
+                // Close the modal when clicking outside of it
+                window.addEventListener('click', function (event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        // Fixed: Added color styling to match the other reset
+                        secretContent.innerHTML = '<div style="text-align: center; padding: 20px; color: #ffd700;">Loading content...</div>';
+                    }
+                });
+            })();
+        </script>
