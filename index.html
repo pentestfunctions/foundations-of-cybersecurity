@@ -8,6 +8,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap"
         rel="stylesheet">
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+
     <style>
         :root {
             --primary: #d8b173;
@@ -1162,6 +1164,7 @@
                 grid-template-columns: 1fr;
             }
         }
+
         .instructions {
             padding: 20px;
             background-color: #e9f7fe;
@@ -1209,7 +1212,6 @@
             text-align: center;
             padding: 20px;
         }
-
     </style>
 
 </head>
@@ -1297,18 +1299,22 @@
                         type.</span>
                 </div>
             </div>
-        <div id="secretKD_modal"
-            style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0, 0, 0, 0.7);">
-            <div
-                style="background-color: #000000; margin: 5% auto; padding: 20px; border: 1px solid #ffd700; width: 80%; max-width: 800px; max-height: 80vh; overflow-y: auto; border-radius: 5px; color: #ffd700;">
-                <span id="secretKD_close"
-                    style="color: #ffd700; float: right; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
-                <h2 style="color: #ffd700;">Secret Content Revealed</h2>
-                <div id="secretKD_content" style="line-height: 1.6; color: #ffd700;">
-                    <div style="text-align: center; padding: 20px; color: #ffd700;">Loading content...</div>
+
+            <!-- Modal popup (hidden by default) -->
+            <div id="markdownModal"
+                style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); z-index: 100; overflow: auto;">
+                <div
+                    style="position: relative; width: 80%; max-width: 800px; margin: 50px auto; background-color: #111; border: 1px solid #333; border-radius: 8px; padding: 20px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);">
+                    <button id="closeModal"
+                        style="position: absolute; top: 10px; right: 10px; background-color: transparent; border: none; color: #999; font-size: 24px; cursor: pointer;">×</button>
+                    <div id="markdown-content" style="color: white; line-height: 1.6;">
+                        <div style="text-align: center; padding: 20px; font-style: italic; color: #666;">Loading and decoding
+                            content...</div>
+                    </div>
+                    <div id="status" style="margin-top: 15px; font-size: 0.9em; color: #666; font-style: italic;"></div>
                 </div>
             </div>
-        </div>
+
 
             <div class="search-container">
                 <div class="search-panel">
@@ -3113,6 +3119,7 @@
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script>
         particlesJS('particles-js', {
             particles: {
@@ -3424,116 +3431,153 @@
             }
         });
 
-            (function () {
-                const secretWord = 'secret';
-                let keyBuffer = '';
-                const modal = document.getElementById('secretKD_modal');
-                const secretContent = document.getElementById('secretKD_content');
-                const closeBtn = document.getElementById('secretKD_close');
-
-                const renderer = new marked.Renderer();
-
-                renderer.heading = function (text, level) {
-                    let style = 'margin-top: 1.5em; margin-bottom: 0.5em; color: #ffd700;';
-                    if (level <= 2) {
-                        style += 'border-bottom: 1px solid #ffd700; padding-bottom: 0.3em;';
+            // Configure marked with highlight.js
+            marked.setOptions({
+                highlight: function (code, lang) {
+                    if (lang && hljs.getLanguage(lang)) {
+                        return hljs.highlight(lang, code).value;
                     }
-                    return `<h${level} style="${style}">${text}</h${level}>`;
-                };
+                    return hljs.highlightAuto(code).value;
+                },
+                breaks: true,
+                gfm: true
+            });
 
-                renderer.code = function (code, language) {
-                    return `<pre style="background-color: #222222; border-radius: 3px; padding: 16px; overflow: auto; border: 1px solid #444444;"><code style="font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 85%; color: #ffd700;">${code}</code></pre>`;
-                };
+            // Function to decode base64
+            function decodeBase64(str) {
+                try {
+                    // First try to decode directly
+                    return atob(str.trim());
+                } catch (e) {
+                    // If it fails, try to extract a base64 string from the content
+                    const base64Regex = /[A-Za-z0-9+/=]{10,}/g;
+                    const matches = str.match(base64Regex);
 
-                renderer.codespan = function (code) {
-                    return `<code style="background-color: #222222; border-radius: 3px; font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; font-size: 85%; padding: 0.2em 0.4em; color: #ffd700;">${code}</code>`;
-                };
-
-                renderer.list = function (body, ordered) {
-                    const type = ordered ? 'ol' : 'ul';
-                    return `<${type} style="padding-left: 2em; color: #ffd700;">${body}</${type}>`;
-                };
-
-                renderer.blockquote = function (quote) {
-                    return `<blockquote style="border-left: 0.25em solid #ffd700; color: #ffd700; padding: 0 1em; margin: 0 0 16px 0;">${quote}</blockquote>`;
-                };
-
-                renderer.paragraph = function (text) {
-                    return `<p style="color: #ffd700; margin-bottom: 1em;">${text}</p>`;
-                };
-
-                renderer.link = function (href, title, text) {
-                    return `<a href="${href}" style="color: #ffcc00; text-decoration: underline;" title="${title || ''}">${text}</a>`;
-                };
-
-                marked.setOptions({
-                    renderer: renderer,
-                    breaks: true,
-                    gfm: true
-                });
-
-                async function fetchAndDisplayContent() {
-                    try {
-                        const contentUrl = 'https://raw.githubusercontent.com/pentestfunctions/pentestfunctions.github.io/refs/heads/main/test';
-
-                        const response = await fetch(contentUrl);
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch content');
+                    if (matches && matches.length > 0) {
+                        try {
+                            // Try to decode the first substantial base64-looking string
+                            return atob(matches[0]);
+                        } catch (e2) {
+                            // If that fails too, return the original content
+                            return str;
                         }
+                    } else {
+                        // If no base64-looking string found, return original
+                        return str;
+                    }
+                }
+            }
 
-                        let encodedContent = await response.text();
+            // Function to load and display the markdown content
+            async function loadMarkdownFile() {
+                const content = document.getElementById('markdown-content');
+                const statusElement = document.getElementById('status');
+                const fileName = 'test';
 
-                        let content = atob(encodedContent);
+                try {
+                    // Try to fetch the file
+                    const response = await fetch(fileName);
 
-                        content = content.replace(/\n\n/g, '\n\n&nbsp;\n\n');
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${fileName}`);
+                    }
 
-                        const htmlContent = marked.parse(content);
+                    // Get the raw text from the file
+                    const base64Text = await response.text();
 
-                        secretContent.innerHTML = htmlContent;
+                    // Try to decode the content as base64
+                    let markdownText;
+                    try {
+                        markdownText = decodeBase64(base64Text);
+                        statusElement.textContent = "Base64 decoded successfully";
+                    } catch (decodeError) {
+                        // If decoding fails, use the original text
+                        markdownText = base64Text;
+                        statusElement.textContent = "Warning: Could not decode as base64, displaying raw content";
+                    }
 
-                    } catch (error) {
-                        console.error('Error fetching content:', error);
-                        secretContent.innerHTML = '<p style="color: #ffd700;">Error loading content. Please try again later.</p>';
+                    // Apply markdown styling inline
+                    const markdownStyles = `
+                    h1, h2, h3, h4, h5, h6 { margin-top: 24px; margin-bottom: 16px; font-weight: 600; line-height: 1.25; color: #eee; }
+                    h1 { padding-bottom: .3em; font-size: 2em; border-bottom: 1px solid #333; }
+                    h2 { padding-bottom: .3em; font-size: 1.5em; border-bottom: 1px solid #333; }
+                    a { color: #58a6ff; text-decoration: none; }
+                    a:hover { text-decoration: underline; }
+                    pre { background-color: #1a1a1a; border-radius: 3px; padding: 16px; overflow: auto; }
+                    code { font-family: SFMono-Regular, Consolas, Liberation Mono, Menlo, monospace; background-color: rgba(110, 118, 129, 0.4); border-radius: 3px; padding: 0.2em 0.4em; font-size: 85%; }
+                    pre code { background-color: transparent; padding: 0; }
+                    blockquote { margin: 0; padding: 0 1em; color: #8b949e; border-left: 0.25em solid #333; }
+                    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+                    table th, table td { padding: 6px 13px; border: 1px solid #333; }
+                    table tr { background-color: #0d1117; border-top: 1px solid #333; }
+                    table tr:nth-child(2n) { background-color: #161b22; }
+                    img { max-width: 100%; }
+                    ul, ol { padding-left: 2em; }
+                    li+li { margin-top: 0.25em; }
+                `;
+
+                    const styleElement = document.createElement('style');
+                    styleElement.textContent = markdownStyles;
+                    document.head.appendChild(styleElement);
+
+                    // Parse and render the markdown
+                    content.innerHTML = marked.parse(markdownText);
+
+                    // Apply syntax highlighting to code blocks
+                    document.querySelectorAll('pre code').forEach((block) => {
+                        hljs.highlightBlock(block);
+                    });
+                } catch (error) {
+                    content.innerHTML = `
+                <div style="padding: 20px;">
+                    <h1 style="color: #ff5555;">Error Loading Content</h1>
+                    <p style="color: #ddd;">Could not load the markdown file. Please make sure that <strong>phishing.md</strong> exists in the same directory as this HTML file.</p>
+                    <p style="color: #999;">Error details: ${error.message}</p>
+                </div>
+                `;
+                    statusElement.textContent = "Error loading file";
+                }
+            }
+
+            // Track keystrokes for the secret word
+            let typedKeys = '';
+            const secretWord = 'secret';
+            const markdownModal = document.getElementById('markdownModal');
+            const closeModal = document.getElementById('closeModal');
+
+            // Listen for keystrokes anywhere on the page
+            document.addEventListener('keydown', function (event) {
+                // Only track printable characters
+                if (event.key.length === 1) {
+                    typedKeys += event.key.toLowerCase();
+
+                    // Check if the last 6 characters match "secret"
+                    if (typedKeys.length > secretWord.length) {
+                        typedKeys = typedKeys.substring(typedKeys.length - secretWord.length);
+                    }
+
+                    if (typedKeys === secretWord) {
+                        typedKeys = ''; // Reset the typed keys
+                        markdownModal.style.display = 'block';
+                        loadMarkdownFile(); // Load the content when the modal is shown
                     }
                 }
 
-                // Listen for keydown events anywhere on the page
-                document.addEventListener('keydown', function (event) {
-                    // Add the key to the buffer
-                    keyBuffer += event.key.toLowerCase();
+                // Close modal with Escape key
+                if (event.key === 'Escape' && markdownModal.style.display === 'block') {
+                    markdownModal.style.display = 'none';
+                }
+            });
 
-                    // If the buffer gets too long, trim it
-                    if (keyBuffer.length > 20) {
-                        keyBuffer = keyBuffer.substring(keyBuffer.length - 20);
-                    }
+            // Close modal when close button is clicked
+            closeModal.addEventListener('click', function () {
+                markdownModal.style.display = 'none';
+            });
 
-                    // Check if the buffer contains the secret word
-                    if (keyBuffer.includes(secretWord)) {
-                        // Clear the buffer
-                        keyBuffer = '';
-
-                        // Show the modal
-                        modal.style.display = 'block';
-
-                        // Fetch and display the content
-                        fetchAndDisplayContent();
-                    }
-                });
-
-                // Close the modal when clicking the close button
-                closeBtn.addEventListener('click', function () {
-                    modal.style.display = 'none';
-                    // Reset content to loading state for next time
-                    secretContent.innerHTML = '<div style="text-align: center; padding: 20px; color: #ffd700;">Loading content...</div>';
-                });
-
-                // Close the modal when clicking outside of it
-                window.addEventListener('click', function (event) {
-                    if (event.target === modal) {
-                        modal.style.display = 'none';
-                        // Fixed: Added color styling to match the other reset
-                        secretContent.innerHTML = '<div style="text-align: center; padding: 20px; color: #ffd700;">Loading content...</div>';
-                    }
-                });
-            })();
-        </script>
+            // Also close modal when clicking outside the content
+            markdownModal.addEventListener('click', function (event) {
+                if (event.target === markdownModal) {
+                    markdownModal.style.display = 'none';
+                }
+            });
+    </script>
