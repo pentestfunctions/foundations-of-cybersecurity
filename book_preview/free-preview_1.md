@@ -18,7 +18,7 @@ There are 2 other main distinctions we can briefly touch on for now until going 
 
 When you type in and connect to a website like `google.com`, this is known as a **DNS** (Domain Name System). It's unrealistic for people to remember `172.217.24.46` the public IP address when they access the internet, so a DNS resolver is used to convert `google.com` to `172.217.24.46`. 
 
-> Think of it like a phonebook that knows where to send your letters you type to IP addresses.
+> Think of it like your contacts list in a cellphone, you can't be expected to remember EVERY phone number but by giving them names you recognize, you can now know who to call or text.
 
 ### How Websites Connect
 
@@ -231,8 +231,10 @@ These hidden programs in documents are particularly sneaky because most people d
 ## Where Does the Data Go?
 Modern phishing pages are often seen sending usernames and passwords to Discord, Telegram (Chat/Messaging platforms), and anywhere a request can be sent. This is due to domains and web servers often being taken offline after being reported as well as for live updates on their current victims. It can be quite scary for an outsider seeing this in action; thousands of credentials being sent directly to a live chat ready to be sold or used. 
 
-Malware campaigns also follow a similar pattern as phishing. Either via impersonating legitimate domains and software or directly emailing you impersonating an important figure or authority. Imagine replacing a link to login with a file to download instead. This can be seen with fake browser updates requiring you to install a file before a website will load, buying ads like previously mentioned but for fake software or simply infecting files and adding a sense or urgency to you to download and view it.
+Malware campaigns also follow a similar pattern as phishing. Either via impersonating legitimate domains and software or directly emailing you impersonating an important figure or authority. 
 
-Before we look at some methods to identify phishing emails, it's also important to understand facebook marketplace scams phishing attempts that have been appearing as those will be more and more relevant as the days go on. Let's say you are purchasing an item or selling an item. The person you will be in contact with will offer to pay for the shipping automatically and send you to a fake shipping website that is a clone of one you might be familiar with. Upon doing so, it will have any details about the purchase or exchange from facebook as they have put it there manually - making it more convincing. It will ask you to signup to get the tracking number or find out how to ship the item and upon doing so your credentials will be 'harvested' by the attacker.
+Imagine replacing a phishing link like we discussed with a file to download instead. This can be seen with fake browser updates requiring you to install a file before a website will load or buying ads like previously mentioned but for fake software.
+
+Before we look at some methods to identify phishing emails, it's also important to understand facebook marketplace phishing attempts that have been appearing as those will be more and more relevant as the days go on. Let's say you are purchasing an item or selling an item. The person you will be in contact with will offer to pay for the shipping automatically and send you to a fake shipping website that is a clone of one you might be familiar with. Upon doing so, it will have any details about the purchase or exchange from facebook as they have put it there manually - making it more convincing. It will ask you to signup to get the tracking number or find out how to ship the item and upon doing so your credentials will be 'harvested' by the attacker.
 
 Credential reuse is a common vector we will look at in the future but just keep in mind for now that any usernames, passwords or emails you enter if obtained by a hacker will be used against thousands of other websites to check for accounts they can utilize to their benefit.
