@@ -1,0 +1,2073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLACKBYTE OS v1.0 — NIGHTFALL</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green: #39ff14;
+  --green-dim: #1a8a00;
+  --green-glow: rgba(57,255,20,0.15);
+  --green-faint: rgba(57,255,20,0.05);
+  --red: #ff2020;
+  --red-dim: #7a0000;
+  --amber: #ffaa00;
+  --amber-dim: #7a4400;
+  --cyan: #00e5ff;
+  --purple: #cc00ff;
+  --bg: #000000;
+  --panel: #060a06;
+  --border: #1a2a1a;
+  --border-bright: #2a4a2a;
+  --text: #c8ffc8;
+  --text-dim: #4a7a4a;
+  --text-muted: #2a4a2a;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-display: 'Orbitron', monospace;
+  --font-vt: 'VT323', monospace;
+  --sidebar-w: 68px;
+  --topbar-h: 30px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  overflow: hidden;
+  height: 100vh;
+  cursor: crosshair;
+  user-select: none;
+}
+
+/* CRT overlay */
+body::after {
+  content:'';
+  position:fixed;
+  inset:0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px);
+  pointer-events:none;
+  z-index:9999;
+}
+
+/* ======================== BOOT ======================== */
+#boot {
+  position:fixed; inset:0; background:#000; z-index:99999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-family: var(--font-vt);
+}
+#boot .skull { font-size:90px; text-shadow:0 0 40px var(--green); animation:pulse 1s infinite; }
+#boot .title {
+  font-family:var(--font-display); font-size:42px; font-weight:900;
+  color:var(--green); text-shadow:0 0 30px var(--green), 0 0 80px rgba(57,255,20,0.4);
+  letter-spacing:10px; margin:8px 0 4px;
+}
+#boot .sub { color:var(--text-dim); letter-spacing:4px; font-size:14px; margin-bottom:36px; }
+#boot-log { width:460px; font-size:15px; }
+.blog { display:flex; justify-content:space-between; align-items:center; margin:4px 0; opacity:0; transition:opacity 0.1s; }
+.blog-bar { width:160px; height:10px; background:#111; border:1px solid var(--green-dim); overflow:hidden; }
+.blog-fill { height:100%; background:var(--green); box-shadow:0 0 8px var(--green); width:0%; transition:width 0.3s ease; }
+.blog-pct { min-width:36px; text-align:right; color:var(--green); }
+#boot-enter { margin-top:28px; color:var(--green); font-size:18px; animation:blink 1s infinite; display:none; }
+
+/* ======================== TOPBAR ======================== */
+#topbar {
+  position:fixed; top:0; left:0; right:0; height:var(--topbar-h);
+  background:#030803; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 12px 0 calc(var(--sidebar-w) + 12px);
+  z-index:1000;
+}
+.tb-left { display:flex; align-items:center; gap:14px; }
+.tb-logo { font-family:var(--font-display); font-size:11px; font-weight:700; color:var(--green); text-shadow:0 0 10px var(--green); letter-spacing:3px; }
+.tb-page { font-size:9px; color:var(--text-dim); letter-spacing:2px; }
+.tb-right { display:flex; align-items:center; gap:16px; }
+.tb-stat { font-size:9px; color:var(--text-dim); }
+.tb-stat span { color:var(--green); margin-left:2px; }
+.tb-clock { font-family:var(--font-display); font-size:12px; color:var(--cyan); letter-spacing:2px; }
+.xp-wrap { display:flex; align-items:center; gap:6px; font-size:9px; }
+.xp-lvl { font-family:var(--font-display); font-size:10px; color:var(--amber); font-weight:700; }
+.xp-bar { width:80px; height:4px; background:#0a1a0a; border-radius:2px; overflow:hidden; }
+.xp-fill { height:100%; background:var(--amber); box-shadow:0 0 4px var(--amber); width:57%; }
+
+/* ======================== SIDEBAR ======================== */
+#sidebar {
+  position:fixed; top:var(--topbar-h); left:0; bottom:0;
+  width:var(--sidebar-w); background:#020602;
+  border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center;
+  padding:6px 0 0; gap:0; z-index:1000;
+  overflow-y:auto; overflow-x:hidden;
+}
+#sidebar::-webkit-scrollbar { width:2px; }
+#sidebar::-webkit-scrollbar-thumb { background:var(--border); }
+
+/* Sidebar top brand mark */
+#sb-brand {
+  width:100%; padding:6px 0 8px;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  border-bottom:1px solid var(--border); margin-bottom:4px; flex-shrink:0;
+}
+#sb-brand svg { filter:drop-shadow(0 0 4px var(--green)); }
+#sb-brand .sb-ver { font-size:7px; color:var(--text-muted); letter-spacing:1px; font-family:var(--font-display); }
+
+/* Nav buttons */
+.nav-btn {
+  width:58px; min-height:48px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  border:1px solid transparent; cursor:pointer;
+  transition:all 0.15s; gap:3px; padding:5px 2px;
+  position:relative; flex-shrink:0;
+}
+.nav-btn:hover { border-color:var(--border-bright); background:var(--green-faint); }
+.nav-btn:hover .nav-label { opacity:1; }
+.nav-btn.active { border-color:var(--green-dim); background:rgba(57,255,20,0.07); }
+.nav-btn.active::before {
+  content:''; position:absolute; left:0; top:8px; bottom:8px;
+  width:2px; background:var(--green); box-shadow:0 0 6px var(--green);
+}
+.nav-btn.active svg { filter:drop-shadow(0 0 5px var(--green)); }
+.nav-btn.active svg path, .nav-btn.active svg rect,
+.nav-btn.active svg circle, .nav-btn.active svg polyline,
+.nav-btn.active svg line, .nav-btn.active svg polygon { stroke:var(--green) !important; }
+.nav-btn svg { display:block; flex-shrink:0; }
+.nav-btn svg path, .nav-btn svg rect, .nav-btn svg circle,
+.nav-btn svg polyline, .nav-btn svg line, .nav-btn svg polygon {
+  stroke:var(--text-dim); transition:stroke 0.15s;
+}
+.nav-btn:hover svg path, .nav-btn:hover svg rect,
+.nav-btn:hover svg circle, .nav-btn:hover svg polyline,
+.nav-btn:hover svg line, .nav-btn:hover svg polygon { stroke:var(--text); }
+
+.nav-label {
+  font-size:7px; color:var(--text-dim); font-family:var(--font-display);
+  letter-spacing:0.5px; text-align:center; line-height:1.2;
+  opacity:0.6; transition:opacity 0.15s;
+}
+.nav-btn.active .nav-label { color:var(--green-dim); opacity:1; }
+
+/* Badge on nav button (e.g. session count) */
+.nav-badge {
+  position:absolute; top:4px; right:4px;
+  min-width:14px; height:14px; border-radius:2px;
+  background:var(--red); color:#000;
+  font-size:7px; font-family:var(--font-display); font-weight:700;
+  display:flex; align-items:center; justify-content:center;
+  line-height:1; padding:0 2px;
+}
+.nav-badge.green { background:var(--green); }
+.nav-badge.amber { background:var(--amber); }
+
+.nav-sep { width:38px; height:1px; background:var(--border); margin:3px 5px; flex-shrink:0; }
+
+/* Sidebar bottom panel */
+#sb-bottom {
+  margin-top:auto; width:100%;
+  border-top:1px solid var(--border);
+  flex-shrink:0; padding:6px 0 4px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+}
+
+/* Mini CPU sparkline in sidebar */
+#sb-cpu-graph {
+  width:52px; height:22px;
+  background:#030903; border:1px solid var(--border);
+  display:block;
+}
+
+.sb-status-dot {
+  width:6px; height:6px; border-radius:50%;
+  display:inline-block; flex-shrink:0;
+}
+.sb-status-dot.online { background:var(--green); box-shadow:0 0 5px var(--green); animation:pulse 2s infinite; }
+.sb-status-dot.stealth { background:var(--purple); box-shadow:0 0 5px var(--purple); }
+
+#sb-conn {
+  display:flex; align-items:center; gap:4px;
+  font-size:8px; color:var(--text-muted); font-family:var(--font-display);
+}
+
+/* Tooltip */
+.nav-btn[data-tip]:hover::after {
+  content: attr(data-tip);
+  position:absolute; left:calc(100% + 8px); top:50%; transform:translateY(-50%);
+  background:#020c02; border:1px solid var(--green-dim);
+  color:var(--green); font-family:var(--font-display); font-size:9px;
+  padding:4px 8px; letter-spacing:1px; white-space:nowrap;
+  z-index:2000; pointer-events:none;
+  box-shadow:0 0 10px rgba(57,255,20,0.15);
+}
+
+/* ======================== PAGES ======================== */
+#pages {
+  position:fixed;
+  top:var(--topbar-h); left:var(--sidebar-w); right:0; bottom:0;
+  overflow:hidden;
+}
+.page {
+  position:absolute; inset:0;
+  padding:16px; overflow-y:auto;
+  display:none; animation:fadeSlide 0.25s ease;
+}
+.page.active { display:block; }
+.page::-webkit-scrollbar { width:4px; }
+.page::-webkit-scrollbar-thumb { background:var(--border); }
+
+@keyframes fadeSlide { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:none; } }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes glitch {
+  0%,88%,100% { transform:none; }
+  90% { transform:skewX(3deg) translateX(3px); }
+  92% { transform:skewX(-2deg) translateX(-2px); }
+}
+@keyframes scanmove {
+  from { transform:translateY(-100vh); }
+  to { transform:translateY(100vh); }
+}
+@keyframes radar-spin { to { transform:rotate(360deg); } }
+@keyframes ping { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2.5);opacity:0} }
+@keyframes barfill { from { width:0 } }
+@keyframes shimmer {
+  0%,100%{opacity:0.6} 50%{opacity:1}
+}
+
+/* ======================== PAGE HEADER ======================== */
+.ph {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  margin-bottom:18px; padding-bottom:12px;
+  border-bottom:1px solid var(--border);
+}
+.ph-left .ph-num { font-size:10px; color:var(--text-muted); letter-spacing:2px; font-family:var(--font-display); }
+.ph-left .ph-title {
+  font-family:var(--font-display); font-size:20px; font-weight:700;
+  color:var(--green); text-shadow:0 0 15px var(--green);
+  letter-spacing:3px; line-height:1.1;
+}
+.ph-left .ph-sub { font-size:10px; color:var(--text-dim); margin-top:3px; letter-spacing:1px; }
+.ph-right { text-align:right; font-size:10px; color:var(--text-dim); }
+
+/* ======================== COMMON COMPONENTS ======================== */
+.card {
+  background:var(--panel); border:1px solid var(--border);
+  padding:12px; margin-bottom:10px;
+}
+.card-title {
+  font-family:var(--font-display); font-size:10px; color:var(--green);
+  letter-spacing:2px; margin-bottom:8px; display:flex; justify-content:space-between;
+}
+
+.btn {
+  background:#050f05; border:1px solid var(--green-dim);
+  color:var(--green); padding:7px 16px;
+  font-family:var(--font-display); font-size:10px; letter-spacing:1px;
+  cursor:pointer; transition:all 0.15s; display:inline-block;
+}
+.btn:hover { background:var(--green-faint); box-shadow:0 0 12px rgba(57,255,20,0.2); border-color:var(--green); }
+
+.btn-red { background:#0a0000; border-color:var(--red-dim); color:var(--red); }
+.btn-red:hover { background:rgba(255,32,32,0.08); border-color:var(--red); box-shadow:0 0 12px rgba(255,32,32,0.2); }
+
+.btn-amber { background:#0a0600; border-color:var(--amber-dim); color:var(--amber); }
+.btn-amber:hover { background:rgba(255,170,0,0.08); border-color:var(--amber); }
+
+.btn-full { display:block; width:100%; text-align:center; margin-top:8px; padding:10px; font-size:11px; }
+
+.tbl { width:100%; border-collapse:collapse; font-size:11px; }
+.tbl th { color:var(--text-dim); text-align:left; padding:5px 8px; border-bottom:1px solid var(--border); font-weight:normal; letter-spacing:1px; font-size:10px; }
+.tbl td { padding:5px 8px; border-bottom:1px solid rgba(26,42,26,0.5); cursor:pointer; }
+.tbl tr:hover td { background:rgba(57,255,20,0.04); color:var(--green); }
+.tbl tr.sel td { background:rgba(57,255,20,0.07); }
+
+.inp {
+  background:#050f05; border:1px solid var(--border);
+  color:var(--green); padding:6px 10px;
+  font-family:var(--font-mono); font-size:11px; outline:none; width:100%;
+}
+.inp:focus { border-color:var(--green-dim); box-shadow:inset 0 0 8px rgba(57,255,20,0.05); }
+
+.sel-inp {
+  background:#050f05; border:1px solid var(--border);
+  color:var(--green); padding:5px 8px;
+  font-family:var(--font-mono); font-size:11px; outline:none; cursor:pointer;
+}
+
+.label-sm { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-bottom:3px; }
+
+.stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
+.stat-box { background:var(--panel); border:1px solid var(--border); padding:10px; text-align:center; }
+.stat-box .val { font-family:var(--font-display); font-size:22px; font-weight:700; color:var(--green); }
+.stat-box .lbl { font-size:9px; color:var(--text-dim); letter-spacing:1px; margin-top:2px; }
+
+.progress { height:6px; background:#050f05; border:1px solid var(--border); overflow:hidden; margin:4px 0; }
+.progress-fill { height:100%; background:var(--green); box-shadow:0 0 6px var(--green); animation:barfill 1.2s ease forwards; }
+.progress-fill.amber { background:var(--amber); box-shadow:0 0 6px var(--amber); }
+.progress-fill.red { background:var(--red); box-shadow:0 0 6px var(--red); }
+
+.badge { display:inline-block; padding:1px 7px; font-size:9px; border:1px solid; letter-spacing:1px; }
+.badge-crit { color:var(--red); border-color:var(--red-dim); background:rgba(255,32,32,0.08); }
+.badge-high { color:var(--amber); border-color:var(--amber-dim); background:rgba(255,170,0,0.08); }
+.badge-med { color:#88ff00; border-color:#445500; background:rgba(136,255,0,0.06); }
+.badge-low { color:var(--text-dim); border-color:var(--border); }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.three-col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+
+/* ======================== PAGE 1: BOOT/STATUS ======================== */
+#p1 .os-hero {
+  text-align:center; padding:30px 0 24px;
+}
+#p1 .skull-big { font-size:72px; text-shadow:0 0 40px var(--green); animation:pulse 2s infinite; }
+#p1 .os-name {
+  font-family:var(--font-display); font-size:48px; font-weight:900;
+  color:var(--green); text-shadow:0 0 30px var(--green), 0 0 80px rgba(57,255,20,0.3);
+  letter-spacing:12px; margin:8px 0 4px;
+  animation:glitch 5s infinite;
+}
+#p1 .os-tagline { color:var(--text-dim); font-size:13px; letter-spacing:4px; margin-bottom:8px; }
+#p1 .os-ver { color:var(--text-muted); font-size:10px; letter-spacing:2px; }
+
+.sys-status-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:16px; }
+.sys-row { display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid var(--border); }
+.sys-row .key { color:var(--text-dim); }
+.sys-row .v { color:var(--green); font-family:var(--font-display); font-size:11px; }
+.sys-row .v.amber { color:var(--amber); }
+
+/* ======================== PAGE 2: DASHBOARD ======================== */
+.contract-card {
+  background:var(--panel); border:1px solid var(--border);
+  border-left:3px solid var(--amber);
+  padding:10px 12px; margin-bottom:6px; cursor:pointer;
+  transition:all 0.15s; display:flex; justify-content:space-between; align-items:center;
+}
+.contract-card:hover { border-left-color:var(--green); background:rgba(57,255,20,0.04); }
+.contract-card .cn { font-size:12px; color:var(--text); }
+.contract-card .cr { font-family:var(--font-display); font-size:13px; color:var(--amber); font-weight:700; }
+.contract-card .cd { font-size:9px; color:var(--text-dim); margin-top:3px; }
+
+/* ======================== PAGE 3: NETWORK SCANNER ======================== */
+.scan-row { display:flex; gap:8px; margin-bottom:12px; }
+.ip-up { color:var(--green); }
+.ip-down { color:var(--red); }
+.os-badge { font-size:9px; color:var(--text-dim); }
+
+/* ======================== PAGE 4: EXPLOIT LAUNCHER ======================== */
+.exploit-detail {
+  background:var(--panel); border:1px solid var(--border);
+  padding:14px; margin-top:12px;
+}
+.crit { color:var(--red); }
+.high { color:var(--amber); }
+.med { color:#88ff00; }
+
+.rel-bar { display:inline-block; height:5px; background:var(--green); box-shadow:0 0 5px var(--green); vertical-align:middle; }
+
+/* ======================== PAGE 5: VULN REPORT ======================== */
+.vuln-card {
+  background:var(--panel); border:1px solid var(--border);
+  border-left:3px solid var(--border); padding:10px 12px;
+  margin-bottom:6px; cursor:pointer; transition:all 0.15s;
+  display:flex; align-items:center; gap:12px;
+}
+.vuln-card:hover { background:rgba(57,255,20,0.03); }
+.vuln-card.vc-crit { border-left-color:var(--red); }
+.vuln-card.vc-high { border-left-color:var(--amber); }
+.vuln-card.vc-med { border-left-color:#88ff00; }
+.vuln-score { font-family:var(--font-display); font-size:22px; font-weight:700; min-width:46px; text-align:center; }
+.vuln-info .cve-id { font-size:10px; color:var(--text-dim); letter-spacing:1px; }
+.vuln-info .vuln-name { font-size:13px; color:var(--text); }
+.vuln-info .vuln-host { font-size:10px; color:var(--text-dim); }
+.risk-score-big {
+  font-family:var(--font-display); font-size:64px; font-weight:900;
+  color:var(--red); text-shadow:0 0 30px var(--red); line-height:1;
+}
+
+/* ======================== PAGE 6: LOOT ======================== */
+.loot-value-big {
+  font-family:var(--font-display); font-size:36px; font-weight:700;
+  color:var(--amber); text-shadow:0 0 20px var(--amber);
+}
+.loot-type-cred { color:var(--red); }
+.loot-type-key { color:var(--amber); }
+.loot-type-hash { color:var(--cyan); }
+.loot-type-config { color:var(--text-dim); }
+.loot-type-token { color:var(--purple); }
+.loot-actions { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+
+/* ======================== PAGE 7: TARGET MAP ======================== */
+#mapsvg { width:100%; max-height:340px; }
+.target-list { margin-top:12px; }
+.target-item {
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px; border:1px solid var(--border);
+  margin-bottom:6px; cursor:pointer; transition:all 0.15s;
+}
+.target-item:hover { border-color:var(--green-dim); background:var(--green-faint); }
+.target-item.selected { border-color:var(--green); background:var(--green-faint); }
+.target-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.target-dot.td-red { background:var(--red); box-shadow:0 0 6px var(--red); }
+.target-dot.td-amber { background:var(--amber); box-shadow:0 0 6px var(--amber); }
+.target-dot.td-green { background:var(--green); box-shadow:0 0 6px var(--green); }
+.target-dot.td-cyan { background:var(--cyan); box-shadow:0 0 6px var(--cyan); }
+.ping-ring { animation:ping 1.5s infinite; }
+
+/* ======================== PAGE 8: PAYLOAD ======================== */
+.tabs { display:flex; gap:2px; margin-bottom:12px; }
+.tab {
+  flex:1; padding:7px; text-align:center; font-family:var(--font-display);
+  font-size:9px; letter-spacing:1px; cursor:pointer; border:1px solid var(--border);
+  color:var(--text-dim); background:var(--panel); transition:all 0.15s;
+}
+.tab.active { border-color:var(--green-dim); color:var(--green); background:var(--green-faint); }
+.tab:hover { border-color:var(--border-bright); color:var(--text); }
+.payload-hex {
+  background:#030803; border:1px solid var(--border);
+  padding:12px; font-family:var(--font-vt); font-size:16px;
+  color:var(--green); line-height:1.6; word-break:break-all;
+  min-height:90px; margin:10px 0;
+}
+.field-row { display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+.field-row label { color:var(--text-dim); font-size:10px; width:60px; flex-shrink:0; }
+
+/* ======================== PAGE 9: CRACKER ======================== */
+.crack-pct {
+  font-family:var(--font-display); font-size:72px; font-weight:900;
+  color:var(--green); text-shadow:0 0 30px var(--green);
+  text-align:center; margin:12px 0 4px;
+}
+.crack-meta { display:flex; justify-content:space-around; font-size:11px; color:var(--text-dim); margin-bottom:10px; }
+.crack-meta span { color:var(--green); }
+.cracked-result {
+  background:#030803; border:1px solid var(--border);
+  border-left:3px solid var(--green);
+  padding:8px 12px; margin-bottom:4px;
+  display:flex; justify-content:space-between;
+  font-size:12px;
+}
+.cracked-result .cr-time { color:var(--text-dim); font-size:10px; }
+
+/* ======================== PAGE 10: PRIV ESC ======================== */
+#tree-container {
+  background:var(--panel); border:1px solid var(--border);
+  padding:16px; min-height:360px; position:relative;
+  overflow:hidden;
+}
+#tree-svg { width:100%; height:360px; }
+
+/* ======================== PAGE 11: STEALTH ======================== */
+.stealth-hero {
+  text-align:center; padding:24px 0;
+  border-bottom:1px solid var(--border); margin-bottom:16px;
+}
+.stealth-icon { font-size:56px; margin-bottom:8px; }
+.stealth-name {
+  font-family:var(--font-display); font-size:28px; font-weight:700;
+  color:var(--purple); text-shadow:0 0 20px var(--purple); letter-spacing:4px;
+}
+.stealth-sub { color:var(--text-dim); font-size:11px; margin-top:4px; font-style:italic; }
+
+.toggle-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; border:1px solid var(--border);
+  margin-bottom:12px; background:var(--panel);
+}
+.toggle-label { font-family:var(--font-display); font-size:14px; color:var(--purple); letter-spacing:3px; }
+.toggle-wrap { display:flex; align-items:center; gap:10px; cursor:pointer; }
+.toggle-track {
+  width:48px; height:20px; border-radius:10px;
+  border:1px solid #440044; background:#0a0014; position:relative; transition:all 0.2s;
+}
+.toggle-track.on { border-color:var(--purple); background:#1a0028; box-shadow:0 0 10px rgba(204,0,255,0.3); }
+.toggle-thumb {
+  width:16px; height:16px; border-radius:50%; background:#440044;
+  position:absolute; top:1px; left:1px; transition:all 0.2s;
+}
+.toggle-track.on .toggle-thumb { left:29px; background:var(--purple); box-shadow:0 0 8px var(--purple); }
+.toggle-on-label { font-family:var(--font-display); font-size:12px; font-weight:700; color:var(--green); min-width:28px; }
+
+.stealth-module-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px; border:1px solid var(--border); margin-bottom:4px;
+  background:var(--panel); transition:all 0.2s;
+}
+.smr-name { font-size:12px; color:var(--text); }
+.smr-status {
+  padding:3px 10px; font-size:9px; letter-spacing:2px; border:1px solid;
+}
+.smr-status.on { color:var(--green); border-color:var(--green-dim); background:rgba(57,255,20,0.08); }
+.smr-status.off { color:var(--text-dim); border-color:var(--border); }
+.stealth-motto {
+  text-align:center; font-size:14px; color:var(--text-dim);
+  font-style:italic; margin-top:16px; letter-spacing:2px;
+}
+
+/* ======================== PAGE 12: ACHIEVEMENTS ======================== */
+.ach-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-top:14px; }
+.ach-item {
+  background:var(--panel); border:1px solid var(--border);
+  padding:14px 8px; text-align:center; cursor:pointer;
+  transition:all 0.15s; position:relative;
+}
+.ach-item.unlocked { border-color:var(--amber-dim); }
+.ach-item.unlocked:hover { border-color:var(--amber); box-shadow:0 0 12px rgba(255,170,0,0.15); }
+.ach-item.locked { opacity:0.3; }
+.ach-item .ai-icon { font-size:28px; margin-bottom:6px; }
+.ach-item .ai-name { font-size:10px; color:var(--text-dim); line-height:1.3; }
+.ach-item.unlocked .ai-name { color:var(--amber); }
+.ach-item .ai-xp { font-size:9px; color:var(--green); margin-top:4px; font-family:var(--font-display); }
+.xp-big {
+  font-family:var(--font-display); font-size:48px; font-weight:700;
+  color:var(--amber); text-shadow:0 0 20px var(--amber);
+}
+.ach-progress-bar { height:8px; margin:8px 0; }
+
+/* ======================== PAGE 13: SESSIONS ======================== */
+.active-dot {
+  display:inline-block; width:7px; height:7px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 6px var(--green);
+  animation:pulse 2s infinite; margin-right:5px; flex-shrink:0;
+}
+.session-row { cursor:pointer; }
+.kill-btn {
+  background:#0a0000; border:1px solid var(--red-dim);
+  color:var(--red); padding:3px 10px; font-family:var(--font-mono);
+  font-size:9px; cursor:pointer; letter-spacing:1px;
+}
+.kill-btn:hover { background:rgba(255,32,32,0.08); box-shadow:0 0 6px rgba(255,32,32,0.2); }
+#net-canvas { width:100%; height:60px; display:block; background:#030803; border:1px solid var(--border); margin-top:10px; }
+
+/* ======================== PAGE 14: TERMINAL ======================== */
+#term-wrap {
+  background:#010501; border:1px solid var(--border);
+  display:flex; flex-direction:column;
+  height:calc(100vh - var(--topbar-h) - 32px - 80px);
+  min-height:300px;
+}
+#term-out {
+  flex:1; overflow-y:auto; padding:12px;
+  font-family:var(--font-vt); font-size:16px; line-height:1.5;
+  color:var(--green);
+}
+#term-out::-webkit-scrollbar { width:4px; }
+#term-out::-webkit-scrollbar-thumb { background:var(--border); }
+.tl { margin:1px 0; word-break:break-all; }
+.tl.r { color:var(--red); }
+.tl.o { color:#b8ffb8; }
+.tl.c { color:var(--green); }
+.tl.w { color:var(--amber); }
+.term-input-row {
+  display:flex; align-items:center;
+  border-top:1px solid var(--border); padding:8px 12px;
+  gap:8px;
+}
+.term-ps { font-family:var(--font-vt); font-size:16px; color:var(--red); white-space:nowrap; }
+.term-in {
+  flex:1; background:transparent; border:none;
+  color:var(--green); font-family:var(--font-vt); font-size:16px;
+  outline:none; caret-color:var(--green);
+}
+
+/* ======================== PAGE 15: THREAT RADAR ======================== */
+.radar-wrap {
+  display:flex; justify-content:center; margin:8px 0 16px;
+}
+#radar-svg { position:relative; }
+.radar-container { position:relative; width:260px; height:260px; }
+#radar-bg { position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle,#051005,#020502); border:1px solid var(--green-dim); }
+#radar-sweep-line {
+  position:absolute; top:50%; left:50%;
+  width:50%; height:2px;
+  transform-origin:0 50%;
+  background:linear-gradient(90deg,transparent,var(--green));
+  animation:radar-spin 3s linear infinite;
+  box-shadow:0 0 10px var(--green);
+}
+.rblip { position:absolute; width:7px; height:7px; border-radius:50%; transform:translate(-50%,-50%); }
+.rblip::after { content:''; position:absolute; inset:-4px; border-radius:50%; border:1px solid; animation:ping 2s infinite; }
+.threat-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 12px; border:1px solid var(--border); margin-bottom:4px;
+  border-left:3px solid transparent;
+}
+.threat-row.t-brute { border-left-color:var(--red); }
+.threat-row.t-exploit { border-left-color:var(--amber); }
+.threat-row.t-malware { border-left-color:var(--purple); }
+.threat-row.t-dns { border-left-color:var(--cyan); }
+.threat-row.t-scan { border-left-color:#88ff00; }
+.threat-row .tn { font-size:11px; }
+.threat-row .tc { font-family:var(--font-display); font-size:18px; font-weight:700; }
+.risk-level {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 14px; margin-top:10px;
+  border:1px solid var(--red-dim); background:rgba(255,32,32,0.06);
+}
+.risk-dots { display:flex; gap:4px; }
+.rdot { width:10px; height:10px; border-radius:2px; background:var(--red); box-shadow:0 0 6px var(--red); }
+.rdot.off { background:#1a0000; box-shadow:none; }
+
+/* ======================== PAGE 16: SETTINGS ======================== */
+.setting-group { margin-bottom:14px; }
+.setting-group-title { font-family:var(--font-display); font-size:10px; color:var(--text-dim); letter-spacing:2px; margin-bottom:6px; }
+.setting-item {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:9px 0; border-bottom:1px solid var(--border);
+}
+.setting-item label { color:var(--text); font-size:11px; }
+.setting-val { color:var(--green); font-size:11px; }
+input[type=range] { accent-color:var(--green); cursor:pointer; }
+
+/* ======================== NOTIFICATION ======================== */
+#notif {
+  position:fixed; bottom:16px; right:16px;
+  background:#020c02; border:1px solid var(--green);
+  box-shadow:0 0 20px rgba(57,255,20,0.2);
+  padding:12px 16px; max-width:240px; z-index:9999;
+  opacity:0; transform:translateY(10px); transition:all 0.25s; pointer-events:none;
+}
+#notif.show { opacity:1; transform:translateY(0); }
+#notif.warn { border-color:var(--red); box-shadow:0 0 20px rgba(255,32,32,0.2); }
+#notif .nt { font-family:var(--font-display); font-size:10px; letter-spacing:1px; margin-bottom:4px; color:var(--green); }
+#notif.warn .nt { color:var(--red); }
+#notif .nb { font-size:10px; color:var(--text); line-height:1.5; }
+
+/* ======================== MODAL ======================== */
+#modal-overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.88); z-index:9000;
+  align-items:center; justify-content:center;
+}
+#modal-overlay.open { display:flex; }
+#modal-box {
+  background:#030d03; border:1px solid var(--green);
+  box-shadow:0 0 50px rgba(57,255,20,0.15);
+  padding:20px; min-width:320px; max-width:480px;
+  width:90%; animation:fadeSlide 0.2s ease;
+}
+#modal-title { font-family:var(--font-display); font-size:14px; color:var(--green); letter-spacing:2px; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+#modal-body { font-size:11px; color:var(--text); line-height:1.8; white-space:pre-wrap; margin-bottom:14px; }
+#modal-close { float:right; }
+
+/* Scanline sweep */
+#scanline {
+  position:fixed; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(transparent,rgba(57,255,20,0.06),transparent);
+  pointer-events:none; z-index:9998;
+  animation:scanmove 8s linear infinite;
+}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="skull">💀</div>
+  <div class="title">BLACKBYTE OS</div>
+  <div class="sub">VERSION 1.0 &bull; CODENAME: NIGHTFALL</div>
+  <div id="boot-log"></div>
+  <div id="boot-enter">[ PRESS ENTER OR CLICK TO CONTINUE ]</div>
+</div>
+
+<!-- OS -->
+<div id="os" style="display:none">
+  <div id="scanline"></div>
+
+  <!-- TOPBAR -->
+  <div id="topbar">
+    <div class="tb-left">
+      <div class="tb-logo">💀 BLACKBYTE OS</div>
+      <div class="tb-page" id="tb-page">SYSTEM STATUS</div>
+    </div>
+    <div class="tb-right">
+      <div class="xp-wrap">
+        <span class="xp-lvl">LVL 7</span>
+        <div class="xp-bar"><div class="xp-fill"></div></div>
+        <span style="color:var(--text-dim)">4,258 / 7,500 XP</span>
+      </div>
+      <div class="tb-stat">CPU<span id="cpu-v">23%</span></div>
+      <div class="tb-stat">RAM<span id="ram-v">45%</span></div>
+      <div class="tb-stat">NET<span id="net-v">18%</span></div>
+      <div class="tb-stat">RANK <span style="color:var(--amber)">SHADOW</span></div>
+      <div class="tb-clock" id="clock">00:00:00</div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+
+    <!-- Brand mark -->
+    <div id="sb-brand">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#39ff14" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M9 8h6M9 10c0 1.5 1 2.5 3 2.5s3-1 3-2.5"/><path d="M8 13c-2 1-3 2.5-3 4v1h14v-1c0-1.5-1-3-3-4"/></svg>
+      <span class="sb-ver">v1.0</span>
+    </div>
+
+    <!-- 01: System Status -->
+    <div class="nav-btn active" onclick="goPage(0)" data-tip="SYSTEM STATUS">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M6 8h4M6 11h6"/></svg>
+      <span class="nav-label">STATUS</span>
+    </div>
+
+    <!-- 02: Dashboard -->
+    <div class="nav-btn" onclick="goPage(1)" data-tip="DASHBOARD">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">DASH</span>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <!-- 03: Network Scanner -->
+    <div class="nav-btn" onclick="goPage(2)" data-tip="NETWORK SCANNER">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8a5.5 5.5 0 0 1 0 8.4M7.8 7.8a5.5 5.5 0 0 0 0 8.4"/><path d="M19.8 4.2a10 10 0 0 1 0 15.6M4.2 4.2a10 10 0 0 0 0 15.6"/></svg>
+      <span class="nav-label">SCAN</span>
+    </div>
+
+    <!-- 04: Exploit Launcher -->
+    <div class="nav-btn" onclick="goPage(3)" data-tip="EXPLOIT LAUNCHER">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span class="nav-label">EXPLOIT</span>
+    </div>
+
+    <!-- 05: Vuln Report -->
+    <div class="nav-btn" onclick="goPage(4)" data-tip="VULN REPORT">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span class="nav-label">VULNS</span>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <!-- 06: Loot Vault -->
+    <div class="nav-btn" onclick="goPage(5)" data-tip="LOOT VAULT">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/><circle cx="12" cy="16" r="1"/></svg>
+      <span class="nav-label">LOOT</span>
+    </div>
+
+    <!-- 07: Target Map -->
+    <div class="nav-btn" onclick="goPage(6)" data-tip="TARGET MAP">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <span class="nav-label">MAP</span>
+    </div>
+
+    <!-- 08: Payload Crafter -->
+    <div class="nav-btn" onclick="goPage(7)" data-tip="PAYLOAD CRAFTER">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="12" y1="2" x2="12" y2="22" transform="rotate(-15 12 12)"/></svg>
+      <span class="nav-label">PAYLOAD</span>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <!-- 09: Hash Cracker -->
+    <div class="nav-btn" onclick="goPage(8)" data-tip="HASH CRACKER">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1"/></svg>
+      <span class="nav-label">CRACK</span>
+    </div>
+
+    <!-- 10: Priv Esc Tree -->
+    <div class="nav-btn" onclick="goPage(9)" data-tip="PRIV ESC TREE">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M6 6l6-3 6 3M6 18l6 3 6-3"/><line x1="6" y1="6" x2="6" y2="18"/><line x1="18" y1="6" x2="18" y2="18"/></svg>
+      <span class="nav-label">PRIVESC</span>
+    </div>
+
+    <!-- 11: Stealth -->
+    <div class="nav-btn" onclick="goPage(10)" data-tip="STEALTH MODULE" id="nav-stealth">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      <span class="nav-label">STEALTH</span>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <!-- 12: Achievements -->
+    <div class="nav-btn" onclick="goPage(11)" data-tip="ACHIEVEMENTS">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+      <span class="nav-label">ACHIEV</span>
+    </div>
+
+    <!-- 13: Sessions -->
+    <div class="nav-btn" onclick="goPage(12)" data-tip="SESSIONS" id="nav-sessions">
+      <div class="nav-badge green" id="sess-badge">3</div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+      <span class="nav-label">SESSIONS</span>
+    </div>
+
+    <!-- 14: Terminal -->
+    <div class="nav-btn" onclick="goPage(13)" data-tip="TERMINAL">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      <span class="nav-label">SHELL</span>
+    </div>
+
+    <div class="nav-sep"></div>
+
+    <!-- 15: Threat Radar -->
+    <div class="nav-btn" onclick="goPage(14)" data-tip="THREAT RADAR" id="nav-threats">
+      <div class="nav-badge" id="threat-badge">17</div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+      <span class="nav-label">RADAR</span>
+    </div>
+
+    <!-- 16: Settings -->
+    <div class="nav-btn" onclick="goPage(15)" data-tip="SETTINGS">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="nav-label">CONFIG</span>
+    </div>
+
+    <!-- Bottom status panel -->
+    <div id="sb-bottom">
+      <canvas id="sb-cpu-graph"></canvas>
+      <div id="sb-conn">
+        <span class="sb-status-dot online" id="sb-dot"></span>
+        <span id="sb-conn-label">ONLINE</span>
+      </div>
+      <div style="font-size:7px;color:var(--text-muted);font-family:var(--font-display);letter-spacing:0.5px" id="sb-stealth-ind">👁 GHOST</div>
+    </div>
+
+  </div>
+
+  <!-- PAGES -->
+  <div id="pages">
+
+    <!-- PAGE 1: SYSTEM STATUS -->
+    <div class="page active" id="page-0">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">01. SYSTEM STATUS</div>
+          <div class="ph-title">BOOT SCREEN</div>
+          <div class="ph-sub">BLACKBYTE OS — PENETRATION TESTING, LEVEL UP.</div>
+        </div>
+        <div class="ph-right">UPTIME: <span id="uptime" style="color:var(--green)">00:00:00</span></div>
+      </div>
+      <div id="p1">
+        <div class="os-hero">
+          <div class="skull-big">💀</div>
+          <div class="os-name">BLACKBYTE OS</div>
+          <div class="os-tagline">PENETRATION TESTING, LEVEL UP.</div>
+          <div class="os-ver">VERSION 1.0 &bull; CODENAME: NIGHTFALL</div>
+        </div>
+        <div class="sys-status-grid">
+          <div>
+            <div class="card-title">BOOT SEQUENCE</div>
+            <div class="sys-row"><span class="key">▸ KERNEL</span><span class="v">5.4.0-CUSTOM</span></div>
+            <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="sys-row"><span class="key">▸ DRIVERS</span><span class="v">LOADED</span></div>
+            <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="sys-row"><span class="key">▸ FILESYSTEM</span><span class="v">MOUNTED</span></div>
+            <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+            <div class="sys-row"><span class="key">▸ SERVICES</span><span class="v">RUNNING</span></div>
+            <div class="progress"><div class="progress-fill" style="width:100%"></div></div>
+          </div>
+          <div>
+            <div class="card-title">SYSTEM METRICS</div>
+            <div class="sys-row"><span class="key">CPU USAGE</span><span class="v" id="p1-cpu">23%</span></div>
+            <div class="progress"><div class="progress-fill" id="p1-cpu-bar" style="width:23%"></div></div>
+            <div class="sys-row"><span class="key">RAM USAGE</span><span class="v" id="p1-ram">45%</span></div>
+            <div class="progress"><div class="progress-fill amber" id="p1-ram-bar" style="width:45%"></div></div>
+            <div class="sys-row"><span class="key">NET I/O</span><span class="v" id="p1-net">18%</span></div>
+            <div class="progress"><div class="progress-fill" id="p1-net-bar" style="width:18%"></div></div>
+            <div class="sys-row"><span class="key">DISK</span><span class="v">67%</span></div>
+            <div class="progress"><div class="progress-fill amber" style="width:67%"></div></div>
+          </div>
+        </div>
+        <div class="stat-grid" style="margin-top:16px">
+          <div class="stat-box"><div class="val">5.4.0</div><div class="lbl">KERNEL</div></div>
+          <div class="stat-box"><div class="val" style="color:var(--amber)">SHADOW</div><div class="lbl">OPERATOR RANK</div></div>
+          <div class="stat-box"><div class="val">14</div><div class="lbl">ACTIVE TOOLS</div></div>
+          <div class="stat-box"><div class="val" style="color:var(--green)">SECURE</div><div class="lbl">CONNECTION</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 2: DASHBOARD -->
+    <div class="page" id="page-1">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">02. MAIN DASHBOARD</div>
+          <div class="ph-title">WELCOME, OPERATOR</div>
+          <div class="ph-sub">TODAY'S ACTIVE CONTRACTS AND SYSTEM OVERVIEW</div>
+        </div>
+        <div class="ph-right" style="font-family:var(--font-display);font-size:11px;color:var(--amber)">REPUTATION: 5,600</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="val" id="d-targets">12</div><div class="lbl">ACTIVE TARGETS</div></div>
+        <div class="stat-box"><div class="val" id="d-pwned">7</div><div class="lbl">PWNED HOSTS</div></div>
+        <div class="stat-box"><div class="val" style="color:var(--amber)">$125K</div><div class="lbl">LOOT VALUE</div></div>
+        <div class="stat-box"><div class="val" id="d-sessions">3</div><div class="lbl">ACTIVE SESSIONS</div></div>
+      </div>
+      <div class="card-title">TODAY'S CONTRACTS</div>
+      <div class="contract-card" onclick="modal('CONTRACT: INFILTRATE MEGACORP','Objective: Gain full access to megacorp.local internal network.\n\nDifficulty: EXPERT\nReward: $2,500 + 1,500 XP\nStealth Required: YES\nTime Limit: 6 hours\n\nStatus: ● ACTIVE')">
+        <div><div class="cn">Infiltrate megacorp.local</div><div class="cd">DIFFICULTY: EXPERT &nbsp;|&nbsp; STEALTH REQUIRED</div></div>
+        <div class="cr">$2,500</div>
+      </div>
+      <div class="contract-card" onclick="modal('CONTRACT: DATA EXFIL','Objective: Extract minimum 10 credential pairs from target DB.\n\nDifficulty: HARD\nReward: $1,500 + 800 XP\nTime Limit: 3 hours\n\nStatus: ● ACTIVE')">
+        <div><div class="cn">Extract 10 passwords</div><div class="cd">DIFFICULTY: HARD &nbsp;|&nbsp; DB EXPLOITATION</div></div>
+        <div class="cr">$1,500</div>
+      </div>
+      <div class="contract-card" onclick="modal('CONTRACT: PRIVILEGE ESCALATION','Objective: Achieve root/SYSTEM on 3 separate hosts.\n\nDifficulty: HARD\nReward: $3,000 + 2,000 XP\nTime Limit: 4 hours\n\nStatus: ● ACTIVE')">
+        <div><div class="cn">Escalate to root on 3 hosts</div><div class="cd">DIFFICULTY: HARD &nbsp;|&nbsp; POST-EXPLOITATION</div></div>
+        <div class="cr">$3,000</div>
+      </div>
+      <div class="card" style="margin-top:12px;">
+        <div class="card-title">SYSTEM STATUS</div>
+        <div class="two-col">
+          <div>
+            <div class="sys-row"><span class="key">CPU</span><span class="v" id="d-cpu">23%</span></div>
+            <div class="progress"><div class="progress-fill" id="d-cpu-bar" style="width:23%"></div></div>
+            <div class="sys-row"><span class="key">RAM</span><span class="v" id="d-ram">45%</span></div>
+            <div class="progress"><div class="progress-fill amber" id="d-ram-bar" style="width:45%"></div></div>
+            <div class="sys-row"><span class="key">NET</span><span class="v" id="d-net">18%</span></div>
+            <div class="progress"><div class="progress-fill" id="d-net-bar" style="width:18%"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;justify-content:center;gap:6px">
+            <div style="font-size:11px;color:var(--text-dim);font-style:italic;text-align:center;padding:12px;">"INFORMATION IS POWER. ACCESS IS FREEDOM."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 3: NETWORK SCANNER -->
+    <div class="page" id="page-2">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">03. NETWORK SCANNER</div>
+          <div class="ph-title">SCAN MODULE v2.4.1</div>
+          <div class="ph-sub">ACTIVE HOST DISCOVERY AND PORT ANALYSIS</div>
+        </div>
+        <div class="ph-right">STEALTH: <span style="color:var(--red)" id="scan-stealth">OFF</span></div>
+      </div>
+      <div class="card">
+        <div class="scan-row">
+          <input class="inp" id="scan-target" value="10.0.0.0/24" style="flex:1" />
+          <button class="btn" style="white-space:nowrap" onclick="startScan()">▶ SCAN</button>
+          <button class="btn btn-amber" style="white-space:nowrap" onclick="notify('STEALTH SCAN','Stealth mode enabled — slower but undetected.')">STEALTH</button>
+        </div>
+        <div class="label-sm" style="margin-bottom:2px">SCAN PROGRESS <span style="color:var(--green)" id="scan-pct">73%</span></div>
+        <div class="progress" style="height:8px;margin-bottom:8px"><div class="progress-fill" id="scan-bar" style="width:73%"></div></div>
+        <div style="font-size:9px;color:var(--text-dim);margin-bottom:8px">SCAN IN PROGRESS... &nbsp;|&nbsp; TIP: Use -sV for service detection</div>
+      </div>
+      <div class="card-title">SYSTEM RESULTS (24 HOSTS)</div>
+      <table class="tbl">
+        <thead><tr><th>IP ADDRESS</th><th>STATUS</th><th>OPEN PORTS</th><th>OS DETECTED</th><th>ACTION</th></tr></thead>
+        <tbody id="scan-tbody">
+          <tr onclick="modal('HOST: 10.0.0.1','IP: 10.0.0.1\nStatus: UP\nPorts: 22 (SSH), 80 (HTTP)\nOS: Linux Ubuntu 20.04\nHostname: gateway.megacorp.local\n\nServices:\n  22/tcp  OpenSSH 8.2\n  80/tcp  Apache 2.4.41')">
+            <td>10.0.0.1</td><td class="ip-up">UP</td><td>22, 80</td><td class="os-badge">Linux</td>
+            <td><button class="btn btn-red" style="padding:2px 8px;font-size:9px" onclick="event.stopPropagation();notify('TARGET SELECTED','10.0.0.1 set as active target.')">TARGET</button></td>
+          </tr>
+          <tr onclick="modal('HOST: 10.0.0.5','IP: 10.0.0.5\nStatus: UP\nPorts: 22 (SSH), 3306 (MySQL)\nOS: Linux Debian 10\nHostname: db01.megacorp.local\n\nServices:\n  22/tcp  OpenSSH 7.9\n  3306/tcp MySQL 8.0.27 — AUTH BYPASS POSSIBLE')">
+            <td>10.0.0.5</td><td class="ip-up">UP</td><td>22, 3306</td><td class="os-badge">Linux</td>
+            <td><button class="btn btn-red" style="padding:2px 8px;font-size:9px" onclick="event.stopPropagation();notify('TARGET SELECTED','10.0.0.5 set as active target.')">TARGET</button></td>
+          </tr>
+          <tr onclick="modal('HOST: 10.0.0.12','IP: 10.0.0.12\nStatus: UP\nPorts: 21 (FTP), 22 (SSH), 80 (HTTP), 445 (SMB)\nOS: Windows Server 2016\nHostname: WEB01.megacorp.local\n\n⚠ SMBv1 ENABLED — EternalBlue possible!')">
+            <td>10.0.0.12</td><td class="ip-up">UP</td><td>21, 22, 80, 445</td><td class="os-badge">Windows</td>
+            <td><button class="btn btn-red" style="padding:2px 8px;font-size:9px" onclick="event.stopPropagation();notify('TARGET SELECTED','10.0.0.12 set. EternalBlue possible!')">TARGET</button></td>
+          </tr>
+          <tr onclick="modal('HOST: 10.0.0.22','IP: 10.0.0.22\nStatus: UP\nPorts: 22 (SSH), 9485 (Java RMI)\nOS: Linux CentOS 7\nHostname: app01.megacorp.local')">
+            <td>10.0.0.22</td><td class="ip-up">UP</td><td>22, 9485</td><td class="os-badge">Linux</td>
+            <td><button class="btn btn-red" style="padding:2px 8px;font-size:9px" onclick="event.stopPropagation();notify('TARGET SELECTED','10.0.0.22 set as active target.')">TARGET</button></td>
+          </tr>
+          <tr><td style="color:var(--text-dim)">10.0.0.45</td><td class="ip-down">DOWN</td><td style="color:var(--text-dim)">—</td><td class="os-badge">Unknown</td><td></td></tr>
+          <tr onclick="modal('HOST: 10.0.0.100','IP: 10.0.0.100\nStatus: UP\nPorts: 80, 443, 8080, 8443\nOS: Linux (Docker Host)\nHostname: web02.megacorp.local\n\nRunning: nginx 1.19.0\nLog4j detected in /opt/app/')">
+            <td>10.0.0.100</td><td class="ip-up">UP</td><td>80, 443, 8080</td><td class="os-badge">Linux</td>
+            <td><button class="btn btn-red" style="padding:2px 8px;font-size:9px" onclick="event.stopPropagation();notify('HOT TARGET','Log4j detected on 10.0.0.100!')">TARGET</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- PAGE 4: EXPLOIT LAUNCHER -->
+    <div class="page" id="page-3">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">04. EXPLOIT LAUNCHER</div>
+          <div class="ph-title">EXPLOIT FRAMEWORK</div>
+          <div class="ph-sub">SELECT AND DEPLOY ATTACK MODULES</div>
+        </div>
+        <div class="ph-right">EXPLOIT POINTS: <span style="color:var(--amber);font-family:var(--font-display)">2,150</span></div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="card-title">CATEGORIES &amp; EXPLOITS</div>
+          <table class="tbl" id="exploit-tbl">
+            <thead><tr><th>CATEGORY</th><th>EXPLOIT</th><th>CVE</th><th>RELIABILITY</th></tr></thead>
+            <tbody>
+              <tr class="sel" onclick="selectExploit(this,'EternalBlue','CVE-2017-0144','REMOTE','95%','CRITICAL','SMBv1 Remote Code Execution on Windows. No auth required. Drops SYSTEM shell.')">
+                <td>REMOTE</td><td class="crit">EternalBlue</td><td style="font-size:9px;color:var(--text-dim)">2017-0144</td>
+                <td><div class="rel-bar" style="width:66px"></div></td>
+              </tr>
+              <tr onclick="selectExploit(this,'Heartbleed','CVE-2014-0160','WEB APPS','80%','HIGH','OpenSSL memory leak. Reads up to 64KB of server memory per request, leaking keys/creds.')">
+                <td>WEB APPS</td><td class="high">Heartbleed</td><td style="font-size:9px;color:var(--text-dim)">2014-0160</td>
+                <td><div class="rel-bar" style="width:56px;background:var(--amber);box-shadow:0 0 5px var(--amber)"></div></td>
+              </tr>
+              <tr onclick="selectExploit(this,'ShellShock','CVE-2014-6271','CLIENT-SIDE','65%','HIGH','Bash env variable injection via CGI. Remote code execution on vulnerable web servers.')">
+                <td>CLIENT-SIDE</td><td class="high">ShellShock</td><td style="font-size:9px;color:var(--text-dim)">2014-6271</td>
+                <td><div class="rel-bar" style="width:45px;background:var(--amber);box-shadow:0 0 5px var(--amber)"></div></td>
+              </tr>
+              <tr onclick="selectExploit(this,'Log4Shell','CVE-2021-44228','PRIV ESC','90%','CRITICAL','JNDI injection in Log4j 2.x. Unauthenticated RCE via malicious LDAP callback.')">
+                <td>PRIV ESC</td><td class="crit">Log4Shell</td><td style="font-size:9px;color:var(--text-dim)">2021-44228</td>
+                <td><div class="rel-bar" style="width:63px"></div></td>
+              </tr>
+              <tr onclick="selectExploit(this,'DirtyPipe','CVE-2022-0847','DOCKER','70%','HIGH','Linux kernel pipe privilege escalation. Overwrites read-only files, achieves root.')">
+                <td>DOCKER</td><td class="med">DirtyPipe</td><td style="font-size:9px;color:var(--text-dim)">2022-0847</td>
+                <td><div class="rel-bar" style="width:49px;background:#88ff00;box-shadow:0 0 5px #88ff00"></div></td>
+              </tr>
+              <tr onclick="selectExploit(this,'PrintNightmare','CVE-2021-34527','REMOTE','75%','HIGH','Windows Print Spooler RCE/LPE. Load malicious DLL as SYSTEM via printer driver install.')">
+                <td>REMOTE</td><td class="high">PrintNightmare</td><td style="font-size:9px;color:var(--text-dim)">2021-34527</td>
+                <td><div class="rel-bar" style="width:52px;background:var(--amber);box-shadow:0 0 5px var(--amber)"></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="exploit-detail" id="exploit-detail">
+            <div class="card-title">EXPLOIT DETAILS</div>
+            <div class="sys-row"><span class="key">NAME</span><span id="ed-name" class="crit" style="font-family:var(--font-display);font-size:12px">EternalBlue</span></div>
+            <div class="sys-row"><span class="key">CVE</span><span id="ed-cve" style="color:var(--text-dim);font-size:10px">CVE-2017-0144</span></div>
+            <div class="sys-row"><span class="key">TYPE</span><span id="ed-type" style="color:var(--text)">REMOTE</span></div>
+            <div class="sys-row"><span class="key">RELIABILITY</span><span id="ed-rel" class="v">95%</span></div>
+            <div class="sys-row"><span class="key">RISK</span><span id="ed-risk" class="crit">CRITICAL</span></div>
+            <div style="margin-top:10px;padding:10px;background:#030803;border:1px solid var(--border);font-size:11px;color:var(--text-dim);line-height:1.6" id="ed-desc">SMBv1 Remote Code Execution on Windows. No auth required. Drops SYSTEM shell.</div>
+            <button class="btn btn-red btn-full" onclick="launchExploit()" style="margin-top:10px">⚡ LAUNCH EXPLOIT</button>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-title">TARGET</div>
+            <div class="field-row">
+              <label>RHOST</label>
+              <input class="inp" id="rhost" value="10.0.0.12" style="padding:5px 8px;font-size:11px"/>
+            </div>
+            <div class="field-row">
+              <label>RPORT</label>
+              <input class="inp" id="rport" value="445" style="padding:5px 8px;font-size:11px"/>
+            </div>
+            <div class="field-row">
+              <label>PAYLOAD</label>
+              <select class="sel-inp" style="flex:1">
+                <option>windows/x64/meterpreter/reverse_tcp</option>
+                <option>windows/x64/shell_reverse_tcp</option>
+                <option>linux/x64/shell_reverse_tcp</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 5: VULNERABILITY REPORT -->
+    <div class="page" id="page-4">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">05. VULNERABILITY REPORT</div>
+          <div class="ph-title">VULN SCANNER</div>
+          <div class="ph-sub">TARGET: megacorp.local &nbsp;|&nbsp; 5 VULNERABILITIES FOUND</div>
+        </div>
+        <div class="ph-right">
+          <div class="risk-score-big">8.7</div>
+          <div style="font-size:9px;color:var(--red);letter-spacing:2px">HIGH RISK</div>
+        </div>
+      </div>
+      <div class="two-col" style="margin-bottom:12px">
+        <div class="stat-box"><div class="val crit">2</div><div class="lbl">CRITICAL</div></div>
+        <div class="stat-box"><div class="val high">2</div><div class="lbl">HIGH</div></div>
+        <div class="stat-box"><div class="val med">1</div><div class="lbl">MEDIUM</div></div>
+        <div class="stat-box"><div class="val">0</div><div class="lbl">LOW</div></div>
+      </div>
+      <div class="vuln-card vc-crit" onclick="modal('CVE-2021-44228 — Log4Shell','CVSS Score: 9.8 (CRITICAL)\n\nDescription: Unauthenticated Remote Code Execution via Log4j JNDI lookup injection.\n\nAffected Host: 10.0.0.100 (megacorp.local)\nAffected Service: Apache Log4j 2.x\nVector: NETWORK / No Auth Required\nImpact: Full RCE as application user\n\nStatus: ⚠ UNPATCHED\nRecommendation: Update Log4j to 2.17.1+\nExploit Available: YES')">
+        <div class="vuln-score crit">9.8</div>
+        <div class="vuln-info">
+          <div class="cve-id">CVE-2021-44228 &nbsp;·&nbsp; Log4Shell</div>
+          <div class="vuln-name">Unauthenticated RCE in Log4j</div>
+          <div class="vuln-host">10.0.0.100:8080 &nbsp;·&nbsp; Apache Log4j 2.x</div>
+        </div>
+        <span class="badge badge-crit">CRITICAL</span>
+      </div>
+      <div class="vuln-card vc-crit" onclick="modal('CVE-2017-0144 — EternalBlue','CVSS Score: 9.3 (CRITICAL)\n\nDescription: SMBv1 Remote Code Execution — NSA exploit.\n\nAffected Host: 10.0.0.12 (WEB01.megacorp.local)\nAffected Service: Windows SMBv1\nVector: NETWORK / No Auth Required\nImpact: Full SYSTEM shell\n\nStatus: ⚠ UNPATCHED\nRecommendation: Disable SMBv1, apply MS17-010\nExploit Available: YES — EternalBlue/Metasploit')">
+        <div class="vuln-score crit">9.3</div>
+        <div class="vuln-info">
+          <div class="cve-id">CVE-2017-0144 &nbsp;·&nbsp; EternalBlue</div>
+          <div class="vuln-name">SMBv1 Remote Code Execution</div>
+          <div class="vuln-host">10.0.0.12:445 &nbsp;·&nbsp; Windows Server 2016</div>
+        </div>
+        <span class="badge badge-crit">CRITICAL</span>
+      </div>
+      <div class="vuln-card vc-high" onclick="modal('CVE-2020-1472 — Zerologon','CVSS Score: 7.5 (HIGH)\n\nDescription: Netlogon cryptographic flaw allows unauthenticated domain compromise.\n\nAffected Host: 10.0.0.1 (DC01.megacorp.local)\nAffected Service: Netlogon (MS-NRPC)\nVector: NETWORK\nImpact: Full domain controller takeover\n\nStatus: ⚠ UNPATCHED\nRecommendation: Apply KB4571694, enforce secure Netlogon')">
+        <div class="vuln-score high">7.5</div>
+        <div class="vuln-info">
+          <div class="cve-id">CVE-2020-1472 &nbsp;·&nbsp; Zerologon</div>
+          <div class="vuln-name">Netlogon Elevation of Privilege</div>
+          <div class="vuln-host">10.0.0.1:445 &nbsp;·&nbsp; Domain Controller</div>
+        </div>
+        <span class="badge badge-high">HIGH</span>
+      </div>
+      <div class="vuln-card vc-high" onclick="modal('CVE-2019-0708 — BlueKeep','CVSS Score: 6.8 (HIGH)\n\nDescription: RDP Remote Code Execution — pre-auth, wormable.\n\nAffected Host: 10.0.0.12\nAffected Service: Remote Desktop Protocol\nVector: NETWORK / No Auth Required\nImpact: Remote Code Execution\n\nStatus: PARTIALLY PATCHED')">
+        <div class="vuln-score high">6.8</div>
+        <div class="vuln-info">
+          <div class="cve-id">CVE-2019-0708 &nbsp;·&nbsp; BlueKeep</div>
+          <div class="vuln-name">RDP Remote Code Execution</div>
+          <div class="vuln-host">10.0.0.12:3389 &nbsp;·&nbsp; Windows Server 2016</div>
+        </div>
+        <span class="badge badge-high">HIGH</span>
+      </div>
+      <div class="vuln-card vc-med" onclick="modal('CVE-2021-34527 — PrintNightmare','CVSS Score: 5.2 (MEDIUM)\n\nDescription: Windows Print Spooler elevation of privilege / RCE.\n\nAffected Host: 10.0.0.12\nAffected Service: Windows Print Spooler\nVector: NETWORK / Low Auth\n\nStatus: UNPATCHED')">
+        <div class="vuln-score med">5.2</div>
+        <div class="vuln-info">
+          <div class="cve-id">CVE-2021-34527 &nbsp;·&nbsp; PrintNightmare</div>
+          <div class="vuln-name">Windows Print Spooler EoP</div>
+          <div class="vuln-host">10.0.0.12 &nbsp;·&nbsp; Windows Print Spooler</div>
+        </div>
+        <span class="badge badge-med">MEDIUM</span>
+      </div>
+      <button class="btn btn-full" onclick="notify('REPORT EXPORTED','vuln_report_megacorp_'+new Date().toISOString().slice(0,10)+'.pdf exported.')">📄 EXPORT FULL REPORT</button>
+    </div>
+
+    <!-- PAGE 6: LOOT -->
+    <div class="page" id="page-5">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">06. LOOT / FINDINGS LOG</div>
+          <div class="ph-title">LOOT VAULT</div>
+          <div class="ph-sub">ALL DISCOVERED CREDENTIALS, KEYS AND SENSITIVE DATA</div>
+        </div>
+        <div class="ph-right">
+          <div class="loot-value-big">$125,430</div>
+          <div style="font-size:9px;color:var(--text-dim)">TOTAL VALUE</div>
+        </div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box"><div class="val">236</div><div class="lbl">ALL ITEMS</div></div>
+        <div class="stat-box"><div class="val crit">85</div><div class="lbl">CREDENTIALS</div></div>
+        <div class="stat-box"><div class="val high">27</div><div class="lbl">API KEYS</div></div>
+        <div class="stat-box"><div class="val" style="color:var(--cyan)">51</div><div class="lbl">HASHES</div></div>
+      </div>
+      <table class="tbl" style="margin-top:8px">
+        <thead><tr><th>ITEM</th><th>TYPE</th><th>VALUE</th><th>FOUND</th></tr></thead>
+        <tbody>
+          <tr onclick="modal('LOOT: admin@megacorp.local','Type: CREDENTIAL\nValue: HIGH\n\nContent:\n  Username: admin@megacorp.local\n  Password: P@ssw0rd123!\n  Hash: NTLM:8844F7EAEF8117...\n\nSource: /etc/shadow dump via SQLi\nFound: 2h ago\nStatus: VERIFIED ✓')">
+            <td class="loot-type-cred">admin@megacorp.local</td><td>Credential</td><td><span class="badge badge-crit">High</span></td><td style="color:var(--text-dim)">2h ago</td>
+          </tr>
+          <tr onclick="modal('LOOT: AWS API Key','Type: API KEY\nValue: HIGH\n\nContent:\n  Key ID: AKIA[REDACTED]JFG2\n  Secret: wJalrXUtn[REDACTED]\n  Region: us-east-1\n\nSource: .env file on webroot\nFound: 3h ago\nPermissions: S3 FullAccess, EC2 ReadOnly')">
+            <td class="loot-type-key">AWS Key AKIA...JFG2</td><td>API Key</td><td><span class="badge badge-crit">High</span></td><td style="color:var(--text-dim)">3h ago</td>
+          </tr>
+          <tr onclick="modal('LOOT: BCrypt Hash','Type: HASH\nValue: MEDIUM\n\nContent: $2b$15$kH4xLnF7...\nType: BCrypt $2b$ cost=15\nCracked: NO (in progress)\n\nSource: users table /var/www/db.sqlite\nFound: 5h ago')">
+            <td class="loot-type-hash">BCrypt Hash $2b$15...</td><td>Hash</td><td><span class="badge badge-high">Med</span></td><td style="color:var(--text-dim)">5h ago</td>
+          </tr>
+          <tr onclick="modal('LOOT: VPN Config','Type: CONFIGURATION\nValue: LOW\n\nContent: vpn.megacorp.local.ovpn\nIncludes pre-shared key and CA cert\n\nSource: /home/jsmith/.vpn/\nFound: 5h ago')">
+            <td class="loot-type-config">vpn.megacorp.local.ovpn</td><td>Config</td><td><span class="badge badge-low">Low</span></td><td style="color:var(--text-dim)">5h ago</td>
+          </tr>
+          <tr onclick="modal('LOOT: Session Token','Type: TOKEN\nValue: HIGH\n\nContent: eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiYWRtaW4iLCJyb2xlIjoiYWRtaW4ifQ.[sig]\n\nDecoded: {user:admin, role:admin}\nExpiry: 24h\n\nSource: HTTP response header interception\nFound: 6h ago')">
+            <td class="loot-type-token">session_token eyJhbG...</td><td>Token</td><td><span class="badge badge-crit">High</span></td><td style="color:var(--text-dim)">6h ago</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="loot-actions">
+        <button class="btn" onclick="notify('LOOT SYNCED','Vault synced to remote encrypted storage.')">🔐 SYNC VAULT</button>
+        <button class="btn btn-amber" onclick="notify('EXPORT OK','loot_dump.json exported successfully.')">📤 EXPORT ALL</button>
+        <button class="btn" onclick="notify('ANALYSIS COMPLETE','High value targets: 47 items flagged.')">📊 ANALYZE</button>
+        <button class="btn" onclick="notify('ARCHIVE','Loot archived and encrypted.')">🗂️ ARCHIVE</button>
+      </div>
+    </div>
+
+    <!-- PAGE 7: TARGET MAP -->
+    <div class="page" id="page-6">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">07. TARGET SELECTION</div>
+          <div class="ph-title">WORLD MAP</div>
+          <div class="ph-sub">ACTIVE TARGETS BY REGION — 6 CONTRACTS AVAILABLE</div>
+        </div>
+        <div class="ph-right">SELECTED: <span id="map-sel" style="color:var(--green)">megacorp.local (EUROPE)</span></div>
+      </div>
+      <svg id="mapsvg" viewBox="0 0 800 360" xmlns="http://www.w3.org/2000/svg" style="background:#030903;border:1px solid var(--border);max-height:280px">
+        <!-- Grid -->
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#0a150a" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="800" height="360" fill="url(#grid)"/>
+        <!-- Continents (simplified blobs) -->
+        <g fill="#0a1a0a" stroke="#1a3a1a" stroke-width="1">
+          <!-- N America -->
+          <ellipse cx="165" cy="155" rx="100" ry="70"/>
+          <!-- S America -->
+          <ellipse cx="215" cy="255" rx="55" ry="65"/>
+          <!-- Europe -->
+          <ellipse cx="400" cy="130" rx="60" ry="45"/>
+          <!-- Africa -->
+          <ellipse cx="400" cy="235" rx="55" ry="75"/>
+          <!-- Asia -->
+          <ellipse cx="590" cy="150" rx="130" ry="80"/>
+          <!-- Oceania -->
+          <ellipse cx="660" cy="280" rx="60" ry="35"/>
+        </g>
+        <!-- Target dots with ping rings -->
+        <g>
+          <!-- Europe (active) -->
+          <circle cx="390" cy="120" r="6" fill="var(--green)" style="filter:drop-shadow(0 0 6px #39ff14)"/>
+          <circle cx="390" cy="120" r="6" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.6"><animate attributeName="r" values="6;16" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0" dur="2s" repeatCount="indefinite"/></circle>
+          <circle cx="420" cy="140" r="5" fill="var(--green)" style="filter:drop-shadow(0 0 5px #39ff14)"/>
+          <circle cx="420" cy="140" r="5" fill="none" stroke="var(--green)" stroke-width="1" opacity="0.5"><animate attributeName="r" values="5;13" dur="2.5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0" dur="2.5s" repeatCount="indefinite"/></circle>
+          <!-- Asia -->
+          <circle cx="580" cy="145" r="6" fill="var(--red)" style="filter:drop-shadow(0 0 6px #ff2020)"/>
+          <circle cx="580" cy="145" r="6" fill="none" stroke="var(--red)" stroke-width="1" opacity="0.5"><animate attributeName="r" values="6;16" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0" dur="1.8s" repeatCount="indefinite"/></circle>
+          <circle cx="630" cy="160" r="5" fill="var(--red)" style="filter:drop-shadow(0 0 5px #ff2020)"/>
+          <circle cx="560" cy="170" r="4" fill="var(--amber)" style="filter:drop-shadow(0 0 4px #ffaa00)"/>
+          <circle cx="670" cy="130" r="5" fill="var(--amber)" style="filter:drop-shadow(0 0 4px #ffaa00)"/>
+          <!-- N America -->
+          <circle cx="155" cy="145" r="5" fill="var(--cyan)" style="filter:drop-shadow(0 0 5px #00e5ff)"/>
+          <circle cx="155" cy="145" r="5" fill="none" stroke="var(--cyan)" stroke-width="1" opacity="0.5"><animate attributeName="r" values="5;14" dur="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0" dur="2.2s" repeatCount="indefinite"/></circle>
+          <!-- S America -->
+          <circle cx="210" cy="248" r="4" fill="var(--amber)" style="filter:drop-shadow(0 0 4px #ffaa00)"/>
+          <circle cx="230" cy="270" r="4" fill="var(--amber)"/>
+          <circle cx="200" cy="260" r="3" fill="var(--amber)"/>
+        </g>
+        <!-- Labels -->
+        <g font-family="'Share Tech Mono'" font-size="11" fill="#4a7a4a">
+          <text x="145" y="100">N. AMERICA</text>
+          <text x="185" y="330">S. AMERICA</text>
+          <text x="372" y="78">EUROPE</text>
+          <text x="375" y="325">AFRICA</text>
+          <text x="555" y="100">ASIA</text>
+          <text x="630" y="320">OCEANIA</text>
+        </g>
+        <!-- Target counts -->
+        <g font-family="'Orbitron'" font-size="10" font-weight="700">
+          <text x="148" y="115" fill="#00e5ff">1 TARGET</text>
+          <text x="188" y="345" fill="#ffaa00">3 TARGETS</text>
+          <text x="372" y="92" fill="#39ff14">2 TARGETS</text>
+          <text x="555" y="115" fill="#ff2020">4 TARGETS</text>
+        </g>
+      </svg>
+      <div class="target-list" style="margin-top:12px">
+        <div class="card-title">ACTIVE TARGETS</div>
+        <div class="two-col">
+          <div>
+            <div class="target-item selected" id="ti-0" onclick="selectTgt(0,'megacorp.local (EUROPE)')">
+              <div class="target-dot td-green"></div>
+              <div><div style="font-size:11px">megacorp.local</div><div style="font-size:9px;color:var(--text-dim)">EUROPE &nbsp;·&nbsp; 2 TARGETS</div></div>
+              <button class="btn" style="margin-left:auto;padding:3px 10px;font-size:9px" onclick="event.stopPropagation();notify('ENGAGED','Connecting to megacorp.local...')">ENGAGE</button>
+            </div>
+            <div class="target-item" id="ti-1" onclick="selectTgt(1,'asia-target-01 (ASIA)')">
+              <div class="target-dot td-red"></div>
+              <div><div style="font-size:11px">asia-target-01</div><div style="font-size:9px;color:var(--text-dim)">ASIA &nbsp;·&nbsp; 4 TARGETS</div></div>
+              <button class="btn btn-amber" style="margin-left:auto;padding:3px 10px;font-size:9px" onclick="event.stopPropagation();notify('ENGAGED','Connecting to asia-target-01...')">ENGAGE</button>
+            </div>
+          </div>
+          <div>
+            <div class="target-item" id="ti-2" onclick="selectTgt(2,'corp-us-01 (N. AMERICA)')">
+              <div class="target-dot td-cyan"></div>
+              <div><div style="font-size:11px">corp-us-01</div><div style="font-size:9px;color:var(--text-dim)">N. AMERICA &nbsp;·&nbsp; 1 TARGET</div></div>
+              <button class="btn" style="margin-left:auto;padding:3px 10px;font-size:9px" onclick="event.stopPropagation();notify('ENGAGED','Connecting to corp-us-01...')">ENGAGE</button>
+            </div>
+            <div class="target-item" id="ti-3" onclick="selectTgt(3,'latam-02 (S. AMERICA)')">
+              <div class="target-dot td-amber"></div>
+              <div><div style="font-size:11px">latam-02</div><div style="font-size:9px;color:var(--text-dim)">S. AMERICA &nbsp;·&nbsp; 3 TARGETS</div></div>
+              <button class="btn btn-amber" style="margin-left:auto;padding:3px 10px;font-size:9px" onclick="event.stopPropagation();notify('ENGAGED','Connecting to latam-02...')">ENGAGE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 8: PAYLOAD CRAFTER -->
+    <div class="page" id="page-7">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">08. PAYLOAD CRAFTER</div>
+          <div class="ph-title">PAYLOAD STUDIO v1.3</div>
+          <div class="ph-sub">BUILD, ENCODE AND STAGE ATTACK PAYLOADS</div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this)">BUILDER</div>
+        <div class="tab" onclick="switchTab(this)">OPTIONS</div>
+        <div class="tab" onclick="switchTab(this)">ENCODER</div>
+        <div class="tab" onclick="switchTab(this)">LISTENER</div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="card-title">CONFIGURATION</div>
+          <div class="label-sm">TEMPLATE</div>
+          <select class="sel-inp" style="width:100%;margin-bottom:8px" onchange="updatePayload()">
+            <option>REVERSE SHELL (LINUX)</option>
+            <option>REVERSE SHELL (WINDOWS)</option>
+            <option>BIND SHELL</option>
+            <option>METERPRETER REVERSE TCP</option>
+            <option>POWERSHELL DOWNLOAD EXEC</option>
+            <option>PYTHON REVERSE SHELL</option>
+          </select>
+          <div class="field-row">
+            <label style="width:60px">LHOST</label>
+            <input class="inp" id="lhost" value="10.14.14.5" oninput="updatePayload()" style="padding:5px 8px"/>
+          </div>
+          <div class="field-row">
+            <label style="width:60px">LPORT</label>
+            <input class="inp" id="lport" value="4444" oninput="updatePayload()" style="padding:5px 8px;flex:0.5"/>
+            <button class="btn btn-amber" onclick="randPort()" style="font-size:9px;padding:5px 10px">RAND</button>
+          </div>
+          <div class="field-row">
+            <label style="width:60px">ENCODER</label>
+            <select class="sel-inp" style="flex:1" onchange="updatePayload()">
+              <option>x86/shikata_ga_nai</option>
+              <option>x64/xor_dynamic</option>
+              <option>none</option>
+            </select>
+          </div>
+          <div class="field-row">
+            <label style="width:60px">ITERATIONS</label>
+            <input class="inp" value="3" style="padding:5px 8px;flex:0.3"/>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);cursor:pointer">
+              <input type="checkbox" checked style="accent-color:var(--green)"/> Use SSL
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);cursor:pointer">
+              <input type="checkbox" style="accent-color:var(--green)"/> Spawn TTY
+            </label>
+            <label style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim);cursor:pointer">
+              <input type="checkbox" style="accent-color:var(--green)"/> Persistence
+            </label>
+          </div>
+          <button class="btn btn-full" style="background:rgba(204,0,255,0.05);border-color:#660066;color:var(--purple)" onclick="generatePayload()">⚡ GENERATE PAYLOAD</button>
+        </div>
+        <div>
+          <div class="card-title">PAYLOAD PREVIEW (HEX)</div>
+          <div class="payload-hex" id="payload-hex">7f 45 4c 46 02 01 01 00<br>00 00 00 00 00 00 00 00<br>02 00 3e 00 01 00 00 00<br>78 10 40 00 00 00 00 00<br>40 00 00 00 00 00 00 00</div>
+          <div class="two-col" style="margin-top:8px;gap:6px">
+            <div class="stat-box" style="padding:8px"><div class="val" id="payload-size" style="font-size:18px">413</div><div class="lbl">BYTES</div></div>
+            <div class="stat-box" style="padding:8px"><div class="val" style="font-size:18px;color:var(--green)">0</div><div class="lbl">BAD CHARS</div></div>
+          </div>
+          <div class="card-title" style="margin-top:12px">OPTIONS</div>
+          <div class="sys-row"><span class="key">NULL BYTES</span><span class="v">AVOIDED</span></div>
+          <div class="sys-row"><span class="key">ARCHITECTURE</span><span class="v">x64</span></div>
+          <div class="sys-row"><span class="key">FORMAT</span><span class="v">raw</span></div>
+          <button class="btn btn-full" onclick="notify('PAYLOAD SAVED','payload.bin written to /tmp/payloads/')">💾 SAVE PAYLOAD</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 9: HASH CRACKER -->
+    <div class="page" id="page-8">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">09. PASSWORD CRACKER</div>
+          <div class="ph-title">HASH CRACKER v3.0</div>
+          <div class="ph-sub">DICTIONARY AND BRUTE-FORCE ATTACK ENGINE</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="card-title">CONFIGURATION</div>
+          <div class="label-sm">HASH TYPE</div>
+          <select class="sel-inp" style="width:100%;margin-bottom:8px">
+            <option>NTLM</option><option>MD5</option><option>SHA1</option><option>SHA256</option><option>SHA512</option><option>bcrypt</option><option>LM</option>
+          </select>
+          <div class="label-sm">TARGET HASH</div>
+          <input class="inp" value="8844F7EAEF8117AD06B0D0630307586C" style="font-family:var(--font-mono);font-size:10px;margin-bottom:8px"/>
+          <div class="label-sm">WORDLIST</div>
+          <select class="sel-inp" style="width:100%;margin-bottom:8px">
+            <option>rockyou.txt (14.3M words)</option>
+            <option>darkweb2017.txt (1.7M)</option>
+            <option>crackstation.txt (1.5B)</option>
+            <option>custom.txt</option>
+          </select>
+          <div class="label-sm">ATTACK MODE</div>
+          <select class="sel-inp" style="width:100%;margin-bottom:12px">
+            <option>DICTIONARY</option><option>BRUTE-FORCE</option><option>HYBRID</option><option>RULE-BASED</option>
+          </select>
+          <button class="btn btn-full" id="crack-btn" onclick="toggleCrack()">▶ START CRACKING</button>
+        </div>
+        <div>
+          <div class="crack-pct" id="crack-pct">42%</div>
+          <div class="progress" style="height:10px;margin-bottom:8px"><div class="progress-fill" id="crack-bar" style="width:42%"></div></div>
+          <div class="crack-meta">
+            <div>ETA: <span id="crack-eta">00:12:47</span></div>
+            <div>SPEED: <span>1.2M/s</span></div>
+            <div>TRIED: <span id="crack-tried">50.4M</span></div>
+          </div>
+          <div class="card-title">CRACKED PASSWORDS</div>
+          <div class="cracked-result">
+            <div><span style="color:var(--green)">Administrator</span> : <span>Password123</span></div>
+            <div class="cr-time">2s ago</div>
+          </div>
+          <div class="cracked-result">
+            <div><span style="color:var(--green)">svc_backup</span> : <span>Winter2024!</span></div>
+            <div class="cr-time">1m ago</div>
+          </div>
+          <div style="text-align:right;margin-top:6px;font-size:10px;color:var(--green)">+250 XP &nbsp;·&nbsp; 2 CREDENTIALS CRACKED</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 10: PRIV ESC TREE -->
+    <div class="page" id="page-9">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">10. PRIV ESCALATION TREE</div>
+          <div class="ph-title">LINUX PRIV ESCALATION</div>
+          <div class="ph-sub">MAP YOUR PATH TO ROOT — CURRENT USER: www-data</div>
+        </div>
+        <div class="ph-right" style="color:var(--green);font-family:var(--font-display);font-size:11px">BEST PATH: 3 STEPS</div>
+      </div>
+      <div id="tree-container">
+        <svg id="tree-svg" viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg">
+          <!-- Edges -->
+          <line x1="380" y1="48" x2="130" y2="120" stroke="#1a3a1a" stroke-width="1.5"/>
+          <line x1="380" y1="48" x2="290" y2="120" stroke="#1a3a1a" stroke-width="1.5"/>
+          <line x1="380" y1="48" x2="470" y2="120" stroke="#1a3a1a" stroke-width="1.5"/>
+          <line x1="380" y1="48" x2="620" y2="120" stroke="#1a3a1a" stroke-width="1.5"/>
+          <!-- HIGHLIGHTED PATH: www-data -> SUDO -> CAP_SETUID -> ROOT -->
+          <line x1="130" y1="148" x2="130" y2="220" stroke="#ffaa00" stroke-width="2" stroke-dasharray="6,3"/>
+          <line x1="130" y1="248" x2="130" y2="300" stroke="#ffaa00" stroke-width="2" stroke-dasharray="6,3"/>
+          <line x1="290" y1="148" x2="290" y2="220" stroke="#1a3a1a" stroke-width="1.5"/>
+          <line x1="470" y1="148" x2="470" y2="220" stroke="#1a3a1a" stroke-width="1.5"/>
+          <!-- Current user node -->
+          <rect x="320" y="14" width="120" height="34" rx="3" fill="#050f05" stroke="#39ff14" stroke-width="1.5"/>
+          <text x="380" y="33" text-anchor="middle" font-family="'Share Tech Mono'" font-size="12" fill="#39ff14">www-data</text>
+          <text x="380" y="44" text-anchor="middle" font-family="'Share Tech Mono'" font-size="8" fill="#4a7a4a">CURRENT USER</text>
+          <!-- Level 1 nodes -->
+          <rect x="70" y="120" width="120" height="34" rx="3" fill="#140e00" stroke="#ffaa00" stroke-width="1.5"/>
+          <text x="130" y="135" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#ffaa00">SUDO -l</text>
+          <text x="130" y="148" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#ffaa00">MISCONFIGS</text>
+          <rect x="230" y="120" width="120" height="34" rx="3" fill="#050f05" stroke="#1a3a1a"/>
+          <text x="290" y="135" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#c8ffc8">PATH HIJACK</text>
+          <text x="290" y="148" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#4a7a4a">POSSIBLE</text>
+          <rect x="410" y="120" width="120" height="34" rx="3" fill="#050f05" stroke="#1a3a1a"/>
+          <text x="470" y="135" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#c8ffc8">SUID BINARIES</text>
+          <text x="470" y="148" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#4a7a4a">2 FOUND</text>
+          <rect x="560" y="120" width="120" height="34" rx="3" fill="#050f05" stroke="#1a3a1a"/>
+          <text x="620" y="135" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#c8ffc8">CRON JOBS</text>
+          <text x="620" y="148" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#4a7a4a">1 FOUND</text>
+          <!-- Level 2 nodes -->
+          <rect x="70" y="220" width="120" height="34" rx="3" fill="#140e00" stroke="#ffaa00" stroke-width="1.5"/>
+          <text x="130" y="235" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#ffaa00">CAP_SETUID</text>
+          <text x="130" y="248" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#ffaa00">CAPABILITY</text>
+          <rect x="230" y="220" width="120" height="34" rx="3" fill="#050f05" stroke="#1a3a1a"/>
+          <text x="290" y="235" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#c8ffc8">WRITE /etc/</text>
+          <text x="290" y="248" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#4a7a4a">passwd POSSIBLE</text>
+          <rect x="410" y="220" width="120" height="34" rx="3" fill="#050f05" stroke="#1a3a1a"/>
+          <text x="470" y="235" text-anchor="middle" font-family="'Share Tech Mono'" font-size="11" fill="#c8ffc8">KERNEL 5.4.0</text>
+          <text x="470" y="248" text-anchor="middle" font-family="'Share Tech Mono'" font-size="9" fill="#4a7a4a">CVE-2021-4034</text>
+          <!-- ROOT -->
+          <rect x="70" y="297" width="120" height="34" rx="3" fill="#0a0000" stroke="#ff2020" stroke-width="2"/>
+          <text x="130" y="312" text-anchor="middle" font-family="'Share Tech Mono'" font-size="13" fill="#ff2020">💀 ROOT</text>
+          <text x="130" y="325" text-anchor="middle" font-family="'Share Tech Mono'" font-size="8" fill="#7a0000">GOAL</text>
+          <!-- Legend -->
+          <rect x="600" y="220" width="140" height="90" rx="3" fill="#030803" stroke="#1a3a1a"/>
+          <text x="610" y="235" font-family="'Share Tech Mono'" font-size="9" fill="#4a7a4a">LEGEND</text>
+          <line x1="610" y1="250" x2="635" y2="250" stroke="#ffaa00" stroke-width="2" stroke-dasharray="4,2"/>
+          <text x="640" y="254" font-family="'Share Tech Mono'" font-size="9" fill="#ffaa00">BEST PATH</text>
+          <rect x="610" y="263" width="20" height="12" rx="2" fill="#050f05" stroke="#39ff14"/>
+          <text x="635" y="273" font-family="'Share Tech Mono'" font-size="9" fill="#39ff14">CURRENT</text>
+          <rect x="610" y="283" width="20" height="12" rx="2" fill="#0a0000" stroke="#ff2020"/>
+          <text x="635" y="293" font-family="'Share Tech Mono'" font-size="9" fill="#ff2020">TARGET</text>
+        </svg>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" onclick="notify('ANALYSIS RUNNING','Enumerating priv esc vectors...')">🔍 ANALYZE</button>
+        <button class="btn btn-amber" onclick="notify('AUTO-EXPLOIT','Attempting CAP_SETUID escalation...')">⚡ AUTO-EXPLOIT PATH</button>
+      </div>
+    </div>
+
+    <!-- PAGE 11: STEALTH -->
+    <div class="page" id="page-10">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">11. STEALTH MODULE</div>
+          <div class="ph-title">GHOST PROTOCOL</div>
+          <div class="ph-sub">EVASION AND ANTI-FORENSICS ENGINE</div>
+        </div>
+      </div>
+      <div class="stealth-hero">
+        <div class="stealth-icon">👤</div>
+        <div class="stealth-name">STEALTH MODULE</div>
+        <div class="stealth-sub">Your actions. Unseen.</div>
+      </div>
+      <div class="toggle-row">
+        <span class="toggle-label">STEALTH MODE</span>
+        <div class="toggle-wrap" onclick="toggleStealth()">
+          <div class="toggle-track on" id="stealth-track"><div class="toggle-thumb"></div></div>
+          <span class="toggle-on-label" id="stealth-label">ON</span>
+        </div>
+        <span style="font-size:20px;cursor:pointer" onclick="toggleStealth()">👁</span>
+      </div>
+      <div id="stealth-modules">
+        <div class="stealth-module-row"><span class="smr-name">⚡ TRAFFIC OBFUSCATION</span><span class="smr-status on" id="sm0">ENABLED</span></div>
+        <div class="stealth-module-row"><span class="smr-name">🗑️ LOG WIPER</span><span class="smr-status on" id="sm1">ENABLED</span></div>
+        <div class="stealth-module-row"><span class="smr-name">🔍 ANTI-FORENSICS</span><span class="smr-status on" id="sm2">ENABLED</span></div>
+        <div class="stealth-module-row"><span class="smr-name">🥷 PROCESS HIDING</span><span class="smr-status on" id="sm3">ENABLED</span></div>
+        <div class="stealth-module-row"><span class="smr-name">⏰ TIMESTAMP SPOOF</span><span class="smr-status on" id="sm4">ENABLED</span></div>
+      </div>
+      <div class="stealth-motto" id="stealth-motto">"YOU ARE A GHOST IN THE MACHINE."</div>
+    </div>
+
+    <!-- PAGE 12: ACHIEVEMENTS -->
+    <div class="page" id="page-11">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">12. ACHIEVEMENTS</div>
+          <div class="ph-title">BADGE SCREEN</div>
+          <div class="ph-sub">37 / 50 UNLOCKED</div>
+        </div>
+        <div class="ph-right">
+          <div class="xp-big">5,650 XP</div>
+        </div>
+      </div>
+      <div class="progress ach-progress-bar" style="height:8px;margin-bottom:16px"><div class="progress-fill amber" style="width:74%"></div></div>
+      <div style="font-size:10px;color:var(--text-dim);margin-bottom:4px">NEXT REWARD AT <span style="color:var(--amber)">6,000 XP</span></div>
+      <div class="ach-grid">
+        <div class="ach-item unlocked" onclick="modal('🩸 FIRST BLOOD','Run your first exploit on a live target.\n\nXP: +250\nUnlocked: 24 hours ago\nRarity: COMMON\n\nStatus: ✓ COMPLETE')"><div class="ai-icon">🩸</div><div class="ai-name">FIRST BLOOD</div><div class="ai-xp">+250 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('⬆️ ESCALATOR','Get root access on any target.\n\nXP: +500\nUnlocked: 18 hours ago\nRarity: UNCOMMON\n\nStatus: ✓ COMPLETE')"><div class="ai-icon">⬆️</div><div class="ai-name">ESCALATOR</div><div class="ai-xp">+500 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('👤 STAY HIDDEN','Remain undetected for 24 consecutive hours.\n\nXP: +750\nUnlocked: 12 hours ago\nRarity: RARE')"><div class="ai-icon">👤</div><div class="ai-name">STAY HIDDEN</div><div class="ai-xp">+750 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('💾 DATA HOARDER','Collect 100+ loot items in a single session.\n\nXP: +1,000\nRarity: UNCOMMON')"><div class="ai-icon">💾</div><div class="ai-name">DATA HOARDER</div><div class="ai-xp">+1000 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('🔓 HASH SLAYER','Crack 10 password hashes.\n\nXP: +250\nRarity: COMMON')"><div class="ai-icon">🔓</div><div class="ai-name">HASH SLAYER</div><div class="ai-xp">+250 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('💣 EXPLOIT MASTER','Successfully deploy 25 exploits.\n\nXP: +500\nRarity: UNCOMMON')"><div class="ai-icon">💣</div><div class="ai-name">EXPLOIT MASTER</div><div class="ai-xp">+500 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('⚡ SPEED RUN','Completely pwn a box in under 5 minutes.\n\nXP: +1,000\nRarity: EPIC\n\nRecord: 3m 42s')"><div class="ai-icon">⚡</div><div class="ai-name">SPEED RUN</div><div class="ai-xp">+1000 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('🌍 WORLD TOUR','Compromise targets on 4 different continents.\n\nXP: +2,000\nRarity: RARE')"><div class="ai-icon">🌍</div><div class="ai-name">WORLD TOUR</div><div class="ai-xp">+2000 XP</div></div>
+        <div class="ach-item unlocked" onclick="modal('🏴 OWN THE DOMAIN','Fully compromise an Active Directory domain.\n\nXP: +3,000\nRarity: LEGENDARY')"><div class="ai-icon">🏴</div><div class="ai-name">OWN THE DOMAIN</div><div class="ai-xp">+3000 XP</div></div>
+        <div class="ach-item locked"><div class="ai-icon">🔒</div><div class="ai-name">???</div><div class="ai-xp">? XP</div></div>
+      </div>
+    </div>
+
+    <!-- PAGE 13: SESSIONS -->
+    <div class="page" id="page-12">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">13. ACTIVE SESSIONS MANAGER</div>
+          <div class="ph-title">SESSIONS</div>
+          <div class="ph-sub">LIVE REVERSE SHELLS AND PERSISTENT ACCESS</div>
+        </div>
+        <div class="ph-right" style="color:var(--green);font-family:var(--font-display);font-size:14px">3 ACTIVE</div>
+      </div>
+      <table class="tbl" id="sess-tbl">
+        <thead><tr><th>TARGET</th><th>USER</th><th>TYPE</th><th>UPTIME</th><th>LOAD</th><th>ACTION</th></tr></thead>
+        <tbody id="sess-tbody">
+          <tr class="session-row" onclick="modal('SESSION: 10.0.0.8','Host: 10.0.0.8 (WEB01)\nUser: Administrator (SYSTEM)\nType: SMB / Meterpreter\nUptime: 00:45:12\nOS: Windows Server 2016\n\nAccess: FULL SYSTEM\nPersistence: SCHEDULED TASK SET')">
+            <td><span class="active-dot"></span>10.0.0.8</td>
+            <td>Administrator</td><td>SMB</td>
+            <td id="s1">00:45:12</td>
+            <td style="color:var(--green)">24%</td>
+            <td><button class="kill-btn" onclick="event.stopPropagation();killSession(this,'10.0.0.8')">■ KILL</button></td>
+          </tr>
+          <tr class="session-row" onclick="modal('SESSION: 10.0.0.12','Host: 10.0.0.12 (APP01)\nUser: www-data\nType: SSH\nUptime: 01:12:33\nOS: Linux Ubuntu 20.04\n\nAccess: LIMITED (working on privesc)\nShell: /bin/bash -i')">
+            <td><span class="active-dot"></span>10.0.0.12</td>
+            <td>www-data</td><td>SSH</td>
+            <td id="s2">01:12:33</td>
+            <td style="color:var(--amber)">67%</td>
+            <td><button class="kill-btn" onclick="event.stopPropagation();killSession(this,'10.0.0.12')">■ KILL</button></td>
+          </tr>
+          <tr class="session-row" onclick="modal('SESSION: 10.0.0.23 ★','Host: 10.0.0.23 (DB01)\nUser: root\nType: REVERSE SHELL\nUptime: 00:09:11\nOS: Linux Debian 10\n\nAccess: ROOT\nShell: /bin/bash\nFlag: BLACKBYTE{N0_R00T_N0_PR0BLEM}')">
+            <td><span class="active-dot"></span>10.0.0.23</td>
+            <td style="color:var(--red)">root</td><td>SHELL</td>
+            <td id="s3">00:09:11</td>
+            <td style="color:var(--green)">8%</td>
+            <td><button class="kill-btn" onclick="event.stopPropagation();killSession(this,'10.0.0.23')">■ KILL</button></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="display:flex;gap:16px;margin-top:12px;font-size:11px;color:var(--text-dim)">
+        <span>SYSTEM LOAD: <span style="color:var(--green)">24%</span></span>
+        <span>NETWORK I/O: <span style="color:var(--cyan)">120 KB/s ↑ / 84 KB/s ↓</span></span>
+      </div>
+      <canvas id="net-canvas"></canvas>
+      <button class="btn btn-full" onclick="notify('NEW SESSION','Opening listener on port 4444...')">+ NEW SESSION</button>
+    </div>
+
+    <!-- PAGE 14: TERMINAL -->
+    <div class="page" id="page-13">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">14. REVERSE SHELL TERMINAL</div>
+          <div class="ph-title">SHELL: 10.0.0.23 (root)</div>
+          <div class="ph-sub">LIVE INTERACTIVE SESSION — TYPE HELP FOR COMMANDS</div>
+        </div>
+        <div class="ph-right"><span class="badge" style="color:var(--red);border-color:var(--red);background:rgba(255,32,32,0.08);font-size:10px;padding:3px 10px;animation:pulse 1s infinite">● LIVE</span></div>
+      </div>
+      <div id="term-wrap">
+        <div id="term-out">
+          <div class="tl r">SHELL: 10.0.0.23 (root) — BLACKBYTE OS</div>
+          <div class="tl o">Connected at <span id="term-time"></span></div>
+          <div class="tl o">&nbsp;</div>
+          <div class="tl c">root@megacorp:/# id</div>
+          <div class="tl o">uid=0(root) gid=0(root) groups=0(root)</div>
+          <div class="tl c">root@megacorp:/# ls -la /root</div>
+          <div class="tl o">total 32</div>
+          <div class="tl o">drwx------ 4 root root 4096 May 18 10:22 .</div>
+          <div class="tl o">drwxr-xr-x 22 root root 4096 May 18 09:13 ..</div>
+          <div class="tl o">-rw------- 1 root root 1288 May 18 10:22 flag.txt</div>
+          <div class="tl c">root@megacorp:/# cat /root/flag.txt</div>
+          <div class="tl w">BLACKBYTE{N0_R00T_N0_PR0BLEM}</div>
+          <div class="tl o">&nbsp;</div>
+        </div>
+        <div class="term-input-row">
+          <span class="term-ps">root@megacorp:/#</span>
+          <input class="term-in" id="term-in" autocomplete="off" spellcheck="false" placeholder="enter command..." onkeydown="handleTerm(event)"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 15: THREAT RADAR -->
+    <div class="page" id="page-14">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">15. THREAT RADAR</div>
+          <div class="ph-title">LIVE NETWORK INTEL</div>
+          <div class="ph-sub">REAL-TIME THREAT MONITORING AND DETECTION</div>
+        </div>
+        <div class="ph-right" style="font-size:9px;color:var(--text-dim)">UPDATED: <span style="color:var(--green)">2s ago</span></div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="radar-wrap">
+            <div class="radar-container">
+              <div id="radar-bg"></div>
+              <svg viewBox="0 0 260 260" style="position:absolute;inset:0;width:100%;height:100%">
+                <circle cx="130" cy="130" r="30" fill="none" stroke="#0a1a0a" stroke-width="0.8"/>
+                <circle cx="130" cy="130" r="60" fill="none" stroke="#0a1a0a" stroke-width="0.8"/>
+                <circle cx="130" cy="130" r="90" fill="none" stroke="#0a1a0a" stroke-width="0.8"/>
+                <circle cx="130" cy="130" r="120" fill="none" stroke="#0a1a0a" stroke-width="0.8"/>
+                <line x1="130" y1="10" x2="130" y2="250" stroke="#0a1a0a" stroke-width="0.8"/>
+                <line x1="10" y1="130" x2="250" y2="130" stroke="#0a1a0a" stroke-width="0.8"/>
+                <line x1="44" y1="44" x2="216" y2="216" stroke="#070f07" stroke-width="0.8"/>
+                <line x1="216" y1="44" x2="44" y2="216" stroke="#070f07" stroke-width="0.8"/>
+              </svg>
+              <div id="radar-sweep-line"></div>
+              <!-- Blips -->
+              <div class="rblip" style="top:38%;left:62%;background:var(--red)"></div>
+              <div class="rblip" style="top:55%;left:35%;background:var(--amber)"></div>
+              <div class="rblip" style="top:28%;left:45%;background:var(--purple)"></div>
+              <div class="rblip" style="top:70%;left:58%;background:var(--cyan)"></div>
+              <div class="rblip" style="top:42%;left:22%;background:var(--red)"></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card-title">THREATS DETECTED</div>
+          <div class="threat-row t-brute">
+            <span class="tn">⚡ BRUTE FORCE ATTACK</span><span class="tc crit" id="tc-brute">4</span>
+          </div>
+          <div class="threat-row t-exploit">
+            <span class="tn">💣 EXPLOIT ATTEMPT</span><span class="tc high" id="tc-exploit">2</span>
+          </div>
+          <div class="threat-row t-malware">
+            <span class="tn">🦠 MALWARE CALLBACK</span><span class="tc" style="color:var(--purple)" id="tc-malware">1</span>
+          </div>
+          <div class="threat-row t-dns">
+            <span class="tn">🔍 ANOMALOUS DNS</span><span class="tc cyan" id="tc-dns">3</span>
+          </div>
+          <div class="threat-row t-scan">
+            <span class="tn">📡 PORT SCAN DETECTED</span><span class="tc med" id="tc-scan">7</span>
+          </div>
+          <div class="risk-level">
+            <span style="font-size:11px;color:var(--text-dim)">GLOBAL RISK LEVEL</span>
+            <span style="font-family:var(--font-display);font-size:13px;font-weight:700;color:var(--red)">HIGH</span>
+            <div class="risk-dots">
+              <div class="rdot"></div><div class="rdot"></div><div class="rdot"></div><div class="rdot off"></div>
+            </div>
+          </div>
+          <button class="btn btn-full" style="margin-top:8px" onclick="modal('THREAT DETAILS','Last 5 minutes:\n\n4x Brute force from 185.220.x.x (Tor exit)\n2x Exploit attempts CVE-2021-44228\n1x Malware beacon to 104.21.x.x\n3x Unusual DNS queries (possible tunneling)\n7x Port scan from 10.0.0.99\n\nRecommendation: Block 185.220.0.0/16, alert SOC')">VIEW DETAILS</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE 16: SETTINGS -->
+    <div class="page" id="page-15">
+      <div class="ph">
+        <div class="ph-left">
+          <div class="ph-num">16. SETTINGS / CONFIG</div>
+          <div class="ph-title">FINE TUNE YOUR ARSENAL</div>
+          <div class="ph-sub">SYSTEM CONFIGURATION AND PREFERENCES</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="setting-group">
+            <div class="setting-group-title">GENERAL</div>
+            <div class="setting-item"><label>OS THEME</label><select class="sel-inp" onchange="notify('THEME','Theme set to '+this.value)"><option>CYBERPUNK</option><option>MATRIX</option><option>BLOOD RED</option><option>GHOST WHITE</option></select></div>
+            <div class="setting-item"><label>TERMINAL FONT</label><select class="sel-inp"><option>JetBrains Mono</option><option>Share Tech Mono</option><option>VT323</option><option>Fira Code</option></select></div>
+            <div class="setting-item"><label>LANGUAGE</label><select class="sel-inp"><option>English</option><option>日本語</option><option>Русский</option></select></div>
+            <div class="setting-item"><label>HACKING SFX</label>
+              <div style="display:flex;align-items:center;gap:8px">
+                <input type="range" min="0" max="100" value="88" oninput="document.getElementById('sfx-v').textContent=this.value+'%'"/>
+                <span class="setting-val" id="sfx-v">88%</span>
+              </div>
+            </div>
+          </div>
+          <div class="setting-group">
+            <div class="setting-group-title">NETWORK</div>
+            <div class="setting-item"><label>DEFAULT LHOST</label><input class="inp" value="10.14.14.5" style="padding:4px 8px;font-size:10px;width:auto"/></div>
+            <div class="setting-item"><label>DEFAULT LPORT</label><input class="inp" value="4444" style="padding:4px 8px;font-size:10px;width:60px"/></div>
+            <div class="setting-item"><label>PROXY</label><input class="inp" value="socks5://127.0.0.1:9050" style="padding:4px 8px;font-size:10px"/></div>
+          </div>
+        </div>
+        <div>
+          <div class="setting-group">
+            <div class="setting-group-title">FEATURES</div>
+            <div class="setting-item"><label>ANIMATIONS</label><span class="setting-val">ON</span></div>
+            <div class="setting-item"><label>AUTO SAVE LOOT</label><span class="setting-val">ON</span></div>
+            <div class="setting-item"><label>AUTO SCREENSHOT</label><span class="setting-val">OFF</span></div>
+            <div class="setting-item"><label>STEALTH ON BOOT</label><span class="setting-val">ON</span></div>
+          </div>
+          <div class="setting-group">
+            <div class="setting-group-title">UPDATES</div>
+            <div class="setting-item"><label>UPDATE CHANNEL</label>
+              <select class="sel-inp"><option>STABLE</option><option>BLEEDING EDGE</option><option>NIGHTLY</option></select>
+            </div>
+            <div class="setting-item"><label>CURRENT VERSION</label><span class="setting-val">1.0.0-NIGHTFALL</span></div>
+            <div class="setting-item"><label>LAST UPDATE</label><span style="color:var(--text-dim)">2 days ago</span></div>
+          </div>
+          <button class="btn btn-full" onclick="notify('CONFIG SAVED','All settings saved successfully.')">✓ SAVE CONFIGURATION</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /pages -->
+</div><!-- /os -->
+
+<!-- NOTIFICATION -->
+<div id="notif"><div class="nt" id="n-title">SYS</div><div class="nb" id="n-body">.</div></div>
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal-box">
+    <div id="modal-title"></div>
+    <pre id="modal-body"></pre>
+    <button class="btn btn-red" id="modal-close" onclick="closeModal()">✕ CLOSE</button>
+  </div>
+</div>
+
+<script>
+// ===== PAGE NAMES =====
+const PAGE_NAMES = ['SYSTEM STATUS','DASHBOARD','NETWORK SCANNER','EXPLOIT LAUNCHER','VULN REPORT','LOOT VAULT','TARGET MAP','PAYLOAD STUDIO','HASH CRACKER','PRIV ESC TREE','STEALTH MODULE','ACHIEVEMENTS','SESSIONS MANAGER','TERMINAL','THREAT RADAR','SETTINGS'];
+
+// ===== BOOT =====
+const bootSteps = [
+  ['▸ INITIALIZING KERNEL',100],['▸ LOADING DRIVERS',100],
+  ['▸ CHECKING HARDWARE',100],['▸ MOUNTING FILESYSTEM',100],['▸ STARTING SERVICES',100]
+];
+let bi=0;
+function runBoot(){
+  if(bi>=bootSteps.length){
+    document.getElementById('boot-enter').style.display='block';
+    document.addEventListener('keydown',e=>{if(e.key==='Enter')launchOS()},{once:true});
+    document.getElementById('boot').addEventListener('click',launchOS,{once:true});
+    return;
+  }
+  const [lbl]=bootSteps[bi];
+  const log=document.getElementById('boot-log');
+  const d=document.createElement('div'); d.className='blog';
+  d.innerHTML=`<span>${lbl}</span><div class="blog-bar"><div class="blog-fill" id="bf${bi}"></div></div><span class="blog-pct" id="bp${bi}">0%</span>`;
+  log.appendChild(d); d.style.opacity='1';
+  let p=0;
+  const iv=setInterval(()=>{
+    p+=Math.random()*20+8;
+    if(p>=100){p=100;clearInterval(iv);bi++;setTimeout(runBoot,100);}
+    document.getElementById('bf'+bi).style.width=p+'%';
+    document.getElementById('bp'+bi).textContent=Math.floor(p)+'%';
+  },50);
+}
+setTimeout(runBoot,300);
+
+function launchOS(){
+  const b=document.getElementById('boot');
+  b.style.transition='opacity 0.4s'; b.style.opacity='0';
+  setTimeout(()=>{b.style.display='none';document.getElementById('os').style.display='block';initOS();},400);
+}
+
+// ===== INIT OS =====
+let startT=Date.now(), crackOn=false, crackPct=42, stealthOn=true;
+
+function initOS(){
+  document.getElementById('term-time').textContent=new Date().toLocaleTimeString();
+  setInterval(tickClock,1000);
+  setInterval(tickStats,2200);
+  setInterval(()=>{if(crackOn)tickCrack();},600);
+  setInterval(tickThreats,6000);
+  setInterval(tickSessions,1000);
+  drawNetGraph();
+  drawSbGraph();
+}
+
+// Sidebar mini CPU sparkline
+function drawSbGraph(){
+  const c=document.getElementById('sb-cpu-graph'); if(!c)return;
+  c.width=52; c.height=22;
+  const ctx=c.getContext('2d');
+  let data=Array.from({length:26},()=>Math.random()*12+4);
+  function frame(){
+    data.push(Math.random()*14+3); data.shift();
+    ctx.clearRect(0,0,52,22);
+    ctx.beginPath();
+    data.forEach((v,i)=>{const x=(i/25)*52,y=22-v;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.strokeStyle='#39ff14'; ctx.lineWidth=1; ctx.shadowColor='#39ff14'; ctx.shadowBlur=2;
+    ctx.stroke();
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+function tickClock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=[n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
+  const s=Math.floor((Date.now()-startT)/1000);
+  const h=String(Math.floor(s/3600)).padStart(2,'0'), m=String(Math.floor((s%3600)/60)).padStart(2,'0'), sec=String(s%60).padStart(2,'0');
+  const up=`${h}:${m}:${sec}`;
+  if(document.getElementById('uptime')) document.getElementById('uptime').textContent=up;
+}
+
+function tickStats(){
+  const cpu=Math.floor(Math.random()*30+15), ram=Math.floor(Math.random()*20+38), net=Math.floor(Math.random()*25+10);
+  document.getElementById('cpu-v').textContent=cpu+'%';
+  document.getElementById('ram-v').textContent=ram+'%';
+  document.getElementById('net-v').textContent=net+'%';
+  // page 1
+  const p1cpu=document.getElementById('p1-cpu'); if(p1cpu){p1cpu.textContent=cpu+'%';document.getElementById('p1-cpu-bar').style.width=cpu+'%';}
+  const p1ram=document.getElementById('p1-ram'); if(p1ram){p1ram.textContent=ram+'%';document.getElementById('p1-ram-bar').style.width=ram+'%';}
+  const p1net=document.getElementById('p1-net'); if(p1net){p1net.textContent=net+'%';document.getElementById('p1-net-bar').style.width=net+'%';}
+  // page 2
+  const dcpu=document.getElementById('d-cpu'); if(dcpu){dcpu.textContent=cpu+'%';document.getElementById('d-cpu-bar').style.width=cpu+'%';}
+}
+
+let sTimes=[2712,4353,551]; // seconds
+function tickSessions(){
+  sTimes=sTimes.map(t=>t+1);
+  ['s1','s2','s3'].forEach((id,i)=>{
+    const el=document.getElementById(id); if(!el)return;
+    const t=sTimes[i]; const h=String(Math.floor(t/3600)).padStart(2,'0'), m=String(Math.floor((t%3600)/60)).padStart(2,'0'), s=String(t%60).padStart(2,'0');
+    el.textContent=`${h}:${m}:${s}`;
+  });
+}
+
+function tickThreats(){
+  const b=[4,2,1,3,7], ids=['tc-brute','tc-exploit','tc-malware','tc-dns','tc-scan'];
+  let total=0;
+  ids.forEach((id,i)=>{
+    const v=b[i]+Math.floor(Math.random()*3);
+    const el=document.getElementById(id); if(el)el.textContent=v;
+    total+=v;
+  });
+  const badge=document.getElementById('threat-badge'); if(badge)badge.textContent=total;
+}
+
+let crackTried=50400000;
+function tickCrack(){
+  crackPct=Math.min(crackPct+Math.random()*0.4,100);
+  crackTried+=Math.floor(Math.random()*1200000+800000);
+  const p=Math.floor(crackPct);
+  const el=document.getElementById('crack-pct'); if(el)el.textContent=p+'%';
+  const bar=document.getElementById('crack-bar'); if(bar)bar.style.width=p+'%';
+  const tried=document.getElementById('crack-tried'); if(tried)tried.textContent=(crackTried/1e6).toFixed(1)+'M';
+}
+
+// ===== NET GRAPH =====
+function drawNetGraph(){
+  const c=document.getElementById('net-canvas'); if(!c)return;
+  c.width=c.offsetWidth||400; c.height=60;
+  const ctx=c.getContext('2d');
+  let data=Array.from({length:60},()=>Math.random()*30+10);
+  function frame(){
+    c.width=c.offsetWidth; c.height=60;
+    data.push(Math.random()*32+8); data.shift();
+    ctx.clearRect(0,0,c.width,c.height);
+    // fill
+    ctx.beginPath();
+    data.forEach((v,i)=>{const x=(i/data.length)*c.width,y=c.height-v;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.lineTo(c.width,c.height); ctx.lineTo(0,c.height); ctx.closePath();
+    ctx.fillStyle='rgba(57,255,20,0.05)'; ctx.fill();
+    // line
+    ctx.beginPath();
+    ctx.strokeStyle='#39ff14'; ctx.lineWidth=1.5; ctx.shadowColor='#39ff14'; ctx.shadowBlur=4;
+    data.forEach((v,i)=>{const x=(i/data.length)*c.width,y=c.height-v;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+    ctx.stroke();
+    requestAnimationFrame(frame);
+  }
+  frame();
+}
+
+// ===== NAVIGATION =====
+function goPage(i){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+i).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-btn')[i].classList.add('active');
+  document.getElementById('tb-page').textContent=PAGE_NAMES[i];
+  if(i===12) setTimeout(drawNetGraph,100);
+  if(i===13) document.getElementById('term-in').focus();
+}
+
+// ===== INTERACTIONS =====
+function selectExploit(row,name,cve,type,rel,risk,desc){
+  document.querySelectorAll('#exploit-tbl tbody tr').forEach(r=>r.classList.remove('sel'));
+  row.classList.add('sel');
+  document.getElementById('ed-name').textContent=name;
+  document.getElementById('ed-cve').textContent=cve;
+  document.getElementById('ed-type').textContent=type;
+  document.getElementById('ed-rel').textContent=rel;
+  document.getElementById('ed-risk').textContent=risk;
+  document.getElementById('ed-desc').textContent=desc;
+  document.getElementById('ed-risk').className=risk==='CRITICAL'?'crit':'high';
+}
+
+function launchExploit(){
+  const name=document.getElementById('ed-name').textContent;
+  const rhost=document.getElementById('rhost').value;
+  notify('⚡ EXPLOIT LAUNCHED',name+'\nTarget: '+rhost+'\nStatus: CONNECTING...');
+  tl('[*] Loading module: '+name,'c');
+  tl('[*] Connecting to '+rhost+'...','o');
+  setTimeout(()=>{tl('[+] Session opened — shell active!','w');},1800);
+}
+
+function startScan(){
+  const t=document.getElementById('scan-target').value;
+  notify('SCAN STARTED','Scanning '+t+'...');
+  document.getElementById('scan-pct').textContent='0%';
+  const bar=document.getElementById('scan-bar'); bar.style.width='0%';
+  let p=0;
+  const iv=setInterval(()=>{
+    p+=Math.random()*5+2; if(p>=100){p=100;clearInterval(iv);document.getElementById('scan-pct').textContent='COMPLETE';}
+    bar.style.width=p+'%'; document.getElementById('scan-pct').textContent=Math.floor(p)+'%';
+  },400);
+}
+
+function toggleCrack(){
+  crackOn=!crackOn;
+  const btn=document.getElementById('crack-btn');
+  btn.textContent=crackOn?'⏸ PAUSE CRACKING':'▶ START CRACKING';
+  if(crackOn)notify('CRACKING STARTED','Attacking with rockyou.txt at 1.2M/s...');
+}
+
+function generatePayload(){
+  const lhost=document.getElementById('lhost').value, lport=document.getElementById('lport').value;
+  const hex=[];
+  for(let i=0;i<40;i++)hex.push(Math.floor(Math.random()*256).toString(16).padStart(2,'0'));
+  const lines=[hex.slice(0,8).join(' '),hex.slice(8,16).join(' '),hex.slice(16,24).join(' '),hex.slice(24,32).join(' '),hex.slice(32,40).join(' ')];
+  document.getElementById('payload-hex').innerHTML=lines.join('<br>');
+  const sz=Math.floor(Math.random()*200+350);
+  document.getElementById('payload-size').textContent=sz;
+  notify('PAYLOAD GENERATED','LHOST: '+lhost+'\nLPORT: '+lport+'\nSize: '+sz+' bytes');
+}
+
+function updatePayload(){
+  const hex=[]; for(let i=0;i<40;i++)hex.push(Math.floor(Math.random()*256).toString(16).padStart(2,'0'));
+  const lines=[hex.slice(0,8).join(' '),hex.slice(8,16).join(' '),hex.slice(16,24).join(' '),hex.slice(24,32).join(' '),hex.slice(32,40).join(' ')];
+  document.getElementById('payload-hex').innerHTML=lines.join('<br>');
+}
+
+function randPort(){
+  document.getElementById('lport').value=Math.floor(Math.random()*50000)+1024;
+  updatePayload();
+}
+
+function selectTgt(i,name){
+  document.querySelectorAll('.target-item').forEach(el=>el.classList.remove('selected'));
+  document.getElementById('ti-'+i).classList.add('selected');
+  document.getElementById('map-sel').textContent=name;
+}
+
+let stealthTargets=[...Array(5).keys()].map(i=>'sm'+i);
+function toggleStealth(){
+  stealthOn=!stealthOn;
+  const track=document.getElementById('stealth-track'), lbl=document.getElementById('stealth-label');
+  const ind=document.getElementById('sb-stealth-ind');
+  const dot=document.getElementById('sb-dot');
+  if(stealthOn){
+    track.classList.add('on'); lbl.textContent='ON';
+    stealthTargets.forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='ENABLED';el.className='smr-status on';}});
+    document.getElementById('stealth-motto').textContent='"YOU ARE A GHOST IN THE MACHINE."';
+    if(ind){ind.textContent='👁 GHOST'; ind.style.color='var(--purple)';}
+    if(dot){dot.className='sb-status-dot stealth';}
+    document.getElementById('sb-conn-label').textContent='GHOST';
+    notify('STEALTH ENABLED','All evasion modules active. You are invisible.');
+  } else {
+    track.classList.remove('on'); lbl.textContent='OFF';
+    stealthTargets.forEach(id=>{const el=document.getElementById(id);if(el){el.textContent='DISABLED';el.className='smr-status off';}});
+    document.getElementById('stealth-motto').textContent='"WARNING: STEALTH MODULES OFFLINE."';
+    if(ind){ind.textContent='⚠ EXPOSED'; ind.style.color='var(--red)';}
+    if(dot){dot.className='sb-status-dot online';}
+    document.getElementById('sb-conn-label').textContent='ONLINE';
+    notify('STEALTH DISABLED','All evasion modules stopped. You may be detected!',true);
+  }
+}
+
+function killSession(btn,ip){
+  const row=btn.closest('tr');
+  row.style.transition='opacity 0.3s'; row.style.opacity='0';
+  setTimeout(()=>{
+    row.remove();
+    notify('SESSION TERMINATED',ip+' — connection closed.');
+    const badge=document.getElementById('sess-badge');
+    if(badge){ const v=Math.max(0,parseInt(badge.textContent||'0')-1); badge.textContent=v; if(v===0)badge.style.display='none'; }
+  },300);
+}
+
+function switchTab(el){
+  el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ===== TERMINAL =====
+const termHist=[], termCmds={
+  'help':()=>['Available commands:\n  id, whoami, ls, ls -la, pwd, ifconfig,\n  ps, netstat, uname -a, env, history,\n  cat flag.txt, hack, clear, exit'],
+  'id':()=>['uid=0(root) gid=0(root) groups=0(root)'],
+  'whoami':()=>['root'],
+  'ls':()=>['bin  boot  dev  etc  home  lib  media  opt  proc  root  run  srv  sys  tmp  usr  var'],
+  'ls -la':()=>['total 64','drwx------ 4 root root 4096 May 18 10:22 .','drwxr-xr-x 22 root root 4096 May 18 09:13 ..','drwx------ 2 root root 4096 May 18 08:00 .ssh','-rw------- 1 root root 1288 May 18 10:22 flag.txt','-rw-r--r-- 1 root root  220 May 17 09:01 .bashrc'],
+  'pwd':()=>['/root'],
+  'env':()=>['PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin','HOME=/root','USER=root','SHELL=/bin/bash'],
+  'ifconfig':()=>['eth0: inet 10.0.0.23 netmask 255.255.255.0','lo: inet 127.0.0.1 netmask 255.0.0.0'],
+  'ps':()=>['  PID TTY  TIME     CMD','    1 ?    00:00:02 systemd','  412 ?    00:00:00 sshd','  488 pts/0 00:00:00 bash','  512 pts/0 00:00:00 ps'],
+  'netstat':()=>['Proto Recv-Q Send-Q Local Address     Foreign Address   State','tcp   0      0      0.0.0.0:22        0.0.0.0:*         LISTEN','tcp   0      0      0.0.0.0:80        0.0.0.0:*         LISTEN','tcp   0      0      10.0.0.23:4444    10.14.14.5:52310  ESTABLISHED'],
+  'uname -a':()=>['Linux megacorp 5.4.0-custom #1 SMP Mon May 18 08:00:00 UTC 2024 x86_64 GNU/Linux'],
+  'history':()=>['  1  id','  2  whoami','  3  ls -la /root','  4  cat /root/flag.txt','  5  useradd -m backdoor','  6  echo backdoor:P@ss >> /etc/shadow'],
+  'cat flag.txt':()=>['BLACKBYTE{N0_R00T_N0_PR0BLEM}'],
+  'cat /root/flag.txt':()=>['BLACKBYTE{N0_R00T_N0_PR0BLEM}'],
+  'hack':()=>['[*] Initiating full compromise sequence...','[*] Scanning for adjacent hosts...','[*] 10.0.0.50 — port 22 open','[*] Attempting SSH bruteforce...','[+] Credentials found: admin:admin123','[+] Session opened on 10.0.0.50!','[!] NEW HOST COMPROMISED'],
+  'clear':()=>{document.getElementById('term-out').innerHTML='';return[];},
+  'exit':()=>['Connection closed by remote host.'],
+};
+let histIdx=-1;
+function handleTerm(e){
+  const inp=document.getElementById('term-in');
+  if(e.key==='Enter'){
+    const cmd=inp.value.trim(); if(!cmd)return;
+    termHist.unshift(cmd); histIdx=-1;
+    tl('root@megacorp:/# '+cmd,'c');
+    const fn=termCmds[cmd.toLowerCase()];
+    if(fn){const lines=fn();lines.forEach(l=>tl(l,cmd==='cat flag.txt'||cmd==='cat /root/flag.txt'?'w':'o'));}
+    else tl('bash: '+cmd+': command not found','o');
+    inp.value='';
+    const out=document.getElementById('term-out'); out.scrollTop=out.scrollHeight;
+  } else if(e.key==='ArrowUp'){histIdx=Math.min(histIdx+1,termHist.length-1);inp.value=termHist[histIdx]||'';}
+  else if(e.key==='ArrowDown'){histIdx=Math.max(histIdx-1,-1);inp.value=histIdx>=0?termHist[histIdx]:'';}
+}
+function tl(text,cls){
+  const out=document.getElementById('term-out'); if(!out)return;
+  const d=document.createElement('div'); d.className='tl '+cls; d.textContent=text;
+  out.appendChild(d); out.scrollTop=out.scrollHeight;
+}
+
+// ===== NOTIFICATIONS =====
+let nTimer;
+function notify(title,body,warn=false){
+  const n=document.getElementById('notif'),t=document.getElementById('n-title'),b=document.getElementById('n-body');
+  t.textContent=title; b.textContent=body;
+  n.className=warn?'warn':'';
+  n.classList.add('show');
+  clearTimeout(nTimer); nTimer=setTimeout(()=>n.classList.remove('show'),3500);
+}
+
+// ===== MODAL =====
+function modal(title,body){
+  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-body').textContent=body;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+
+// ===== SCAN PROGRESS AUTO =====
+setInterval(()=>{
+  const bar=document.getElementById('scan-bar'), pct=document.getElementById('scan-pct');
+  if(!bar||!pct) return;
+  const cur=parseFloat(bar.style.width)||73;
+  if(cur<100){ const next=Math.min(cur+Math.random()*2,100); bar.style.width=next+'%'; if(next>=100)pct.textContent='COMPLETE'; else pct.textContent=Math.floor(next)+'%'; }
+},4000);
+</script>
+</body>
+</html>
