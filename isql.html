@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Quest v2 — From Beginner to Expert</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/sql-wasm.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Syne:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg:      #07080d;
+  --bg2:     #0c0e16;
+  --bg3:     #10131d;
+  --panel:   #141826;
+  --border:  #1e2538;
+  --border2: #283048;
+  --accent:  #5dfdcb;
+  --a2:      #4a9eff;
+  --a3:      #ff6b9d;
+  --a4:      #ffd166;
+  --a5:      #b084ff;
+  --text:    #dde6f5;
+  --text2:   #8899bb;
+  --text3:   #3d4d6a;
+  --ok:      #5dfdcb;
+  --err:     #ff6b9d;
+  --warn:    #ffd166;
+  --mono:    'Fira Code', monospace;
+  --sans:    'Syne', sans-serif;
+  --radius:  8px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:var(--sans)}
+
+/* ══ LAYOUT ══════════════════════════════════════════════ */
+#app{display:grid;grid-template-rows:48px 1fr;grid-template-columns:260px 1fr 300px;height:100vh}
+
+/* ══ TOPBAR ══════════════════════════════════════════════ */
+#topbar{
+  grid-column:1/-1;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 16px;gap:14px;
+}
+.logo{font-family:var(--mono);font-size:.9rem;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:8px;letter-spacing:.06em;white-space:nowrap}
+.logo-glyph{background:linear-gradient(135deg,var(--accent),var(--a2));color:#07080d;border-radius:6px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:800}
+
+#track-wrap{flex:1;display:flex;align-items:center;gap:4px;overflow:hidden;padding:0 8px}
+.track-seg{height:4px;border-radius:2px;flex:1;background:var(--border2);cursor:pointer;transition:.25s;position:relative}
+.track-seg.done{background:var(--accent);box-shadow:0 0 6px rgba(93,253,203,.5)}
+.track-seg.active{background:var(--a4);box-shadow:0 0 8px rgba(255,209,102,.6);animation:blink .9s infinite}
+.track-seg:hover{transform:scaleY(2)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+
+.topbar-badges{display:flex;gap:6px;align-items:center;white-space:nowrap}
+.badge{font-family:var(--mono);font-size:.62rem;padding:3px 9px;border-radius:20px;border:1px solid}
+.badge-xp{color:var(--a4);border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.06)}
+.badge-streak{color:var(--a3);border-color:rgba(255,107,157,.3);background:rgba(255,107,157,.06)}
+.badge-rank{color:var(--a5);border-color:rgba(176,132,255,.3);background:rgba(176,132,255,.06)}
+
+/* ══ LEFT SIDEBAR ════════════════════════════════════════ */
+#sidebar{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.sb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-tab{flex:1;font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);padding:9px 4px;text-align:center;cursor:pointer;transition:.15s;border-bottom:2px solid transparent}
+.sb-tab:hover{color:var(--text2)}
+.sb-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.sb-pane{flex:1;overflow-y:auto;display:none;padding:10px}
+.sb-pane.active{display:block}
+
+/* Curriculum list */
+.track-header{font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.12em;color:var(--text3);padding:8px 4px 4px;display:flex;align-items:center;gap:6px}
+.track-header::after{content:'';flex:1;height:1px;background:var(--border)}
+.ch-row{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:.15s;margin-bottom:2px}
+.ch-row:hover{background:rgba(255,255,255,.03)}
+.ch-row.active{background:rgba(93,253,203,.07);border:1px solid rgba(93,253,203,.15)}
+.ch-row.done{opacity:.55}
+.ch-row.locked{opacity:.3;cursor:not-allowed}
+.ch-num{font-family:var(--mono);font-size:.58rem;color:var(--text3);width:20px;flex-shrink:0}
+.ch-name{font-size:.7rem;color:var(--text2);flex:1;line-height:1.3}
+.ch-row.active .ch-name{color:var(--accent)}
+.ch-icon{font-size:.7rem;flex-shrink:0}
+
+/* Schema pane */
+.tbl-card{margin-bottom:8px}
+.tbl-header{font-family:var(--mono);font-size:.65rem;color:var(--a2);font-weight:600;padding:5px 8px;background:rgba(74,158,255,.07);border-left:2px solid var(--a2);border-radius:0 4px 4px 0;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.tbl-header:hover{background:rgba(74,158,255,.12)}
+.tbl-cols{overflow:hidden;transition:.2s}
+.col-row{font-family:var(--mono);font-size:.62rem;padding:2px 8px 2px 18px;display:flex;justify-content:space-between;color:var(--text2)}
+.col-type{color:var(--text3)}
+.col-pk{color:var(--a4)}
+
+/* Badges pane */
+.badge-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.badge-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center}
+.badge-card.earned{border-color:rgba(93,253,203,.3);background:rgba(93,253,203,.04)}
+.badge-card.locked{opacity:.3}
+.badge-icon{font-size:1.4rem;margin-bottom:4px}
+.badge-title{font-family:var(--mono);font-size:.58rem;color:var(--text2);font-weight:600}
+.badge-desc{font-size:.6rem;color:var(--text3);margin-top:2px;line-height:1.3}
+
+/* ══ MAIN ═════════════════════════════════════════════════ */
+#main{display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+
+/* Challenge header */
+#ch-header{padding:14px 18px 10px;border-bottom:1px solid var(--border);background:var(--bg2);flex-shrink:0}
+.ch-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ch-track-tag{font-family:var(--mono);font-size:.58rem;padding:2px 8px;border-radius:20px;border:1px solid}
+.track-beginner{color:#5dfdcb;border-color:rgba(93,253,203,.3);background:rgba(93,253,203,.06)}
+.track-intermediate{color:#4a9eff;border-color:rgba(74,158,255,.3);background:rgba(74,158,255,.06)}
+.track-advanced{color:#ffd166;border-color:rgba(255,209,102,.3);background:rgba(255,209,102,.06)}
+.track-expert{color:#ff6b9d;border-color:rgba(255,107,157,.3);background:rgba(255,107,157,.06)}
+.diff-pill{font-family:var(--mono);font-size:.55rem;padding:2px 7px;border-radius:20px;font-weight:700;text-transform:uppercase}
+.diff-easy{color:#5dfdcb;background:rgba(93,253,203,.1);border:1px solid rgba(93,253,203,.25)}
+.diff-medium{color:#ffd166;background:rgba(255,209,102,.1);border:1px solid rgba(255,209,102,.25)}
+.diff-hard{color:#ff6b9d;background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.25)}
+.diff-expert{color:#b084ff;background:rgba(176,132,255,.1);border:1px solid rgba(176,132,255,.25)}
+.ch-xp{font-family:var(--mono);font-size:.58rem;color:var(--a4);margin-left:auto}
+.ch-title{font-size:.95rem;font-weight:600;color:var(--text);line-height:1.45;margin-bottom:6px}
+.ch-desc{font-size:.75rem;color:var(--text2);line-height:1.55}
+.ch-desc code{font-family:var(--mono);color:var(--accent);background:rgba(93,253,203,.08);padding:1px 5px;border-radius:3px}
+.tag-bar{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.stag{font-family:var(--mono);font-size:.56rem;padding:2px 7px;border-radius:20px;border:1px solid rgba(255,255,255,.1);color:var(--text3)}
+
+/* Editor */
+#editor-area{flex:1;display:flex;flex-direction:column;padding:12px;gap:10px;overflow:hidden;min-height:0}
+.editor-frame{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;overflow:hidden;transition:border-color .2s,box-shadow .2s;min-height:0}
+.editor-frame:focus-within{border-color:rgba(93,253,203,.4);box-shadow:0 0 0 1px rgba(93,253,203,.1),0 4px 24px rgba(93,253,203,.06)}
+.editor-titlebar{background:var(--bg2);border-bottom:1px solid var(--border);padding:6px 12px;display:flex;align-items:center;gap:8px;border-radius:var(--radius) var(--radius) 0 0;flex-shrink:0}
+.tbar-dot{width:9px;height:9px;border-radius:50%}
+.tbar-fname{font-family:var(--mono);font-size:.6rem;color:var(--text3);flex:1;text-align:center}
+.tbar-help{font-family:var(--mono);font-size:.58rem;color:var(--text3);cursor:pointer;padding:1px 6px;border-radius:3px;border:1px solid var(--border)}
+.tbar-help:hover{color:var(--accent);border-color:rgba(93,253,203,.3)}
+
+#editor{
+  flex:1;background:transparent;color:var(--text);font-family:var(--mono);font-size:.8rem;
+  line-height:1.75;border:none;outline:none;resize:none;padding:12px 14px;
+  caret-color:var(--accent);tab-size:2;min-height:0;
+}
+#editor::placeholder{color:var(--text3)}
+
+/* Concept box */
+.concept{background:rgba(74,158,255,.05);border:1px solid rgba(74,158,255,.15);border-radius:var(--radius);padding:11px 14px;flex-shrink:0}
+.concept-label{font-family:var(--mono);font-size:.58rem;color:var(--a2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;font-weight:700}
+.concept-body{font-size:.73rem;color:var(--text2);line-height:1.6}
+.concept-body code{font-family:var(--mono);color:var(--accent);background:rgba(93,253,203,.08);padding:1px 5px;border-radius:3px}
+.concept-body pre{font-family:var(--mono);font-size:.7rem;color:var(--accent);background:rgba(93,253,203,.06);border-left:2px solid rgba(93,253,203,.3);padding:8px 12px;border-radius:0 4px 4px 0;margin-top:5px;white-space:pre-wrap}
+
+/* Toolbar row */
+.toolbar{display:flex;gap:7px;align-items:center;flex-shrink:0}
+.btn{font-family:var(--mono);font-size:.68rem;border-radius:6px;padding:7px 14px;cursor:pointer;border:1px solid;transition:all .15s;letter-spacing:.03em;display:flex;align-items:center;gap:5px;white-space:nowrap}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#00c4a0);color:#07080d;border-color:transparent;font-weight:700}
+.btn-primary:hover{box-shadow:0 4px 14px rgba(93,253,203,.35)}
+.btn-ghost{background:transparent;color:var(--text3);border-color:var(--border)}
+.btn-ghost:hover{color:var(--text2);border-color:var(--border2)}
+.btn-yellow{background:transparent;color:var(--a4);border-color:rgba(255,209,102,.25)}
+.btn-yellow:hover{background:rgba(255,209,102,.08)}
+.btn-blue{background:transparent;color:var(--a2);border-color:rgba(74,158,255,.25)}
+.btn-blue:hover{background:rgba(74,158,255,.08)}
+.btn-pink{background:transparent;color:var(--a3);border-color:rgba(255,107,157,.25)}
+.btn-pink:hover{background:rgba(255,107,157,.08)}
+.kbd{font-size:.58rem;color:var(--text3);background:var(--bg2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;margin-left:2px}
+
+/* ══ RIGHT PANEL ══════════════════════════════════════════ */
+#right{background:var(--bg2);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+.r-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.r-tab{font-family:var(--mono);font-size:.58rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:9px 10px;cursor:pointer;transition:.15s;border-bottom:2px solid transparent;flex:1;text-align:center}
+.r-tab:hover{color:var(--text2)}
+.r-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.r-pane{flex:1;overflow-y:auto;padding:10px;display:none}
+.r-pane.active{display:block}
+
+/* Results */
+.res-meta{font-family:var(--mono);font-size:.62rem;color:var(--text3);margin-bottom:8px;display:flex;gap:10px}
+.res-rows{color:var(--accent)}
+.res-time{color:var(--a2)}
+.tbl-wrap{overflow-x:auto;border-radius:6px;border:1px solid var(--border)}
+.rtbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:.65rem}
+.rtbl th{background:var(--bg3);color:var(--a2);text-align:left;padding:5px 9px;border-bottom:1px solid var(--border);white-space:nowrap;font-weight:600}
+.rtbl td{padding:4px 9px;border-bottom:1px solid var(--border);color:var(--text2);white-space:nowrap;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.rtbl tr:last-child td{border-bottom:none}
+.rtbl tr:hover td{background:rgba(255,255,255,.02);color:var(--text)}
+.null-v{color:var(--text3);font-style:italic}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:6px;color:var(--text3)}
+.empty-state .em-icon{font-size:1.8rem}
+.empty-state p{font-family:var(--mono);font-size:.65rem}
+
+/* Feedback */
+.feedback{margin-top:8px;padding:11px 13px;border-radius:8px;font-size:.75rem;line-height:1.5;display:none}
+.feedback.ok{background:rgba(93,253,203,.07);border:1px solid rgba(93,253,203,.25);color:var(--ok);display:block}
+.feedback.fail{background:rgba(255,107,157,.07);border:1px solid rgba(255,107,157,.25);color:var(--err);display:block}
+.feedback.info{background:rgba(74,158,255,.07);border:1px solid rgba(74,158,255,.25);color:var(--a2);display:block}
+.fb-title{font-family:var(--mono);font-weight:700;font-size:.68rem;margin-bottom:3px}
+#next-btn{display:none;width:100%;margin-top:10px;background:linear-gradient(135deg,var(--accent),var(--a2));color:#07080d;border:none;border-radius:8px;padding:10px;font-family:var(--mono);font-size:.72rem;font-weight:700;cursor:pointer;letter-spacing:.04em;transition:.2s}
+#next-btn:hover{box-shadow:0 4px 18px rgba(93,253,203,.3);transform:translateY(-1px)}
+#next-btn.show{display:block}
+
+/* Terminal log */
+#log-pane{font-family:var(--mono);font-size:.65rem;line-height:1.85}
+.log-ln{display:flex;gap:8px;padding:1px 0}
+.log-t{color:var(--text3);flex-shrink:0;font-size:.58rem}
+.log-m{color:var(--text2)}
+.log-ok .log-m{color:var(--ok)}
+.log-err .log-m{color:var(--err)}
+.log-info .log-m{color:var(--a2)}
+.log-warn .log-m{color:var(--warn)}
+.log-cmd .log-m{color:var(--a5)}
+.log-sys .log-m{color:var(--text3)}
+
+/* History pane */
+.hist-item{font-family:var(--mono);font-size:.63rem;padding:7px 9px;border-radius:5px;border:1px solid var(--border);margin-bottom:4px;cursor:pointer;color:var(--text2);transition:.15s;line-height:1.5}
+.hist-item:hover{border-color:var(--accent);color:var(--accent);background:rgba(93,253,203,.04)}
+.hist-item .hist-meta{color:var(--text3);font-size:.56rem;margin-bottom:2px}
+
+/* Help pane */
+.help-section{margin-bottom:14px}
+.help-section-title{font-family:var(--mono);font-size:.62rem;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;font-weight:700;border-bottom:1px solid rgba(93,253,203,.1);padding-bottom:4px}
+.help-cmd{display:flex;gap:10px;margin-bottom:5px;font-family:var(--mono);font-size:.63rem}
+.help-cmd-name{color:var(--a4);flex-shrink:0;min-width:120px}
+.help-cmd-desc{color:var(--text3)}
+.help-example{background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:var(--mono);font-size:.63rem;color:var(--accent);margin:4px 0;cursor:pointer;transition:.15s}
+.help-example:hover{border-color:rgba(93,253,203,.35);background:rgba(93,253,203,.05)}
+.help-example::before{content:'▶ ';color:var(--text3)}
+
+/* Sandbox mode */
+#sandbox-banner{display:none;background:rgba(176,132,255,.08);border-bottom:1px solid rgba(176,132,255,.2);padding:6px 16px;font-family:var(--mono);font-size:.65rem;color:var(--a5);text-align:center}
+#sandbox-banner.show{display:block}
+
+/* XP toast */
+.xp-toast{position:fixed;top:60px;right:310px;background:rgba(255,209,102,.12);border:1px solid rgba(255,209,102,.35);color:var(--a4);font-family:var(--mono);font-size:.78rem;font-weight:700;padding:7px 15px;border-radius:20px;pointer-events:none;z-index:9999;opacity:0;transition:.3s;transform:translateY(10px)}
+.xp-toast.show{opacity:1;transform:translateY(0)}
+
+/* Badge toast */
+.badge-toast{position:fixed;bottom:30px;right:310px;background:var(--panel);border:1px solid rgba(93,253,203,.3);color:var(--text);font-family:var(--mono);font-size:.7rem;padding:10px 16px;border-radius:10px;pointer-events:none;z-index:9999;opacity:0;transition:.35s;transform:translateY(20px);min-width:220px}
+.badge-toast.show{opacity:1;transform:translateY(0)}
+
+/* Confetti */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:9998;display:none}
+.cpiece{position:absolute;top:-12px;width:8px;height:8px;border-radius:2px;animation:conffall linear forwards}
+@keyframes conffall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* Autocomplete */
+#ac{position:absolute;background:var(--panel);border:1px solid var(--border2);border-radius:7px;padding:4px 0;z-index:500;min-width:170px;max-height:160px;overflow-y:auto;display:none;box-shadow:0 8px 32px rgba(0,0,0,.6);font-family:var(--mono)}
+.ac-item{font-size:.68rem;padding:5px 12px;cursor:pointer;color:var(--text2);display:flex;justify-content:space-between;gap:12px}
+.ac-item.sel,.ac-item:hover{background:rgba(93,253,203,.1);color:var(--accent)}
+.ac-kind{color:var(--text3);font-size:.58rem}
+
+/* Completion screen */
+#completion-overlay{display:none;position:fixed;inset:0;background:rgba(7,8,13,.92);z-index:10000;align-items:center;justify-content:center;flex-direction:column;gap:16px}
+#completion-overlay.show{display:flex}
+.comp-title{font-family:var(--sans);font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--a2),var(--a5));-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center}
+.comp-sub{font-size:.85rem;color:var(--text2);text-align:center}
+.comp-stats{display:flex;gap:20px;margin-top:8px}
+.comp-stat{text-align:center;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 20px}
+.comp-stat-n{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--accent)}
+.comp-stat-l{font-size:.65rem;color:var(--text3);margin-top:2px}
+.comp-btns{display:flex;gap:10px}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <div class="logo"><div class="logo-glyph">⚡</div>SQL QUEST</div>
+  <div id="track-wrap"></div>
+  <div class="topbar-badges">
+    <span id="xp-badge" class="badge badge-xp">0 XP</span>
+    <span id="streak-badge" class="badge badge-streak">🔥 0</span>
+    <span id="rank-badge" class="badge badge-rank">BEGINNER</span>
+  </div>
+</div>
+
+<!-- LEFT SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-tabs">
+    <div class="sb-tab active" onclick="sbSwitch('curriculum',this)">CURRICULUM</div>
+    <div class="sb-tab" onclick="sbSwitch('schema',this)">SCHEMA</div>
+    <div class="sb-tab" onclick="sbSwitch('badges',this)">BADGES</div>
+  </div>
+  <div id="sb-curriculum" class="sb-pane active"></div>
+  <div id="sb-schema" class="sb-pane"></div>
+  <div id="sb-badges" class="sb-pane"></div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="sandbox-banner">🔬 SANDBOX MODE — Free exploration. Type any SQL query. Type <code>:exit</code> to return to challenges.</div>
+
+  <div id="ch-header">
+    <div class="ch-meta">
+      <span id="ch-track-tag" class="ch-track-tag track-beginner">BEGINNER</span>
+      <span id="ch-diff" class="diff-pill diff-easy">easy</span>
+      <span id="ch-num" style="font-family:var(--mono);font-size:.62rem;color:var(--text3)">1 / 25</span>
+      <span id="ch-xp" class="ch-xp">+30 XP</span>
+    </div>
+    <div id="ch-title" class="ch-title"></div>
+    <div id="ch-desc" class="ch-desc"></div>
+    <div id="ch-tags" class="tag-bar"></div>
+  </div>
+
+  <div id="editor-area">
+    <div id="concept-panel" class="concept" style="display:none">
+      <div class="concept-label" id="concept-label">CONCEPT</div>
+      <div class="concept-body" id="concept-body"></div>
+    </div>
+
+    <div class="editor-frame">
+      <div class="editor-titlebar">
+        <div class="tbar-dot" style="background:#ff5f56"></div>
+        <div class="tbar-dot" style="background:#ffbd2e"></div>
+        <div class="tbar-dot" style="background:#27c93f"></div>
+        <div class="tbar-fname">query.sql</div>
+        <div class="tbar-help" onclick="insertHelp()">HELP</div>
+        <div class="tbar-help" onclick="toggleSandbox()">SANDBOX</div>
+      </div>
+      <textarea id="editor" placeholder="-- Type your SQL here, or type HELP for guidance&#10;-- Ctrl+Enter to run  |  ↑↓ for query history" spellcheck="false"></textarea>
+      <div id="ac"></div>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn btn-primary" onclick="runQuery()">▶ RUN <span class="kbd">^↵</span></button>
+      <button class="btn btn-yellow" onclick="doHint()">💡 HINT</button>
+      <button class="btn btn-blue" onclick="doAnswer()">👁 ANSWER</button>
+      <button class="btn btn-ghost" onclick="clearEditor()">✕ CLEAR</button>
+      <button class="btn btn-ghost" onclick="resetDB()">↺ RESET DB</button>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="right">
+  <div class="r-tabs">
+    <div class="r-tab active" onclick="rSwitch('results',this)">RESULTS</div>
+    <div class="r-tab" onclick="rSwitch('log',this)">LOG</div>
+    <div class="r-tab" onclick="rSwitch('history',this)">HISTORY</div>
+    <div class="r-tab" onclick="rSwitch('help',this)">HELP</div>
+  </div>
+
+  <div id="r-results" class="r-pane active">
+    <div id="empty-state" class="empty-state">
+      <div class="em-icon">🔍</div>
+      <p>Run a query to see results</p>
+      <p style="margin-top:4px;font-size:.58rem">Type HELP to get started</p>
+    </div>
+    <div id="results-wrap" style="display:none">
+      <div class="res-meta" id="res-meta"></div>
+      <div id="res-table"></div>
+      <div class="feedback" id="feedback"></div>
+      <button id="next-btn" onclick="nextChallenge()">→ NEXT CHALLENGE</button>
+    </div>
+  </div>
+
+  <div id="r-log" class="r-pane"><div id="log-pane"></div></div>
+  <div id="r-history" class="r-pane"><div id="history-pane"><div class="empty-state"><div class="em-icon">📜</div><p>No queries yet</p></div></div></div>
+  <div id="r-help" class="r-pane"><div id="help-pane"></div></div>
+</div>
+
+</div><!-- /app -->
+
+<div class="xp-toast" id="xp-toast"></div>
+<div class="badge-toast" id="badge-toast"></div>
+<div id="confetti"></div>
+
+<div id="completion-overlay">
+  <div class="comp-title">🏆 SQL QUEST COMPLETE!</div>
+  <div class="comp-sub">You've gone from zero to expert. Every concept mastered.</div>
+  <div class="comp-stats" id="comp-stats"></div>
+  <div class="comp-btns">
+    <button class="btn btn-primary" onclick="document.getElementById('completion-overlay').classList.remove('show');toggleSandbox()">🔬 FREE SANDBOX</button>
+    <button class="btn btn-ghost" onclick="document.getElementById('completion-overlay').classList.remove('show')">✕ CLOSE</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// CHALLENGE DATA
+// ═══════════════════════════════════════════════════════════════
+const TRACKS = {
+  beginner:     { label:'BEGINNER',     cls:'track-beginner'     },
+  intermediate: { label:'INTERMEDIATE', cls:'track-intermediate' },
+  advanced:     { label:'ADVANCED',     cls:'track-advanced'     },
+  expert:       { label:'EXPERT',       cls:'track-expert'       },
+};
+
+const CHALLENGES = [
+  // ────────────────── BEGINNER ──────────────────
+  {id:1,track:'beginner',diff:'easy',xp:20,
+   title:'Your First Query — SELECT Everything',
+   desc:'Welcome to Neonville\'s crime database! Every SQL journey starts here. Your mission: retrieve <code>ALL</code> rows and columns from the <code>citizens</code> table so we can see who lives here.',
+   concept:{label:'SELECT Statement',body:'<code>SELECT</code> retrieves data. The <code>*</code> wildcard means "all columns". Always end statements with <code>;</code><pre>SELECT * FROM table_name;</pre>'},
+   tags:['SELECT','*','FROM'],
+   hint:'Type exactly: SELECT * FROM citizens;',
+   answer:'SELECT * FROM citizens;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Try: SELECT * FROM citizens;');
+     if(!r[0].columns.includes('name')) return fail('Wrong table? Use FROM citizens');
+     if(r[0].values.length < 5) return fail('Not enough rows. Did you select from citizens?');
+     return ok('🎉 All '+r[0].values.length+' citizens retrieved! SELECT * is your foundation.');
+   }
+  },
+  {id:2,track:'beginner',diff:'easy',xp:25,
+   title:'Choose Your Columns — SELECT Specific Fields',
+   desc:'Too much data is noise. Retrieve only the <code>name</code> and <code>age</code> columns from the <code>citizens</code> table.',
+   concept:{label:'Selecting Specific Columns',body:'Instead of <code>*</code>, list column names separated by commas.<pre>SELECT col1, col2 FROM table_name;</pre>'},
+   tags:['SELECT','columns'],
+   hint:'SELECT name, age FROM citizens;',
+   answer:'SELECT name, age FROM citizens;',
+   check(r,db){
+     if(!r?.length) return fail('No results returned.');
+     const c=r[0].columns;
+     if(c.length!==2) return fail('Return exactly 2 columns: name and age. Got: '+c.join(', '));
+     if(!c.includes('name')||!c.includes('age')) return fail('Need columns: name and age');
+     return ok('✅ Clean output! Selecting specific columns makes queries focused and fast.');
+   }
+  },
+  {id:3,track:'beginner',diff:'easy',xp:30,
+   title:'Filter Rows — The WHERE Clause',
+   desc:'Find potential criminals! Get <code>name</code> and <code>status</code> of all citizens whose <code>status</code> is <code>\'suspect\'</code>.',
+   concept:{label:'WHERE Clause',body:'Filter rows with conditions. String values need single quotes.<pre>SELECT col1 FROM t WHERE col = \'value\';\nSELECT col1 FROM t WHERE num > 100;</pre>'},
+   tags:['WHERE','filtering'],
+   hint:'SELECT name, status FROM citizens WHERE status = \'suspect\';',
+   answer:"SELECT name, status FROM citizens WHERE status = 'suspect';",
+   check(r,db){
+     if(!r?.length) return fail('No results. Check your WHERE clause syntax.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('name')||!c.includes('status')) return fail('Need: name and status columns');
+     if(!v.length) return fail('No suspects found. Is the value exactly \'suspect\'?');
+     if(v.some(row=>row[c.indexOf('status')]!=='suspect')) return fail('Some non-suspects included. Fix your WHERE condition.');
+     return ok('🕵️ Found '+v.length+' suspects! WHERE is your most-used SQL tool.');
+   }
+  },
+  {id:4,track:'beginner',diff:'easy',xp:30,
+   title:'Sort Results — ORDER BY',
+   desc:'Get all citizens\' <code>name</code> and <code>age</code>, sorted youngest to oldest. Use <code>ORDER BY age ASC</code>.',
+   concept:{label:'ORDER BY',body:'Sort results ascending (ASC) or descending (DESC).<pre>SELECT * FROM t ORDER BY col ASC;\nSELECT * FROM t ORDER BY col DESC;\nSELECT * FROM t ORDER BY col1, col2 DESC;</pre>'},
+   tags:['ORDER BY','ASC','DESC'],
+   hint:'Add ORDER BY age ASC at the end of your query.',
+   answer:'SELECT name, age FROM citizens ORDER BY age ASC;',
+   check(r,db){
+     if(!r?.length) return fail('No results.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('age')) return fail('Include the age column.');
+     const ages=v.map(row=>row[c.indexOf('age')]);
+     for(let i=1;i<ages.length;i++) if(ages[i]<ages[i-1]) return fail('Not sorted ascending! Got: '+ages.slice(0,4).join(', ')+'...');
+     return ok('📊 Sorted! Youngest: '+ages[0]+', Oldest: '+ages[ages.length-1]+'. ORDER BY is essential for readable data.');
+   }
+  },
+  {id:5,track:'beginner',diff:'easy',xp:30,
+   title:'Limit Results — LIMIT',
+   desc:'The database has many records. Get only the <code>3</code> oldest citizens — return <code>name</code> and <code>age</code>, sorted by age descending, limited to 3 rows.',
+   concept:{label:'LIMIT',body:'Restrict how many rows are returned. LIMIT comes last in the query.<pre>SELECT * FROM t ORDER BY col DESC LIMIT 10;</pre>This is essential for large datasets — never pull a million rows when you need 10!'},
+   tags:['LIMIT','ORDER BY'],
+   hint:'SELECT name, age FROM citizens ORDER BY age DESC LIMIT 3;',
+   answer:'SELECT name, age FROM citizens ORDER BY age DESC LIMIT 3;',
+   check(r,db){
+     if(!r?.length) return fail('No results.');
+     const v=r[0].values, c=r[0].columns;
+     if(v.length!==3) return fail('Need exactly 3 rows. Got: '+v.length+'. Use LIMIT 3.');
+     if(!c.includes('age')) return fail('Include age column.');
+     const ages=v.map(row=>row[c.indexOf('age')]);
+     for(let i=1;i<ages.length;i++) if(ages[i]>ages[i-1]) return fail('Should be sorted DESC (oldest first). Got: '+ages.join(', '));
+     return ok('🏅 Perfect! Top 3 oldest: '+v.map(row=>row[c.indexOf('name')]+' ('+row[c.indexOf('age')]+')').join(', '));
+   }
+  },
+  {id:6,track:'beginner',diff:'easy',xp:35,
+   title:'Remove Duplicates — DISTINCT',
+   desc:'What districts exist in Neonville? Use <code>DISTINCT</code> to get a unique list of <code>district</code> values from the citizens table — no duplicates!',
+   concept:{label:'DISTINCT',body:'Removes duplicate values from results.<pre>SELECT DISTINCT col FROM table;\nSELECT DISTINCT col1, col2 FROM table; -- unique combinations</pre>'},
+   tags:['DISTINCT','deduplication'],
+   hint:'SELECT DISTINCT district FROM citizens;',
+   answer:'SELECT DISTINCT district FROM citizens;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Try: SELECT DISTINCT district FROM citizens;');
+     const v=r[0].values;
+     const unique=new Set(v.map(row=>row[0]));
+     if(unique.size!==v.length) return fail('Still has duplicates! Make sure you\'re using DISTINCT.');
+     if(v.length<3) return fail('Too few districts. Something went wrong with your query.');
+     return ok('🗺️ Found '+v.length+' unique districts: '+[...unique].join(', ')+'. DISTINCT is great for exploring data.');
+   }
+  },
+
+  // ────────────────── INTERMEDIATE ──────────────────
+  {id:7,track:'intermediate',diff:'medium',xp:40,
+   title:'Pattern Matching — LIKE',
+   desc:'Find all citizens whose <code>name</code> starts with the letter <b>\'J\'</b>. Return their full names. Use the <code>LIKE</code> operator with a wildcard.',
+   concept:{label:'LIKE Operator',body:'Match string patterns with LIKE. Use <code>%</code> as wildcard (any characters) and <code>_</code> for a single character.<pre>WHERE name LIKE \'J%\'   -- starts with J\nWHERE name LIKE \'%son\' -- ends with son\nWHERE name LIKE \'%an%\' -- contains an</pre>'},
+   tags:['LIKE','pattern','WHERE'],
+   hint:"WHERE name LIKE 'J%' — the % means 'anything after J'",
+   answer:"SELECT name FROM citizens WHERE name LIKE 'J%';",
+   check(r,db){
+     if(!r?.length) return fail('No results. Use LIKE \'J%\'');
+     const v=r[0].values, c=r[0].columns;
+     if(!c.includes('name')) return fail('Return the name column.');
+     if(!v.length) return fail('No names starting with J found. Check your LIKE pattern.');
+     if(v.some(row=>!String(row[c.indexOf('name')]).startsWith('J'))) return fail('Some names don\'t start with J. Pattern should be \'J%\'');
+     return ok('🔎 Found '+v.length+' names starting with J: '+v.map(r2=>r2[0]).join(', '));
+   }
+  },
+  {id:8,track:'intermediate',diff:'medium',xp:40,
+   title:'Multiple Conditions — AND / OR',
+   desc:'Find citizens who are <b>suspects</b> AND live in <b>\'Downtown\'</b>. Return <code>name</code>, <code>district</code>, <code>status</code>.',
+   concept:{label:'AND / OR / NOT',body:'Combine conditions with logical operators.<pre>WHERE a = 1 AND b = 2  -- both must be true\nWHERE a = 1 OR b = 2   -- either can be true\nWHERE NOT status = \'x\' -- negation\nWHERE age BETWEEN 20 AND 40 -- range</pre>'},
+   tags:['AND','OR','WHERE'],
+   hint:"WHERE status = 'suspect' AND district = 'Downtown'",
+   answer:"SELECT name, district, status FROM citizens WHERE status = 'suspect' AND district = 'Downtown';",
+   check(r,db){
+     if(!r?.length) return fail('No results. Use AND to combine two conditions.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('district')||!c.includes('status')) return fail('Return name, district, status.');
+     const si=c.indexOf('status'), di=c.indexOf('district');
+     for(const row of v){
+       if(row[si]!=='suspect') return fail('Non-suspect in results: '+row[c.indexOf('name')]);
+       if(row[di]!=='Downtown') return fail('Non-Downtown citizen in results: '+row[c.indexOf('name')]);
+     }
+     return ok('✅ '+v.length+' Downtown suspects found. AND/OR lets you build precise filters.');
+   }
+  },
+  {id:9,track:'intermediate',diff:'medium',xp:45,
+   title:'Add Data — INSERT INTO',
+   desc:'A new citizen has arrived! Insert them into the <code>citizens</code> table:<br>• name: <b>\'Alex Cipher\'</b> • age: <b>28</b> • district: <b>\'Uptown\'</b> • status: <b>\'civilian\'</b>',
+   concept:{label:'INSERT INTO',body:'Add new rows to a table. Column names and values must match in order.<pre>INSERT INTO table (col1, col2) VALUES (val1, val2);\n-- Strings need quotes, numbers don\'t\n-- Skip auto-generated columns like id</pre>'},
+   tags:['INSERT','DML'],
+   hint:"INSERT INTO citizens (name, age, district, status) VALUES ('Alex Cipher', 28, 'Uptown', 'civilian');",
+   answer:"INSERT INTO citizens (name, age, district, status) VALUES ('Alex Cipher', 28, 'Uptown', 'civilian');",
+   check(r,db){
+     try{
+       const ch=db.exec("SELECT * FROM citizens WHERE name='Alex Cipher'");
+       if(!ch?.length||!ch[0].values.length) return fail('Alex Cipher not found! Check your INSERT syntax.');
+       const row=ch[0].values[0], c=ch[0].columns;
+       if(row[c.indexOf('age')]!=28) return fail('Age should be 28, got: '+row[c.indexOf('age')]);
+       if(row[c.indexOf('district')]!=='Uptown') return fail('District should be Uptown');
+       if(row[c.indexOf('status')]!=='civilian') return fail('Status should be civilian');
+       return ok('🎉 Alex Cipher added to Neonville! INSERT INTO is how databases grow.');
+     }catch(e){return fail('Error: '+e.message)}
+   }
+  },
+  {id:10,track:'intermediate',diff:'medium',xp:45,
+   title:'Modify Data — UPDATE',
+   desc:'Jake Stone (id=3) was just arrested! Update his <code>status</code> to <code>\'arrested\'</code>. Use a precise <code>WHERE id = 3</code> to avoid changing other rows.',
+   concept:{label:'UPDATE Statement',body:'Modify existing rows. ALWAYS use WHERE — without it you update every row!<pre>UPDATE table SET col = value WHERE condition;\nUPDATE table SET col1 = v1, col2 = v2 WHERE id = 5;\n-- ⚠️ UPDATE table SET col = value; -- DANGER: all rows!</pre>'},
+   tags:['UPDATE','DML','WHERE'],
+   hint:"UPDATE citizens SET status = 'arrested' WHERE id = 3;",
+   answer:"UPDATE citizens SET status = 'arrested' WHERE id = 3;",
+   check(r,db){
+     try{
+       const ch=db.exec('SELECT status FROM citizens WHERE id=3');
+       if(!ch?.length) return fail('Could not find citizen id=3.');
+       const s=ch[0].values[0][0];
+       if(s!=='arrested') return fail('Status is still "'+s+'". Use: UPDATE citizens SET status = \'arrested\' WHERE id = 3;');
+       const others=db.exec("SELECT COUNT(*) FROM citizens WHERE id!=3 AND status='arrested'");
+       if(others[0].values[0][0]>2) return fail('Too many arrests! Did you forget the WHERE clause?');
+       return ok('⚖️ Jake Stone updated to arrested. WHERE is your safety net with UPDATE!');
+     }catch(e){return fail('Error: '+e.message)}
+   }
+  },
+  {id:11,track:'intermediate',diff:'medium',xp:45,
+   title:'Remove Data — DELETE',
+   desc:'There\'s a corrupt test record for someone named <b>\'Test User\'</b>. Delete only that record from citizens. Verify your condition before running!',
+   concept:{label:'DELETE Statement',body:'Remove entire rows. No WHERE = DELETE ALL ROWS (no undo!).<pre>DELETE FROM table WHERE condition;\n-- Always verify with SELECT first:\nSELECT * FROM table WHERE condition; -- preview\nDELETE FROM table WHERE condition;  -- then delete</pre>'},
+   tags:['DELETE','DML'],
+   hint:"DELETE FROM citizens WHERE name = 'Test User';",
+   answer:"DELETE FROM citizens WHERE name = 'Test User';",
+   check(r,db){
+     try{
+       const ch=db.exec("SELECT COUNT(*) FROM citizens WHERE name='Test User'");
+       if(ch[0].values[0][0]>0) return fail('Test User is still there! Use DELETE FROM citizens WHERE name = \'Test User\';');
+       const total=db.exec('SELECT COUNT(*) FROM citizens');
+       if(total[0].values[0][0]<5) return fail('Too many rows deleted! Click Reset DB and try again with a precise WHERE clause.');
+       return ok('🗑️ Test User removed! Remember: SELECT before DELETE — always check first.');
+     }catch(e){return fail('Error: '+e.message)}
+   }
+  },
+  {id:12,track:'intermediate',diff:'medium',xp:50,
+   title:'Count & Group — COUNT + GROUP BY',
+   desc:'How many citizens live in each district? Return <code>district</code> and a count column named <code>total</code>, sorted by total descending.',
+   concept:{label:'Aggregate Functions',body:'Summarize data across rows.<pre>COUNT(*) -- count rows\nSUM(col) -- add values\nAVG(col) -- average\nMAX(col) -- highest\nMIN(col) -- lowest\n\nSELECT district, COUNT(*) AS total\nFROM citizens GROUP BY district\nORDER BY total DESC;</pre>'},
+   tags:['COUNT','GROUP BY','aggregation'],
+   hint:'SELECT district, COUNT(*) AS total FROM citizens GROUP BY district ORDER BY total DESC;',
+   answer:'SELECT district, COUNT(*) AS total FROM citizens GROUP BY district ORDER BY total DESC;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Use GROUP BY district.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('district')) return fail('Include the district column.');
+     if(!c.includes('total')) return fail('Name your count "total" using: COUNT(*) AS total');
+     const tots=v.map(row=>row[c.indexOf('total')]);
+     for(let i=1;i<tots.length;i++) if(tots[i]>tots[i-1]) return fail('Sort by total DESC (most first).');
+     return ok('🏙️ Population by district: '+v.slice(0,3).map(row=>row[c.indexOf('district')]+': '+row[c.indexOf('total')]).join(', ')+'. GROUP BY is SQL\'s pivot table!');
+   }
+  },
+  {id:13,track:'intermediate',diff:'medium',xp:55,
+   title:'Connect Tables — INNER JOIN',
+   desc:'The <code>crimes</code> table has criminal records but only stores citizen IDs. JOIN it with <code>citizens</code> to get each crime\'s <code>type</code> and the criminal\'s <code>name</code> and <code>date</code>.',
+   concept:{label:'INNER JOIN',body:'Combine rows from two tables where keys match.<pre>SELECT a.col, b.col\nFROM table_a a\nJOIN table_b b ON a.key = b.key;\n-- Use dot notation: table.column\n-- INNER JOIN = only matching rows</pre>'},
+   tags:['JOIN','INNER JOIN','relationships'],
+   hint:'SELECT c.name, cr.type, cr.date FROM crimes cr JOIN citizens c ON cr.citizen_id = c.id;',
+   answer:'SELECT c.name, cr.type, cr.date FROM crimes cr JOIN citizens c ON cr.citizen_id = c.id;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Check your JOIN syntax.');
+     const c=r[0].columns;
+     if(!c.includes('name')) return fail('Missing name column from citizens.');
+     if(!c.includes('type')) return fail('Missing type column from crimes.');
+     if(!c.includes('date')) return fail('Missing date column.');
+     if(!r[0].values.length) return fail('JOIN returned no rows. Check the ON condition.');
+     return ok('🔗 Joined '+r[0].values.length+' crime records with citizen names! JOINs are how relational databases shine.');
+   }
+  },
+  {id:14,track:'intermediate',diff:'medium',xp:60,
+   title:'Filter Groups — HAVING',
+   desc:'Find repeat offenders: citizens with <b>more than 1 crime</b>. Return <code>name</code> and <code>crime_count</code>, sorted by crime_count descending.',
+   concept:{label:'HAVING Clause',body:'WHERE filters rows BEFORE grouping. HAVING filters AFTER aggregation.<pre>SELECT col, COUNT(*) AS n\nFROM t GROUP BY col\nHAVING COUNT(*) > 2; -- filter groups\n\n-- Cannot use: WHERE COUNT(*) > 2 ← wrong!</pre>'},
+   tags:['HAVING','GROUP BY','aggregation'],
+   hint:'Join tables, GROUP BY citizen, then HAVING COUNT(*) > 1',
+   answer:'SELECT c.name, COUNT(*) AS crime_count FROM citizens c JOIN crimes cr ON cr.citizen_id = c.id GROUP BY c.id, c.name HAVING COUNT(*) > 1 ORDER BY crime_count DESC;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Use JOIN + GROUP BY + HAVING.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('name')) return fail('Include citizen name.');
+     if(!c.includes('crime_count')) return fail('Name your count column "crime_count".');
+     const ci=c.indexOf('crime_count');
+     if(v.some(row=>row[ci]<=1)) return fail('Some with only 1 crime slipped through. Use HAVING COUNT(*) > 1');
+     const counts=v.map(row=>row[ci]);
+     for(let i=1;i<counts.length;i++) if(counts[i]>counts[i-1]) return fail('Sort by crime_count DESC.');
+     return ok('🚔 '+v.length+' repeat offenders! Most prolific: '+v[0][c.indexOf('name')]+' with '+v[0][ci]+' crimes. HAVING unlocks powerful filtering.');
+   }
+  },
+
+  // ────────────────── ADVANCED ──────────────────
+  {id:15,track:'advanced',diff:'hard',xp:70,
+   title:'NULL Values — IS NULL / IS NOT NULL',
+   desc:'Some citizens have <code>NULL</code> ages (unknown). Find all citizens where age <code>IS NULL</code>. Then modify the query to find those where age <code>IS NOT NULL</code>.',
+   concept:{label:'NULL in SQL',body:'NULL means "no value" — not zero, not empty string. Special comparison rules:<pre>WHERE col IS NULL     -- correct ✓\nWHERE col IS NOT NULL -- correct ✓\nWHERE col = NULL      -- WRONG! ✗ always false\nWHERE col != NULL     -- WRONG! ✗ always false\n\nNULL in math: 5 + NULL = NULL\nNULL in logic: NULL AND TRUE = NULL</pre>'},
+   tags:['NULL','IS NULL'],
+   hint:'SELECT * FROM citizens WHERE age IS NULL;',
+   answer:'SELECT * FROM citizens WHERE age IS NULL;',
+   check(r,db){
+     if(!r?.length){
+       // maybe they also ran IS NOT NULL — check their query worked
+       const ch=db.exec('SELECT COUNT(*) FROM citizens WHERE age IS NOT NULL');
+       if(ch[0].values[0][0]>0){
+         // Their query may have found IS NOT NULL successfully
+       }
+       return fail('No results. Check for citizens WHERE age IS NULL.');
+     }
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('age')) return fail('Include the age column so we can verify.');
+     const ai=c.indexOf('age');
+     if(v.some(row=>row[ai]!==null)) return fail('Some rows have non-NULL ages. Use IS NULL, not = NULL.');
+     return ok('✅ Found '+v.length+' citizens with unknown age. NULL handling is critical for real-world data quality!');
+   }
+  },
+  {id:16,track:'advanced',diff:'hard',xp:70,
+   title:'Conditional Logic — CASE WHEN',
+   desc:'Create a risk classification. Return each citizen\'s <code>name</code> and a <code>risk_level</code> column: <b>\'HIGH\'</b> if arrested/suspect, <b>\'LOW\'</b> if civilian.',
+   concept:{label:'CASE WHEN',body:'SQL\'s if/else — creates conditional columns.<pre>SELECT name,\n  CASE\n    WHEN condition1 THEN \'result1\'\n    WHEN condition2 THEN \'result2\'\n    ELSE \'default\'\n  END AS alias\nFROM table;</pre>'},
+   tags:['CASE WHEN','conditional'],
+   hint:"Use CASE WHEN status IN ('arrested','suspect') THEN 'HIGH' ELSE 'LOW' END AS risk_level",
+   answer:"SELECT name, CASE WHEN status IN ('arrested','suspect') THEN 'HIGH' ELSE 'LOW' END AS risk_level FROM citizens;",
+   check(r,db){
+     if(!r?.length) return fail('No results. Use CASE WHEN ... END AS risk_level');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('risk_level')) return fail('Name your CASE result "risk_level" using AS.');
+     if(!c.includes('name')) return fail('Include the name column.');
+     const ri=c.indexOf('risk_level');
+     if(!v.some(row=>row[ri]==='HIGH')) return fail('No HIGH risk levels found. Check your WHEN condition.');
+     if(!v.some(row=>row[ri]==='LOW')) return fail('No LOW risk levels found. Check your ELSE clause.');
+     const valid=['HIGH','LOW'];
+     if(v.some(row=>!valid.includes(row[ri]))) return fail('risk_level should only be HIGH or LOW.');
+     return ok('🎯 Risk classification built! CASE WHEN turns raw data into actionable categories.');
+   }
+  },
+  {id:17,track:'advanced',diff:'hard',xp:75,
+   title:'Subqueries — Query Inside a Query',
+   desc:'Find all citizens who live in the <b>same district as \'Maria Santos\'</b>, but <b>not Maria herself</b>. Use a subquery in the WHERE clause.',
+   concept:{label:'Subqueries',body:'A SELECT nested inside another query. The inner query runs first.<pre>SELECT * FROM t\nWHERE col = (SELECT col FROM t2 WHERE ...)\n-- Can also use IN for multiple values:\nWHERE col IN (SELECT col FROM t2)\n-- Or in FROM clause:\nFROM (SELECT ...) AS alias</pre>'},
+   tags:['subquery','nested SELECT'],
+   hint:"WHERE district = (SELECT district FROM citizens WHERE name = 'Maria Santos')",
+   answer:"SELECT name FROM citizens WHERE district = (SELECT district FROM citizens WHERE name = 'Maria Santos') AND name != 'Maria Santos';",
+   check(r,db){
+     if(!r?.length) return fail('No results. Build a subquery to find Maria\'s district first.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('name')) return fail('Return the name column.');
+     const ni=c.indexOf('name');
+     if(v.some(row=>row[ni]==='Maria Santos')) return fail('Maria Santos should not be in the results. Add: AND name != \'Maria Santos\'');
+     const dist=db.exec("SELECT district FROM citizens WHERE name='Maria Santos'");
+     if(!dist?.length) return fail('Maria Santos not in database.');
+     const d=dist[0].values[0][0];
+     const exp=db.exec("SELECT COUNT(*) FROM citizens WHERE district='"+d+"' AND name!='Maria Santos'");
+     if(v.length!==exp[0].values[0][0]) return fail('Expected '+exp[0].values[0][0]+' neighbors in '+d+', got '+v.length+'.');
+     return ok('🔎 Subquery mastered! Found all '+v.length+' citizens in '+d+'. Subqueries are SQL superpowers.');
+   }
+  },
+  {id:18,track:'advanced',diff:'hard',xp:80,
+   title:'Build a Table — CREATE TABLE',
+   desc:'The city needs an <code>evidence</code> table. Create it with: <code>id</code> INTEGER PRIMARY KEY, <code>crime_id</code> INTEGER, <code>description</code> TEXT, <code>found_at</code> TEXT, <code>collected_by</code> TEXT.',
+   concept:{label:'CREATE TABLE',body:'Define new tables with columns and types.<pre>CREATE TABLE name (\n  id INTEGER PRIMARY KEY,\n  col TEXT NOT NULL,\n  col2 INTEGER DEFAULT 0,\n  FOREIGN KEY(col) REFERENCES other(id)\n);\n-- Types: INTEGER TEXT REAL BLOB\n-- Constraints: NOT NULL UNIQUE DEFAULT CHECK</pre>'},
+   tags:['CREATE TABLE','DDL','schema'],
+   hint:'CREATE TABLE evidence (id INTEGER PRIMARY KEY, crime_id INTEGER, description TEXT, found_at TEXT, collected_by TEXT);',
+   answer:'CREATE TABLE evidence (id INTEGER PRIMARY KEY, crime_id INTEGER, description TEXT, found_at TEXT, collected_by TEXT);',
+   check(r,db){
+     try{
+       const ch=db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name='evidence'");
+       if(!ch?.length||!ch[0].values.length) return fail('Table "evidence" doesn\'t exist. Use CREATE TABLE evidence (...)');
+       const cols=db.exec('PRAGMA table_info(evidence)');
+       const names=cols[0].values.map(row=>row[1]);
+       for(const req of ['id','crime_id','description','found_at','collected_by']){
+         if(!names.includes(req)) return fail('Missing column: '+req);
+       }
+       return ok('🏗️ Table evidence created with '+names.length+' columns! You now understand how databases are structured.');
+     }catch(e){return fail('Error: '+e.message)}
+   }
+  },
+  {id:19,track:'advanced',diff:'hard',xp:80,
+   title:'LEFT JOIN — Include Non-Matching Rows',
+   desc:'Some citizens have no crimes. Use a <code>LEFT JOIN</code> to get ALL citizens with their crime count (even 0). Return <code>name</code> and <code>crime_count</code>.',
+   concept:{label:'LEFT JOIN vs INNER JOIN',body:'INNER JOIN: only rows with matches in BOTH tables.<br>LEFT JOIN: ALL rows from left table, NULL for non-matching right rows.<pre>SELECT c.name, COUNT(cr.id) AS crime_count\nFROM citizens c\nLEFT JOIN crimes cr ON cr.citizen_id = c.id\nGROUP BY c.id, c.name;</pre>'},
+   tags:['LEFT JOIN','outer join'],
+   hint:'Use LEFT JOIN and COUNT(cr.id) — counting NULL gives 0, not an error',
+   answer:'SELECT c.name, COUNT(cr.id) AS crime_count FROM citizens c LEFT JOIN crimes cr ON cr.citizen_id = c.id GROUP BY c.id, c.name ORDER BY crime_count DESC;',
+   check(r,db){
+     if(!r?.length) return fail('No results.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('name')) return fail('Include name column.');
+     if(!c.includes('crime_count')) return fail('Name your count "crime_count".');
+     const allCount=db.exec('SELECT COUNT(*) FROM citizens');
+     const total=allCount[0].values[0][0];
+     if(v.length<total) return fail('Not all citizens shown! You need LEFT JOIN to include those with 0 crimes. Got '+v.length+' of '+total+'.');
+     const ci=c.indexOf('crime_count');
+     if(!v.some(row=>row[ci]===0)) return fail('Missing citizens with 0 crimes. Use LEFT JOIN, not INNER JOIN.');
+     return ok('✅ All '+v.length+' citizens shown! '+v.filter(row=>row[ci]===0).length+' have no crimes. LEFT JOIN preserves unmatched rows.');
+   }
+  },
+  {id:20,track:'advanced',diff:'hard',xp:85,
+   title:'Aliases & Calculated Columns',
+   desc:'Create a summary: return each citizen\'s <code>name</code>, <code>age</code>, and a calculated column <code>birth_year</code> (2024 minus age), plus an <code>age_group</code>: <b>\'YOUNG\'</b> if under 30, <b>\'MID\'</b> if 30-45, <b>\'SENIOR\'</b> if over 45. Exclude null ages.',
+   concept:{label:'Expressions & Aliases',body:'Columns can be calculated expressions.<pre>SELECT\n  name,\n  2024 - age AS birth_year,\n  age * 12 AS age_months,\n  UPPER(name) AS name_upper\nFROM citizens\nWHERE age IS NOT NULL;</pre>'},
+   tags:['AS','expressions','CASE WHEN'],
+   hint:'SELECT name, age, 2024-age AS birth_year, CASE WHEN age < 30 THEN ... END AS age_group FROM citizens WHERE age IS NOT NULL;',
+   answer:"SELECT name, age, 2024-age AS birth_year, CASE WHEN age < 30 THEN 'YOUNG' WHEN age <= 45 THEN 'MID' ELSE 'SENIOR' END AS age_group FROM citizens WHERE age IS NOT NULL;",
+   check(r,db){
+     if(!r?.length) return fail('No results. Check your WHERE age IS NOT NULL.');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('birth_year')) return fail('Missing birth_year calculated column.');
+     if(!c.includes('age_group')) return fail('Missing age_group column.');
+     const ai=c.indexOf('age'), bi=c.indexOf('birth_year'), gi=c.indexOf('age_group');
+     if(v.some(row=>row[ai]!==null && row[bi]!==2024-row[ai])) return fail('birth_year calculation wrong. Use 2024 - age.');
+     if(v.some(row=>row[ai]===null)) return fail('NULL ages present. Add WHERE age IS NOT NULL.');
+     const valid=['YOUNG','MID','SENIOR'];
+     if(v.some(row=>!valid.includes(row[gi]))) return fail('age_group values should be YOUNG, MID, or SENIOR only.');
+     return ok('🧮 Calculated columns working! birth_year and age_group both correct. Expressions turn raw data into insights.');
+   }
+  },
+
+  // ────────────────── EXPERT ──────────────────
+  {id:21,track:'expert',diff:'expert',xp:100,
+   title:'CTEs — WITH Clauses',
+   desc:'Use a CTE (Common Table Expression) to first find all <b>high-severity crimes</b> (severity >= 3), then join that result with citizens to get the criminals\' names. Return <code>name</code>, <code>type</code>, <code>severity</code>.',
+   concept:{label:'Common Table Expressions (CTEs)',body:'CTEs are named subqueries defined before the main query — more readable than nested subqueries.<pre>WITH cte_name AS (\n  SELECT ...\n),\nsecond_cte AS (\n  SELECT ...\n)\nSELECT * FROM cte_name\nJOIN second_cte ON ...;</pre>CTEs can reference each other and make complex queries readable.'},
+   tags:['CTE','WITH','advanced'],
+   hint:'WITH severe AS (SELECT * FROM crimes WHERE severity >= 3) SELECT c.name, s.type, s.severity FROM severe s JOIN citizens c ON s.citizen_id = c.id;',
+   answer:'WITH severe AS (SELECT * FROM crimes WHERE severity >= 3) SELECT c.name, s.type, s.severity FROM severe s JOIN citizens c ON s.citizen_id = c.id ORDER BY s.severity DESC;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Write WITH cte AS (SELECT ...) SELECT ... FROM cte ...');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('name')) return fail('Include criminal name from citizens.');
+     if(!c.includes('severity')) return fail('Include severity column to verify filtering.');
+     const si=c.indexOf('severity');
+     if(v.some(row=>row[si]<3)) return fail('Low-severity crimes included. CTE should filter severity >= 3.');
+     return ok('🧠 CTE mastered! '+v.length+' high-severity crimes. CTEs make complex queries modular and readable.');
+   }
+  },
+  {id:22,track:'expert',diff:'expert',xp:100,
+   title:'Window Functions — ROW_NUMBER',
+   desc:'Rank citizens by age within each district using <code>ROW_NUMBER() OVER (PARTITION BY district ORDER BY age DESC)</code>. Return <code>name</code>, <code>district</code>, <code>age</code>, and <code>rank_in_district</code>.',
+   concept:{label:'Window Functions',body:'Apply calculations across rows related to current row — without GROUP BY collapsing.<pre>ROW_NUMBER() OVER (PARTITION BY col ORDER BY col2)\nRANK() OVER (ORDER BY col DESC)\nSUM(col) OVER (PARTITION BY group)\nLAG(col) OVER (ORDER BY col2)  -- previous row\nLEAD(col) OVER (ORDER BY col2) -- next row</pre>Window functions are among the most powerful SQL features.'},
+   tags:['window functions','ROW_NUMBER','PARTITION BY'],
+   hint:'SELECT name, district, age, ROW_NUMBER() OVER (PARTITION BY district ORDER BY age DESC) AS rank_in_district FROM citizens WHERE age IS NOT NULL;',
+   answer:'SELECT name, district, age, ROW_NUMBER() OVER (PARTITION BY district ORDER BY age DESC) AS rank_in_district FROM citizens WHERE age IS NOT NULL ORDER BY district, rank_in_district;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Use ROW_NUMBER() OVER (PARTITION BY district ORDER BY age DESC)');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('rank_in_district')) return fail('Name your window column "rank_in_district".');
+     if(!c.includes('district')) return fail('Include district to verify partitioning.');
+     const ri=c.indexOf('rank_in_district'), di=c.indexOf('district');
+     // Check that rank 1 exists per district
+     const districts=new Set(v.map(row=>row[di]));
+     for(const dist of districts){
+       const distRows=v.filter(row=>row[di]===dist).map(row=>row[ri]);
+       if(!distRows.includes(1)) return fail('District "'+dist+'" has no rank 1. Check PARTITION BY district.');
+     }
+     return ok('🏆 Window functions working! '+districts.size+' districts ranked. Window functions are what separate SQL beginners from experts.');
+   }
+  },
+  {id:23,track:'expert',diff:'expert',xp:110,
+   title:'Self JOIN — Compare Rows Within Same Table',
+   desc:'Find pairs of citizens who live in the <b>same district</b>. Return <code>a.name AS citizen1</code>, <code>b.name AS citizen2</code>, <code>a.district</code>. Avoid duplicates by using <code>a.id < b.id</code>.',
+   concept:{label:'Self JOIN',body:'Join a table to itself to compare rows within the same table.<pre>SELECT a.col, b.col\nFROM table a\nJOIN table b ON a.key = b.key\nWHERE a.id < b.id; -- prevents duplicates\n-- Use different aliases (a, b) for each "copy"</pre>'},
+   tags:['self join','aliases'],
+   hint:'SELECT a.name AS citizen1, b.name AS citizen2, a.district FROM citizens a JOIN citizens b ON a.district = b.district WHERE a.id < b.id;',
+   answer:'SELECT a.name AS citizen1, b.name AS citizen2, a.district FROM citizens a JOIN citizens b ON a.district = b.district WHERE a.id < b.id ORDER BY a.district;',
+   check(r,db){
+     if(!r?.length) return fail('No results. Self join: FROM citizens a JOIN citizens b ON a.district = b.district');
+     const c=r[0].columns, v=r[0].values;
+     if(!c.includes('citizen1')) return fail('Alias a.name AS citizen1');
+     if(!c.includes('citizen2')) return fail('Alias b.name AS citizen2');
+     const c1i=c.indexOf('citizen1'), c2i=c.indexOf('citizen2');
+     if(v.some(row=>row[c1i]===row[c2i])) return fail('A citizen is paired with themselves! Use WHERE a.id < b.id');
+     return ok('🤝 '+v.length+' district-mate pairs found! Self JOINs solve a whole class of "compare rows" problems.');
+   }
+  },
+  {id:24,track:'expert',diff:'expert',xp:115,
+   title:'Transactions — ROLLBACK Safety',
+   desc:'Use a transaction to safely update multiple rows. START a transaction, update ALL suspects\' status to <code>\'under_investigation\'</code>, then verify with SELECT (inside the transaction it should show changes). Then COMMIT it.',
+   concept:{label:'Transactions',body:'Group operations into atomic units — all succeed or all fail.<pre>BEGIN TRANSACTION;\n  UPDATE table SET ...;\n  INSERT INTO ...;\n  -- if something goes wrong:\n  ROLLBACK; -- undo everything\n  -- if all good:\nCOMMIT; -- make permanent\n</pre>ACID properties: Atomicity, Consistency, Isolation, Durability. Critical for financial systems, medical records, etc.'},
+   tags:['transactions','BEGIN','COMMIT','ROLLBACK'],
+   hint:"BEGIN TRANSACTION;\nUPDATE citizens SET status = 'under_investigation' WHERE status = 'suspect';\nCOMMIT;",
+   answer:"BEGIN TRANSACTION;\nUPDATE citizens SET status = 'under_investigation' WHERE status = 'suspect';\nCOMMIT;",
+   check(r,db){
+     try{
+       const ch=db.exec("SELECT COUNT(*) FROM citizens WHERE status='under_investigation'");
+       const count=ch[0].values[0][0];
+       if(count===0) return fail('No under_investigation citizens found. Did you run the UPDATE and COMMIT?');
+       const suspects=db.exec("SELECT COUNT(*) FROM citizens WHERE status='suspect'");
+       if(suspects[0].values[0][0]>0) return fail('Still suspects in database! Update ALL suspects.');
+       return ok('🔒 Transaction committed! '+count+' suspects updated. Transactions protect data integrity — critical in production systems.');
+     }catch(e){return fail('Error: '+e.message)}
+   }
+  },
+  {id:25,track:'expert',diff:'expert',xp:150,
+   title:'THE FINAL MISSION — Multi-Table Mastery',
+   desc:'The Commissioner demands a complete crime report. Write ONE query that returns: citizen <code>name</code>, their <code>district</code>, crime <code>type</code>, crime <code>date</code>, crime <code>severity</code>, and a <code>threat_level</code> column: <b>\'CRITICAL\'</b> if severity >= 4, <b>\'MODERATE\'</b> if severity >= 2, else <b>\'LOW\'</b>. Only include citizens whose status contains \'suspect\', \'arrested\', or \'under_investigation\'. Sort by severity DESC.',
+   concept:{label:'Everything Together',body:'Real-world queries combine all the tools:<pre>SELECT, FROM, JOIN\nWHERE, AND/OR/IN\nCASE WHEN ... END AS alias\nGROUP BY, HAVING\nORDER BY, LIMIT\n\nThe skill is knowing which combination\nto reach for, and in which order.</pre>'},
+   tags:['JOIN','CASE WHEN','WHERE','ORDER BY','mastery'],
+   hint:"JOIN citizens with crimes, WHERE status IN (...), CASE WHEN severity >= 4 THEN 'CRITICAL'..., ORDER BY severity DESC",
+   answer:"SELECT c.name, c.district, cr.type, cr.date, cr.severity, CASE WHEN cr.severity >= 4 THEN 'CRITICAL' WHEN cr.severity >= 2 THEN 'MODERATE' ELSE 'LOW' END AS threat_level FROM citizens c JOIN crimes cr ON cr.citizen_id = c.id WHERE c.status IN ('suspect','arrested','under_investigation') ORDER BY cr.severity DESC;",
+   check(r,db){
+     if(!r?.length) return fail('No results. Combine JOIN + WHERE IN + CASE WHEN + ORDER BY.');
+     const c=r[0].columns, v=r[0].values;
+     const req=['name','district','type','date','severity','threat_level'];
+     for(const col of req) if(!c.includes(col)) return fail('Missing column: '+col);
+     const ti=c.indexOf('threat_level'), sevi=c.indexOf('severity');
+     for(const row of v){
+       const sev=row[sevi], tl=row[ti];
+       if(sev>=4&&tl!=='CRITICAL') return fail('Severity '+sev+' should be CRITICAL, got '+tl);
+       if(sev<4&&sev>=2&&tl!=='MODERATE') return fail('Severity '+sev+' should be MODERATE, got '+tl);
+     }
+     const sevs=v.map(row=>row[sevi]);
+     for(let i=1;i<sevs.length;i++) if(sevs[i]>sevs[i-1]) return fail('Not sorted by severity DESC.');
+     return ok('🏆 FINAL MISSION COMPLETE! '+v.length+' threat records compiled. You have gone from SELECT * to window functions, CTEs, and transactions. You are now an SQL expert. Welcome to the club.');
+   }
+  },
+];
+
+function ok(msg){return{ok:true,msg}}
+function fail(msg){return{ok:false,msg}}
+
+// ═══════════════════════════════════════════════════════════════
+// DATABASE SCHEMA
+// ═══════════════════════════════════════════════════════════════
+const SCHEMA_SQL = `
+CREATE TABLE citizens (
+  id INTEGER PRIMARY KEY,
+  name TEXT NOT NULL,
+  age INTEGER,
+  district TEXT,
+  status TEXT DEFAULT 'civilian'
+);
+CREATE TABLE crimes (
+  id INTEGER PRIMARY KEY,
+  citizen_id INTEGER,
+  type TEXT,
+  date TEXT,
+  severity INTEGER,
+  FOREIGN KEY(citizen_id) REFERENCES citizens(id)
+);
+INSERT INTO citizens VALUES
+(1,'Maria Santos',34,'Uptown','civilian'),
+(2,'Leo Vance',45,'Downtown','suspect'),
+(3,'Jake Stone',29,'Midtown','suspect'),
+(4,'Nina Ray',52,'Uptown','civilian'),
+(5,'Sam Park',31,'Downtown','civilian'),
+(6,'Zara Finn',28,'Midtown','suspect'),
+(7,'Ash Cole',37,'Uptown','suspect'),
+(8,'Riku Tani',41,'Harbor','civilian'),
+(9,'Dee Moore',26,'Harbor','suspect'),
+(10,'Blake Wu',33,'Downtown','civilian'),
+(11,'Jordan Lee',NULL,'Harbor','civilian'),
+(99,'Test User',0,'Glitch Zone','error');
+INSERT INTO crimes VALUES
+(1,2,'Theft','2024-03-12',2),
+(2,3,'Assault','2024-01-05',4),
+(3,6,'Forgery','2024-02-18',3),
+(4,7,'Theft','2024-04-01',2),
+(5,2,'Vandalism','2024-03-28',1),
+(6,9,'Fraud','2024-05-10',3),
+(7,3,'Theft','2024-05-15',2),
+(8,6,'Assault','2024-06-01',4),
+(9,7,'Fraud','2024-06-20',3),
+(10,9,'Vandalism','2024-07-04',1);
+`;
+
+// ═══════════════════════════════════════════════════════════════
+// HELP CONTENT
+// ═══════════════════════════════════════════════════════════════
+const HELP_CONTENT = {
+  overview: {
+    title:'📚 SQL Quest Help System',
+    body:`<div class="help-section">
+<div class="help-section-title">How to Use SQL Quest</div>
+<p style="font-size:.7rem;color:var(--text2);line-height:1.7;margin-bottom:8px">Type SQL queries in the editor and press <strong>Ctrl+Enter</strong> to run. Each challenge gives you a task — write the correct SQL to pass it and earn XP.</p>
+<div class="help-cmd"><span class="help-cmd-name">Ctrl+Enter</span><span class="help-cmd-desc">Run current query</span></div>
+<div class="help-cmd"><span class="help-cmd-name">↑ / ↓</span><span class="help-cmd-desc">Browse query history</span></div>
+<div class="help-cmd"><span class="help-cmd-name">Tab</span><span class="help-cmd-desc">Autocomplete / indent</span></div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Commands (type in editor)</div>
+<div class="help-cmd"><span class="help-cmd-name">HELP</span><span class="help-cmd-desc">Show this help panel</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP SELECT</span><span class="help-cmd-desc">SELECT syntax & examples</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP WHERE</span><span class="help-cmd-desc">WHERE / filtering guide</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP JOIN</span><span class="help-cmd-desc">JOIN types & examples</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP INSERT</span><span class="help-cmd-desc">INSERT INTO guide</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP UPDATE</span><span class="help-cmd-desc">UPDATE guide</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP DELETE</span><span class="help-cmd-desc">DELETE guide</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP AGGREGATE</span><span class="help-cmd-desc">COUNT, SUM, AVG, GROUP BY</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP ADVANCED</span><span class="help-cmd-desc">CTEs, window funcs, transactions</span></div>
+<div class="help-cmd"><span class="help-cmd-name">HELP EXAMPLES</span><span class="help-cmd-desc">Runnable example queries</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:tables</span><span class="help-cmd-desc">List all tables</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:schema citizens</span><span class="help-cmd-desc">Show table columns</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:history</span><span class="help-cmd-desc">Show recent queries</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:progress</span><span class="help-cmd-desc">Show your progress stats</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:clear</span><span class="help-cmd-desc">Clear the editor</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:reset</span><span class="help-cmd-desc">Reset database to original</span></div>
+<div class="help-cmd"><span class="help-cmd-name">:sandbox</span><span class="help-cmd-desc">Toggle sandbox mode</span></div>
+</div>`
+  },
+  SELECT: {
+    title:'SELECT — Retrieve Data',
+    body:`<div class="help-section">
+<div class="help-section-title">Syntax</div>
+<div class="help-example" onclick="loadExample('SELECT * FROM citizens;')">SELECT * FROM citizens;</div>
+<div class="help-example" onclick="loadExample('SELECT name, age FROM citizens;')">SELECT name, age FROM citizens;</div>
+<div class="help-example" onclick="loadExample('SELECT DISTINCT district FROM citizens;')">SELECT DISTINCT district FROM citizens;</div>
+<div class="help-example" onclick="loadExample('SELECT name, 2024 - age AS birth_year FROM citizens WHERE age IS NOT NULL;')">SELECT name, 2024 - age AS birth_year FROM citizens WHERE age IS NOT NULL;</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Key Concepts</div>
+<div class="help-cmd"><span class="help-cmd-name">*</span><span class="help-cmd-desc">All columns</span></div>
+<div class="help-cmd"><span class="help-cmd-name">col AS alias</span><span class="help-cmd-desc">Rename a column</span></div>
+<div class="help-cmd"><span class="help-cmd-name">DISTINCT</span><span class="help-cmd-desc">Remove duplicate rows</span></div>
+<div class="help-cmd"><span class="help-cmd-name">expression</span><span class="help-cmd-desc">2024 - age, price * qty, etc.</span></div>
+</div>`
+  },
+  WHERE: {
+    title:'WHERE — Filter Rows',
+    body:`<div class="help-section">
+<div class="help-section-title">Comparison Operators</div>
+<div class="help-cmd"><span class="help-cmd-name">= != < > <= >=</span><span class="help-cmd-desc">Standard comparisons</span></div>
+<div class="help-cmd"><span class="help-cmd-name">LIKE 'J%'</span><span class="help-cmd-desc">Pattern match (% = wildcard)</span></div>
+<div class="help-cmd"><span class="help-cmd-name">IN ('a','b')</span><span class="help-cmd-desc">Match any in list</span></div>
+<div class="help-cmd"><span class="help-cmd-name">BETWEEN 20 AND 40</span><span class="help-cmd-desc">Range check (inclusive)</span></div>
+<div class="help-cmd"><span class="help-cmd-name">IS NULL</span><span class="help-cmd-desc">Check for null value</span></div>
+<div class="help-cmd"><span class="help-cmd-name">IS NOT NULL</span><span class="help-cmd-desc">Check for non-null</span></div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Examples</div>
+<div class="help-example" onclick="loadExample(&quot;SELECT * FROM citizens WHERE status = 'suspect';&quot;)">SELECT * FROM citizens WHERE status = 'suspect';</div>
+<div class="help-example" onclick="loadExample(&quot;SELECT * FROM citizens WHERE age BETWEEN 25 AND 35;&quot;)">SELECT * FROM citizens WHERE age BETWEEN 25 AND 35;</div>
+<div class="help-example" onclick="loadExample(&quot;SELECT * FROM citizens WHERE status IN ('suspect','arrested');&quot;)">SELECT * FROM citizens WHERE status IN ('suspect','arrested');</div>
+<div class="help-example" onclick="loadExample(&quot;SELECT * FROM citizens WHERE name LIKE 'J%';&quot;)">SELECT * FROM citizens WHERE name LIKE 'J%';</div>
+<div class="help-example" onclick="loadExample('SELECT * FROM citizens WHERE age IS NULL;')">SELECT * FROM citizens WHERE age IS NULL;</div>
+</div>`
+  },
+  JOIN: {
+    title:'JOIN — Connect Tables',
+    body:`<div class="help-section">
+<div class="help-section-title">JOIN Types</div>
+<div class="help-cmd"><span class="help-cmd-name">INNER JOIN</span><span class="help-cmd-desc">Only matching rows in both</span></div>
+<div class="help-cmd"><span class="help-cmd-name">LEFT JOIN</span><span class="help-cmd-desc">All left rows + matching right</span></div>
+<div class="help-cmd"><span class="help-cmd-name">Self JOIN</span><span class="help-cmd-desc">Table joined to itself</span></div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Examples</div>
+<div class="help-example" onclick="loadExample('SELECT c.name, cr.type FROM citizens c JOIN crimes cr ON cr.citizen_id = c.id;')">SELECT c.name, cr.type FROM citizens c JOIN crimes cr ON cr.citizen_id = c.id;</div>
+<div class="help-example" onclick="loadExample('SELECT c.name, COUNT(cr.id) AS crimes FROM citizens c LEFT JOIN crimes cr ON cr.citizen_id = c.id GROUP BY c.id, c.name;')">SELECT c.name, COUNT(cr.id) AS crimes FROM citizens c LEFT JOIN crimes cr ON cr.citizen_id = c.id GROUP BY c.id, c.name;</div>
+</div>`
+  },
+  INSERT: {
+    title:'INSERT — Add Rows',
+    body:`<div class="help-section">
+<div class="help-section-title">Syntax</div>
+<div class="help-example" onclick="loadExample(&quot;INSERT INTO citizens (name, age, district, status) VALUES ('New Person', 30, 'Uptown', 'civilian');&quot;)">INSERT INTO citizens (name, age, district, status) VALUES ('New Person', 30, 'Uptown', 'civilian');</div>
+<div class="help-example" onclick="loadExample(&quot;-- Insert multiple rows\nINSERT INTO crimes (citizen_id, type, date, severity) VALUES (1, 'Speeding', '2024-08-01', 1), (2, 'Parking', '2024-08-02', 1);&quot;)">-- Insert multiple rows (2 at once)</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Rules</div>
+<div class="help-cmd"><span class="help-cmd-name">Strings</span><span class="help-cmd-desc">Need single quotes: 'value'</span></div>
+<div class="help-cmd"><span class="help-cmd-name">Numbers</span><span class="help-cmd-desc">No quotes needed: 42</span></div>
+<div class="help-cmd"><span class="help-cmd-name">NULL</span><span class="help-cmd-desc">Use keyword NULL (no quotes)</span></div>
+<div class="help-cmd"><span class="help-cmd-name">AUTO id</span><span class="help-cmd-desc">Skip PRIMARY KEY columns</span></div>
+</div>`
+  },
+  UPDATE: {
+    title:'UPDATE — Modify Rows',
+    body:`<div class="help-section">
+<div class="help-section-title">Syntax</div>
+<div class="help-example" onclick="loadExample(&quot;UPDATE citizens SET status = 'civilian' WHERE id = 2;&quot;)">UPDATE citizens SET status = 'civilian' WHERE id = 2;</div>
+<div class="help-example" onclick="loadExample(&quot;UPDATE citizens SET status = 'civilian', age = 30 WHERE name = 'Leo Vance';&quot;)">UPDATE citizens SET status = 'civilian', age = 30 WHERE name = 'Leo Vance';</div>
+<div class="help-example" onclick="loadExample(&quot;-- ⚠️ DANGER: updates ALL rows!\n-- UPDATE citizens SET status = 'civilian';&quot;)">-- ⚠️ Without WHERE = update ALL rows</div>
+</div>`
+  },
+  DELETE: {
+    title:'DELETE — Remove Rows',
+    body:`<div class="help-section">
+<div class="help-section-title">Syntax</div>
+<div class="help-example" onclick="loadExample(&quot;-- Safe workflow:\nSELECT * FROM citizens WHERE id = 99;\n-- Check it first, then:\nDELETE FROM citizens WHERE id = 99;&quot;)">-- Safe workflow: SELECT first, then DELETE</div>
+<div class="help-example" onclick="loadExample(&quot;DELETE FROM crimes WHERE severity = 1;&quot;)">DELETE FROM crimes WHERE severity = 1;</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">⚠️ Warning</div>
+<p style="font-size:.7rem;color:var(--err);line-height:1.6">DELETE FROM table; with no WHERE deletes EVERY row. There is no undo. Always use WHERE, always SELECT first to preview.</p>
+</div>`
+  },
+  AGGREGATE: {
+    title:'Aggregate Functions',
+    body:`<div class="help-section">
+<div class="help-section-title">Functions</div>
+<div class="help-cmd"><span class="help-cmd-name">COUNT(*)</span><span class="help-cmd-desc">Count all rows</span></div>
+<div class="help-cmd"><span class="help-cmd-name">COUNT(col)</span><span class="help-cmd-desc">Count non-NULL values</span></div>
+<div class="help-cmd"><span class="help-cmd-name">SUM(col)</span><span class="help-cmd-desc">Total of numeric column</span></div>
+<div class="help-cmd"><span class="help-cmd-name">AVG(col)</span><span class="help-cmd-desc">Average value</span></div>
+<div class="help-cmd"><span class="help-cmd-name">MAX(col)</span><span class="help-cmd-desc">Highest value</span></div>
+<div class="help-cmd"><span class="help-cmd-name">MIN(col)</span><span class="help-cmd-desc">Lowest value</span></div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Examples</div>
+<div class="help-example" onclick="loadExample('SELECT district, COUNT(*) AS total, AVG(age) AS avg_age FROM citizens GROUP BY district ORDER BY total DESC;')">SELECT district, COUNT(*), AVG(age) FROM citizens GROUP BY district;</div>
+<div class="help-example" onclick="loadExample('SELECT COUNT(*) AS total, MAX(age) AS oldest, MIN(age) AS youngest, AVG(age) AS average FROM citizens WHERE age IS NOT NULL;')">SELECT COUNT(*), MAX(age), MIN(age), AVG(age) FROM citizens WHERE age IS NOT NULL;</div>
+<div class="help-example" onclick="loadExample('SELECT district, COUNT(*) AS n FROM citizens GROUP BY district HAVING COUNT(*) > 2 ORDER BY n DESC;')">GROUP BY district HAVING COUNT(*) > 2;</div>
+</div>`
+  },
+  ADVANCED: {
+    title:'Advanced SQL',
+    body:`<div class="help-section">
+<div class="help-section-title">CTEs (WITH)</div>
+<div class="help-example" onclick="loadExample('WITH suspects AS (\n  SELECT * FROM citizens WHERE status = \'suspect\'\n)\nSELECT s.name, cr.type\nFROM suspects s\nJOIN crimes cr ON cr.citizen_id = s.id;')">WITH suspects AS (SELECT...) SELECT ... FROM suspects</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Window Functions</div>
+<div class="help-example" onclick="loadExample('SELECT name, age, district,\n  ROW_NUMBER() OVER (PARTITION BY district ORDER BY age DESC) AS rank_in_district\nFROM citizens\nWHERE age IS NOT NULL;')">ROW_NUMBER() OVER (PARTITION BY district ORDER BY age)</div>
+<div class="help-example" onclick="loadExample('SELECT name, age,\n  AVG(age) OVER (PARTITION BY district) AS avg_district_age\nFROM citizens WHERE age IS NOT NULL;')">AVG(age) OVER (PARTITION BY district)</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Transactions</div>
+<div class="help-example" onclick="loadExample('BEGIN TRANSACTION;\n  UPDATE citizens SET status = \'civilian\' WHERE id = 2;\n  -- If happy:\nCOMMIT;\n  -- If not:\n-- ROLLBACK;')">BEGIN TRANSACTION; ... COMMIT; / ROLLBACK;</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">CASE WHEN</div>
+<div class="help-example" onclick="loadExample(&quot;SELECT name, CASE WHEN age < 30 THEN 'YOUNG' WHEN age < 50 THEN 'MID' ELSE 'SENIOR' END AS age_group FROM citizens WHERE age IS NOT NULL;&quot;)">CASE WHEN age < 30 THEN 'YOUNG' ELSE 'SENIOR' END AS age_group</div>
+</div>`
+  },
+  EXAMPLES: {
+    title:'🚀 Runnable Examples',
+    body:`<div class="help-section">
+<div class="help-section-title">Beginner</div>
+<div class="help-example" onclick="loadExample('SELECT * FROM citizens;')">Get all citizens</div>
+<div class="help-example" onclick="loadExample(&quot;SELECT * FROM citizens WHERE status = 'suspect' ORDER BY name;&quot;)">All suspects, sorted by name</div>
+<div class="help-example" onclick="loadExample('SELECT DISTINCT district FROM citizens ORDER BY district;')">Unique districts</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Intermediate</div>
+<div class="help-example" onclick="loadExample('SELECT c.name, cr.type, cr.date, cr.severity FROM citizens c JOIN crimes cr ON cr.citizen_id = c.id ORDER BY cr.severity DESC;')">All crimes with criminal names</div>
+<div class="help-example" onclick="loadExample('SELECT district, COUNT(*) AS residents, AVG(age) AS avg_age FROM citizens WHERE age IS NOT NULL GROUP BY district ORDER BY residents DESC;')">District statistics</div>
+<div class="help-example" onclick="loadExample('SELECT c.name, COUNT(cr.id) AS crimes FROM citizens c LEFT JOIN crimes cr ON cr.citizen_id = c.id GROUP BY c.id, c.name ORDER BY crimes DESC;')">Everyone\'s crime count (including 0)</div>
+</div>
+<div class="help-section">
+<div class="help-section-title">Advanced</div>
+<div class="help-example" onclick="loadExample('WITH crime_stats AS (\n  SELECT citizen_id, COUNT(*) AS n, MAX(severity) AS worst\n  FROM crimes GROUP BY citizen_id\n)\nSELECT c.name, cs.n AS crimes, cs.worst AS worst_severity\nFROM citizens c JOIN crime_stats cs ON cs.citizen_id = c.id\nORDER BY cs.worst DESC, cs.n DESC;')">CTE: crime stats per person</div>
+<div class="help-example" onclick="loadExample('SELECT name, district, age,\n  ROW_NUMBER() OVER (PARTITION BY district ORDER BY age DESC) AS rank\nFROM citizens WHERE age IS NOT NULL;')">Window: rank by age per district</div>
+</div>`
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// BADGES
+// ═══════════════════════════════════════════════════════════════
+const ALL_BADGES = [
+  {id:'first_query', icon:'🎯', title:'First Query',   desc:'Run your first SELECT'},
+  {id:'suspect',     icon:'🕵️', title:'WHERE Force',   desc:'Complete a WHERE challenge'},
+  {id:'insert_pro',  icon:'📝', title:'Data Creator',  desc:'Successfully INSERT a row'},
+  {id:'careful_del', icon:'🗑️', title:'Careful Cutter',desc:'Use DELETE without disaster'},
+  {id:'join_master', icon:'🔗', title:'Join Master',   desc:'Complete first JOIN challenge'},
+  {id:'architect',   icon:'🏗️', title:'Architect',     desc:'CREATE your own table'},
+  {id:'cte_wizard',  icon:'🧙', title:'CTE Wizard',    desc:'Master Common Table Expressions'},
+  {id:'window_god',  icon:'🪟', title:'Window God',    desc:'Use window functions'},
+  {id:'no_hint_5',   icon:'🧠', title:'Self Reliant',  desc:'Complete 5 challenges without hints'},
+  {id:'speed_run',   icon:'⚡', title:'Speed Demon',   desc:'Run a query under 0.5ms'},
+  {id:'streak10',    icon:'🔥', title:'On Fire',       desc:'10 correct answers in a row'},
+  {id:'completionist',icon:'🏆',title:'Completionist', desc:'Complete all 25 challenges'},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════
+let db=null, currentCh=0, sandboxMode=false;
+let hintUsed=false, hintCount=0, consecutiveNoHint=0;
+let historyBuf=[], historyIdx=-1;
+const LS = {
+  get(k,def=null){try{const v=localStorage.getItem('sqlq_'+k);return v!==null?JSON.parse(v):def}catch{return def}},
+  set(k,v){try{localStorage.setItem('sqlq_'+k,JSON.stringify(v))}catch{}},
+};
+
+let STATE = {
+  xp:         LS.get('xp',0),
+  completed:  new Set(LS.get('completed',[])),
+  streak:     LS.get('streak',0),
+  badges:     new Set(LS.get('badges',[])),
+  queryLog:   LS.get('queryLog',[]),
+  lastDate:   LS.get('lastDate',''),
+  totalQueries: LS.get('totalQueries',0),
+  noHintStreak: LS.get('noHintStreak',0),
+  correctStreak: LS.get('correctStreak',0),
+};
+
+function saveState(){
+  LS.set('xp',STATE.xp);
+  LS.set('completed',[...STATE.completed]);
+  LS.set('streak',STATE.streak);
+  LS.set('badges',[...STATE.badges]);
+  LS.set('queryLog',STATE.queryLog.slice(-100));
+  LS.set('lastDate',STATE.lastDate);
+  LS.set('totalQueries',STATE.totalQueries);
+  LS.set('noHintStreak',STATE.noHintStreak);
+  LS.set('correctStreak',STATE.correctStreak);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+async function init(){
+  sysLog('Booting SQL Quest v2.0...');
+  sysLog('Loading WebAssembly SQL engine...');
+  try{
+    const SQL=await initSqlJs({locateFile:f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.2/${f}`});
+    db=new SQL.Database();
+    initDB();
+    sysLog('SQLite engine ready ✓');
+    buildUI();
+    // Check daily streak
+    checkDailyStreak();
+    // Load last challenge or first incomplete
+    const startCh=findStartChallenge();
+    loadChallenge(startCh);
+    buildHelpPane();
+    sysLog('Welcome back! '+STATE.completed.size+'/'+CHALLENGES.length+' challenges completed, '+STATE.xp+' XP earned.');
+  }catch(e){
+    errLog('Failed to load SQL engine: '+e.message);
+    document.getElementById('ch-title').textContent='⚠️ Failed to load. Check your internet connection.';
+  }
+}
+
+function initDB(){
+  db.run('DROP TABLE IF EXISTS citizens;DROP TABLE IF EXISTS crimes;DROP TABLE IF EXISTS evidence;');
+  db.run(SCHEMA_SQL);
+  // Re-apply completed challenge mutations for continuity
+  replayMutations();
+}
+
+function replayMutations(){
+  // For challenges that mutate DB, re-apply if completed
+  // ch9 insert, ch10 update, ch11 delete, ch18 create table, ch24 transaction
+  const done=STATE.completed;
+  if(done.has(9)) {
+    try{db.run("INSERT OR IGNORE INTO citizens (name,age,district,status) VALUES ('Alex Cipher',28,'Uptown','civilian')");}catch(e){}
+  }
+  if(done.has(10)){
+    try{db.run("UPDATE citizens SET status='arrested' WHERE id=3");}catch(e){}
+  }
+  if(done.has(11)){
+    try{db.run("DELETE FROM citizens WHERE name='Test User'");}catch(e){}
+  }
+  if(done.has(18)){
+    try{db.run("CREATE TABLE IF NOT EXISTS evidence (id INTEGER PRIMARY KEY, crime_id INTEGER, description TEXT, found_at TEXT, collected_by TEXT)");}catch(e){}
+  }
+  if(done.has(24)){
+    try{db.run("UPDATE citizens SET status='under_investigation' WHERE status='suspect'");}catch(e){}
+  }
+}
+
+function findStartChallenge(){
+  for(let i=0;i<CHALLENGES.length;i++){
+    if(!STATE.completed.has(CHALLENGES[i].id)) return i;
+  }
+  return 0;
+}
+
+function checkDailyStreak(){
+  const today=new Date().toDateString();
+  if(STATE.lastDate&&STATE.lastDate!==today){
+    const yesterday=new Date(Date.now()-86400000).toDateString();
+    if(STATE.lastDate!==yesterday){
+      STATE.streak=0;
+    }
+  }
+  STATE.lastDate=today;
+  saveState();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// BUILD UI
+// ═══════════════════════════════════════════════════════════════
+function buildUI(){
+  buildTrack();
+  buildCurriculum();
+  buildSchema();
+  buildBadgesPane();
+  updateTopbar();
+  setupEditor();
+}
+
+function buildTrack(){
+  const wrap=document.getElementById('track-wrap');
+  wrap.innerHTML=CHALLENGES.map((ch,i)=>{
+    const st=STATE.completed.has(ch.id)?'done':i===currentCh?'active':'';
+    return`<div class="track-seg ${st}" id="ts-${i}" onclick="loadChallenge(${i})" title="Ch${ch.id}: ${ch.title}"></div>`;
+  }).join('');
+}
+
+function buildCurriculum(){
+  const pane=document.getElementById('sb-curriculum');
+  const tracks=['beginner','intermediate','advanced','expert'];
+  let html='';
+  for(const t of tracks){
+    const chs=CHALLENGES.filter(c=>c.track===t);
+    html+=`<div class="track-header"><span>${TRACKS[t].label}</span></div>`;
+    for(const ch of chs){
+      const idx=CHALLENGES.indexOf(ch);
+      const done=STATE.completed.has(ch.id);
+      const active=idx===currentCh;
+      const icon=done?'✅':active?'▶':'○';
+      html+=`<div class="ch-row${done?' done':''}${active?' active':''}" id="chr-${idx}" onclick="loadChallenge(${idx})">
+        <span class="ch-num">${String(ch.id).padStart(2,'0')}</span>
+        <span class="ch-name">${ch.title}</span>
+        <span class="ch-icon">${icon}</span>
+      </div>`;
+    }
+  }
+  pane.innerHTML=html;
+}
+
+function buildSchema(){
+  if(!db) return;
+  const pane=document.getElementById('sb-schema');
+  try{
+    const tables=db.exec("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+    if(!tables.length){pane.innerHTML='<div style="color:var(--text3);font-size:.65rem;font-family:var(--mono)">No tables yet</div>';return;}
+    let html='';
+    for(const [tname] of tables[0].values){
+      const info=db.exec(`PRAGMA table_info(${tname})`);
+      if(!info.length) continue;
+      const rowCount=db.exec(`SELECT COUNT(*) FROM ${tname}`);
+      const cnt=rowCount[0].values[0][0];
+      let cols='';
+      for(const col of info[0].values){
+        const pk=col[5]===1;
+        cols+=`<div class="col-row"><span class="${pk?'col-pk':''}">${pk?'🔑 ':''} ${col[1]}</span><span class="col-type">${col[2]}</span></div>`;
+      }
+      html+=`<div class="tbl-card"><div class="tbl-header" onclick="toggleCols(this)"><span>${tname}</span><span style="color:var(--text3);font-size:.58rem">${cnt} rows ▾</span></div><div class="tbl-cols">${cols}</div></div>`;
+    }
+    pane.innerHTML=html;
+  }catch(e){pane.innerHTML='<div style="color:var(--err);font-size:.65rem">Error loading schema</div>';}
+}
+
+function toggleCols(el){
+  const cols=el.nextElementSibling;
+  cols.style.display=cols.style.display==='none'?'block':'none';
+}
+
+function buildBadgesPane(){
+  const pane=document.getElementById('sb-badges');
+  pane.innerHTML='<div class="badge-grid">'+ALL_BADGES.map(b=>{
+    const earned=STATE.badges.has(b.id);
+    return`<div class="badge-card ${earned?'earned':'locked'}" title="${b.desc}">
+      <div class="badge-icon">${b.icon}</div>
+      <div class="badge-title">${b.title}</div>
+      <div class="badge-desc">${earned?b.desc:'???'}</div>
+    </div>`;
+  }).join('')+'</div>';
+}
+
+function updateTopbar(){
+  document.getElementById('xp-badge').textContent=STATE.xp+' XP';
+  document.getElementById('streak-badge').textContent='🔥 '+STATE.streak;
+  const rank=STATE.xp<100?'BEGINNER':STATE.xp<300?'APPRENTICE':STATE.xp<600?'SKILLED':STATE.xp<1000?'ADVANCED':'EXPERT';
+  document.getElementById('rank-badge').textContent=rank;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOAD CHALLENGE
+// ═══════════════════════════════════════════════════════════════
+function loadChallenge(idx){
+  if(sandboxMode) exitSandbox();
+  currentCh=idx;
+  hintUsed=false;
+  hintCount=0;
+  const ch=CHALLENGES[idx];
+
+  const trackInfo=TRACKS[ch.track];
+  document.getElementById('ch-track-tag').textContent=trackInfo.label;
+  document.getElementById('ch-track-tag').className='ch-track-tag '+trackInfo.cls;
+  document.getElementById('ch-diff').textContent=ch.diff;
+  document.getElementById('ch-diff').className='diff-pill diff-'+ch.diff;
+  document.getElementById('ch-num').textContent=ch.id+' / '+CHALLENGES.length;
+  document.getElementById('ch-xp').textContent='+'+ch.xp+' XP';
+  document.getElementById('ch-title').textContent=ch.title;
+  document.getElementById('ch-desc').innerHTML=ch.desc;
+  document.getElementById('ch-tags').innerHTML=ch.tags.map(t=>`<span class="stag">${t}</span>`).join('');
+
+  if(ch.concept){
+    document.getElementById('concept-panel').style.display='block';
+    document.getElementById('concept-label').textContent=ch.concept.label;
+    document.getElementById('concept-body').innerHTML=ch.concept.body;
+  } else {
+    document.getElementById('concept-panel').style.display='none';
+  }
+
+  // Reset results
+  document.getElementById('empty-state').style.display='flex';
+  document.getElementById('results-wrap').style.display='none';
+  document.getElementById('feedback').className='feedback';
+  document.getElementById('next-btn').className='';
+
+  // Editor
+  document.getElementById('editor').value='';
+  document.getElementById('editor').focus();
+
+  // Highlight completed
+  const alreadyDone=STATE.completed.has(ch.id);
+  if(alreadyDone){
+    const fb=document.getElementById('feedback');
+    fb.className='feedback info';
+    fb.innerHTML='<div class="fb-title">✅ ALREADY COMPLETED</div>This challenge is done. Feel free to experiment, or move to the next one.';
+    document.getElementById('empty-state').style.display='none';
+    document.getElementById('results-wrap').style.display='block';
+    document.getElementById('next-btn').className='show';
+    document.getElementById('next-btn').textContent=idx<CHALLENGES.length-1?'→ NEXT CHALLENGE':'🏆 ALL DONE!';
+  }
+
+  // Update sidebar & track
+  buildCurriculum();
+  buildTrack();
+  sysLog('Loaded challenge '+ch.id+': '+ch.title);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RUN QUERY
+// ═══════════════════════════════════════════════════════════════
+function runQuery(){
+  const sql=document.getElementById('editor').value.trim();
+  if(!sql) return;
+  if(!db){errLog('DB not ready');return;}
+
+  // Handle special commands
+  if(handleCommand(sql)) return;
+
+  STATE.totalQueries++;
+  addToHistory(sql);
+
+  const t0=performance.now();
+  let results=null;
+
+  try{
+    results=db.exec(sql);
+    const ms=(performance.now()-t0).toFixed(2);
+    okLog('Executed in '+ms+'ms → '+(results[0]?.values?.length||0)+' rows returned');
+
+    // Show results tab
+    showResults(results, ms);
+
+    // Badge: speed demon
+    if(parseFloat(ms)<0.5) awardBadge('speed_demon');
+
+    // Check challenge answer (not in sandbox)
+    if(!sandboxMode){
+      const ch=CHALLENGES[currentCh];
+      const verdict=ch.check(results,db);
+      showFeedback(verdict.ok, verdict.msg);
+
+      if(verdict.ok){
+        STATE.correctStreak++;
+        if(!STATE.completed.has(ch.id)){
+          STATE.completed.add(ch.id);
+          const xpEarned=Math.max(Math.floor(ch.xp*(hintUsed?0.5:1)), Math.floor(ch.xp*0.3));
+          addXP(xpEarned);
+          STATE.streak++;
+          if(!hintUsed) STATE.noHintStreak++;
+          else STATE.noHintStreak=0;
+          checkBadges(ch);
+          updateTopbar();
+          buildTrack();
+          buildCurriculum();
+          saveState();
+          okLog('Challenge '+ch.id+' completed! +'+xpEarned+' XP');
+          // Rebuild schema if DDL
+          if(/CREATE|DROP|ALTER/i.test(sql)) buildSchema();
+        }
+        document.getElementById('next-btn').className='show';
+        document.getElementById('next-btn').textContent=currentCh<CHALLENGES.length-1?'→ NEXT CHALLENGE':'🏆 VIEW FINAL RESULTS';
+        if(CHALLENGES[currentCh].id===25 && !STATE.completed.has('shown_complete')){
+          STATE.completed.add('shown_complete');
+          setTimeout(showCompletion,1500);
+        }
+      } else {
+        STATE.correctStreak=0;
+        STATE.noHintStreak=0;
+      }
+    }
+
+    // Always rebuild schema after DDL
+    if(/CREATE|DROP|ALTER/i.test(sql)){buildSchema();}
+    saveState();
+
+  }catch(e){
+    errLog('SQL Error: '+e.message);
+    showResults(null, 0);
+    showFeedback(false,'⛔ Syntax Error: '+e.message);
+    STATE.correctStreak=0;
+    document.getElementById('streak-badge').textContent='🔥 '+STATE.streak;
+  }
+}
+
+function showResults(results, ms){
+  document.getElementById('empty-state').style.display='none';
+  document.getElementById('results-wrap').style.display='block';
+  rSwitch('results', document.querySelector('[data-tab-r="results"]'));
+
+  if(!results||!results.length){
+    document.getElementById('res-meta').textContent='✓ OK — no rows returned ('+ms+'ms)';
+    document.getElementById('res-table').innerHTML='<div style="font-family:var(--mono);font-size:.68rem;color:var(--text3);padding:8px">Statement executed — no rows to display.</div>';
+    return;
+  }
+  const {columns,values}=results[0];
+  document.getElementById('res-meta').innerHTML=
+    `<span class="res-rows">${values.length} row${values.length!==1?'s':''}</span><span class="res-time">${ms}ms</span><span>${columns.length} cols</span>`;
+  let html='<div class="tbl-wrap"><table class="rtbl"><thead><tr>'+columns.map(c=>`<th>${c}</th>`).join('')+'</tr></thead><tbody>';
+  for(const row of values){
+    html+='<tr>'+row.map(c=>c===null?'<td><span class="null-v">NULL</span></td>':`<td title="${c}">${String(c).substring(0,80)}</td>`).join('')+'</tr>';
+  }
+  html+='</tbody></table></div>';
+  document.getElementById('res-table').innerHTML=html;
+}
+
+function showFeedback(isOk, msg){
+  const fb=document.getElementById('feedback');
+  fb.className='feedback '+(isOk?'ok':'fail');
+  fb.innerHTML=`<div class="fb-title">${isOk?'✅ CORRECT!':'❌ NOT QUITE'}</div>${msg}`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMMANDS
+// ═══════════════════════════════════════════════════════════════
+function handleCommand(sql){
+  const up=sql.toUpperCase().trim();
+  const raw=sql.trim();
+
+  // :commands
+  if(raw.startsWith(':')){
+    const parts=raw.slice(1).split(' ');
+    const cmd=parts[0].toLowerCase();
+    switch(cmd){
+      case 'tables':     cmdTables(); return true;
+      case 'schema':     cmdSchema(parts[1]); return true;
+      case 'history':    cmdHistory(); return true;
+      case 'progress':   cmdProgress(); return true;
+      case 'clear':      clearEditor(); return true;
+      case 'reset':      resetDB(); return true;
+      case 'sandbox':    toggleSandbox(); return true;
+      case 'exit':       exitSandbox(); return true;
+      default:
+        warnLog('Unknown command: :'+cmd+'. Type HELP for available commands.');
+        return true;
+    }
+  }
+
+  // HELP commands
+  if(up==='HELP'||up==='HELP;'){
+    showHelp('overview'); return true;
+  }
+  if(up.startsWith('HELP ')){
+    const topic=up.replace('HELP ','').replace(';','').trim();
+    showHelp(topic); return true;
+  }
+  return false;
+}
+
+function cmdTables(){
+  try{
+    const t=db.exec("SELECT name, (SELECT COUNT(*) FROM sqlite_master WHERE type='table') as total FROM sqlite_master WHERE type='table' ORDER BY name");
+    if(!t?.length||!t[0].values.length){infoLog('No tables found in database.');return;}
+    const names=t[0].values.map(r=>r[0]);
+    infoLog('Tables: '+names.map(n=>{
+      try{const c=db.exec(`SELECT COUNT(*) FROM ${n}`);return n+'('+c[0].values[0][0]+' rows)';}catch{return n;}
+    }).join(', '));
+    showResults(db.exec("SELECT name as table_name FROM sqlite_master WHERE type='table' ORDER BY name"),0);
+    rSwitch('results',null);
+  }catch(e){errLog(e.message);}
+}
+
+function cmdSchema(tname){
+  if(!tname){warnLog('Usage: :schema <table>  (e.g. :schema citizens)');return;}
+  try{
+    const r=db.exec(`PRAGMA table_info(${tname})`);
+    if(!r?.length){errLog('Table "'+tname+'" not found.');return;}
+    infoLog('Schema for: '+tname);
+    showResults(r,0);
+    rSwitch('results',null);
+  }catch(e){errLog(e.message);}
+}
+
+function cmdHistory(){
+  showQueryHistory();
+  rSwitch('history',document.querySelector('[onclick*="history"]'));
+}
+
+function cmdProgress(){
+  const done=STATE.completed.size;
+  const total=CHALLENGES.length;
+  const pct=Math.round(done/total*100);
+  infoLog(`Progress: ${done}/${total} challenges (${pct}%) | XP: ${STATE.xp} | Streak: ${STATE.streak} | Badges: ${STATE.badges.size}/${ALL_BADGES.length} | Total queries: ${STATE.totalQueries}`);
+}
+
+function showHelp(topic){
+  const key=topic.toUpperCase();
+  const content=HELP_CONTENT[key]||HELP_CONTENT['overview'];
+  document.getElementById('help-pane').innerHTML=
+    `<div style="font-family:var(--sans);font-size:.8rem;font-weight:700;color:var(--accent);margin-bottom:10px">${content.title}</div>${content.body}`;
+  rSwitch('help', document.querySelector('[onclick*="\'help\'"]'));
+  cmdLog('HELP '+topic);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════════
+function addToHistory(sql){
+  const entry={sql,ts:Date.now(),ch:sandboxMode?'sandbox':CHALLENGES[currentCh]?.id};
+  STATE.queryLog.push(entry);
+  historyBuf.unshift(sql);
+  if(historyBuf.length>50) historyBuf.pop();
+  historyIdx=-1;
+  showQueryHistory();
+}
+
+function showQueryHistory(){
+  const pane=document.getElementById('history-pane');
+  if(!STATE.queryLog.length){
+    pane.innerHTML='<div class="empty-state"><div class="em-icon">📜</div><p>No queries yet</p></div>';
+    return;
+  }
+  const recent=[...STATE.queryLog].reverse().slice(0,30);
+  pane.innerHTML=recent.map(e=>{
+    const d=new Date(e.ts);
+    const t=d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    const label=e.ch==='sandbox'?'sandbox':'ch'+e.ch;
+    return`<div class="hist-item" onclick="loadExample('${e.sql.replace(/'/g,"\\'")}')">
+      <div class="hist-meta">${t} · ${label}</div>
+      ${e.sql.substring(0,80)}${e.sql.length>80?'…':''}
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HINTS / ANSWER
+// ═══════════════════════════════════════════════════════════════
+function doHint(){
+  hintUsed=true; hintCount++;
+  const ch=CHALLENGES[currentCh];
+  warnLog('Hint (costs 50% XP): '+ch.hint);
+  document.getElementById('ch-desc').innerHTML+=`<div style="margin-top:8px;padding:8px;background:rgba(255,209,102,.07);border:1px solid rgba(255,209,102,.2);border-radius:6px;font-size:.72rem;color:var(--a4)">💡 ${ch.hint}</div>`;
+}
+
+function doAnswer(){
+  hintUsed=true; hintCount+=5;
+  const ch=CHALLENGES[currentCh];
+  document.getElementById('editor').value=ch.answer;
+  warnLog('Answer revealed! Try to understand it. XP penalty applied.');
+}
+
+function clearEditor(){
+  document.getElementById('editor').value='';
+  document.getElementById('editor').focus();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SANDBOX
+// ═══════════════════════════════════════════════════════════════
+function toggleSandbox(){
+  sandboxMode?exitSandbox():enterSandbox();
+}
+
+function enterSandbox(){
+  sandboxMode=true;
+  document.getElementById('sandbox-banner').classList.add('show');
+  document.getElementById('ch-title').textContent='🔬 Sandbox Mode — Free Exploration';
+  document.getElementById('ch-desc').innerHTML='You\'re in sandbox mode. Run any SQL you want against the Neonville database. No challenge checking. Type <code>:exit</code> or click the button to return.';
+  document.getElementById('ch-tags').innerHTML='<span class="stag">FREE PLAY</span>';
+  document.getElementById('concept-panel').style.display='none';
+  document.getElementById('editor').value='-- Sandbox mode: run any SQL freely\n-- Try: SELECT * FROM citizens;\n-- Or:  :tables  :schema citizens  HELP EXAMPLES';
+  document.getElementById('editor').focus();
+  infoLog('Entered sandbox mode. Full database access enabled.');
+}
+
+function exitSandbox(){
+  sandboxMode=false;
+  document.getElementById('sandbox-banner').classList.remove('show');
+  loadChallenge(currentCh);
+  infoLog('Exited sandbox mode.');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RESET DB
+// ═══════════════════════════════════════════════════════════════
+function resetDB(){
+  if(!db) return;
+  initDB();
+  buildSchema();
+  warnLog('Database reset to original state. Note: previously completed challenges may need to be re-answered to restore their changes.');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// XP + BADGES
+// ═══════════════════════════════════════════════════════════════
+function addXP(n){
+  STATE.xp+=n;
+  const toast=document.getElementById('xp-toast');
+  toast.textContent='+'+n+' XP';
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),1600);
+  updateTopbar();
+}
+
+function awardBadge(id){
+  if(STATE.badges.has(id)) return;
+  STATE.badges.add(id);
+  saveState();
+  const badge=ALL_BADGES.find(b=>b.id===id);
+  if(!badge) return;
+  const toast=document.getElementById('badge-toast');
+  toast.innerHTML=`<div style="font-weight:700;color:var(--accent);margin-bottom:2px">🏅 BADGE UNLOCKED!</div><div style="font-size:.75rem">${badge.icon} ${badge.title} — ${badge.desc}</div>`;
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3500);
+  buildBadgesPane();
+  okLog('Badge earned: '+badge.icon+' '+badge.title);
+}
+
+function checkBadges(ch){
+  if(STATE.totalQueries>=1) awardBadge('first_query');
+  if(ch.id===3) awardBadge('suspect');
+  if(ch.id===9) awardBadge('insert_pro');
+  if(ch.id===11) awardBadge('careful_del');
+  if(ch.id===13) awardBadge('join_master');
+  if(ch.id===18) awardBadge('architect');
+  if(ch.id===21) awardBadge('cte_wizard');
+  if(ch.id===22) awardBadge('window_god');
+  if(STATE.noHintStreak>=5) awardBadge('no_hint_5');
+  if(STATE.correctStreak>=10) awardBadge('streak10');
+  if(STATE.completed.size===CHALLENGES.length) awardBadge('completionist');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// COMPLETION SCREEN
+// ═══════════════════════════════════════════════════════════════
+function showCompletion(){
+  celebrate();
+  document.getElementById('comp-stats').innerHTML=`
+    <div class="comp-stat"><div class="comp-stat-n">${STATE.xp}</div><div class="comp-stat-l">Total XP</div></div>
+    <div class="comp-stat"><div class="comp-stat-n">${CHALLENGES.length}</div><div class="comp-stat-l">Challenges</div></div>
+    <div class="comp-stat"><div class="comp-stat-n">${STATE.badges.size}</div><div class="comp-stat-l">Badges</div></div>
+    <div class="comp-stat"><div class="comp-stat-n">${STATE.totalQueries}</div><div class="comp-stat-l">Total Queries</div></div>
+  `;
+  document.getElementById('completion-overlay').classList.add('show');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════
+function nextChallenge(){
+  if(currentCh<CHALLENGES.length-1) loadChallenge(currentCh+1);
+  else showCompletion();
+}
+
+function insertHelp(){
+  document.getElementById('editor').value='HELP';
+  runQuery();
+}
+
+function loadExample(sql){
+  document.getElementById('editor').value=sql;
+  document.getElementById('editor').focus();
+  rSwitch('results',document.querySelector('.r-tab'));
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCHES
+// ═══════════════════════════════════════════════════════════════
+function sbSwitch(name,el){
+  document.querySelectorAll('.sb-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sb-pane').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('sb-'+name).classList.add('active');
+}
+
+function rSwitch(name,el){
+  document.querySelectorAll('.r-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.r-pane').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else{
+    const tabs=document.querySelectorAll('.r-tab');
+    tabs.forEach(t=>{if(t.getAttribute('onclick')?.includes("'"+name+"'")) t.classList.add('active');});
+  }
+  document.getElementById('r-'+name).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EDITOR SETUP
+// ═══════════════════════════════════════════════════════════════
+function setupEditor(){
+  const ed=document.getElementById('editor');
+
+  ed.addEventListener('keydown',e=>{
+    // Ctrl+Enter = run
+    if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runQuery();return;}
+    // Tab = 2 spaces
+    if(e.key==='Tab'){e.preventDefault();const s=ed.selectionStart;ed.value=ed.value.substring(0,s)+'  '+ed.value.substring(ed.selectionEnd);ed.selectionStart=ed.selectionEnd=s+2;return;}
+    // Up/down = history navigation
+    if(e.key==='ArrowUp'&&e.altKey){
+      e.preventDefault();
+      if(historyBuf.length){historyIdx=Math.min(historyIdx+1,historyBuf.length-1);ed.value=historyBuf[historyIdx];}
+      return;
+    }
+    if(e.key==='ArrowDown'&&e.altKey){
+      e.preventDefault();
+      if(historyIdx>0){historyIdx--;ed.value=historyBuf[historyIdx];}
+      else{historyIdx=-1;ed.value='';}
+      return;
+    }
+    // Autocomplete
+    scheduleAC();
+  });
+
+  ed.addEventListener('input',scheduleAC);
+  ed.addEventListener('blur',()=>{setTimeout(()=>document.getElementById('ac').style.display='none',200);});
+}
+
+// ── AUTOCOMPLETE ─────────────────────────────────────────────
+const AC_KEYWORDS=['SELECT','FROM','WHERE','AND','OR','NOT','INSERT','INTO','VALUES','UPDATE','SET','DELETE','CREATE','TABLE','DROP','ALTER','JOIN','LEFT','RIGHT','INNER','OUTER','ON','GROUP','BY','ORDER','HAVING','LIMIT','DISTINCT','AS','IS','NULL','LIKE','BETWEEN','IN','CASE','WHEN','THEN','ELSE','END','COUNT','SUM','AVG','MAX','MIN','WITH','OVER','PARTITION','ROW_NUMBER','RANK','BEGIN','COMMIT','ROLLBACK','TRANSACTION'];
+const AC_TABLES=['citizens','crimes','evidence'];
+const AC_COLS=['id','name','age','district','status','citizen_id','type','date','severity','crime_id','description','found_at','collected_by'];
+
+let acTimer=null;
+function scheduleAC(){clearTimeout(acTimer);acTimer=setTimeout(doAC,120);}
+
+function doAC(){
+  const ed=document.getElementById('editor');
+  const ac=document.getElementById('ac');
+  const pos=ed.selectionStart;
+  const text=ed.value.substring(0,pos);
+  const word=text.match(/(\w+)$/)?.[1]||'';
+  if(word.length<2){ac.style.display='none';return;}
+  const up=word.toUpperCase();
+  const suggestions=[];
+  for(const kw of AC_KEYWORDS) if(kw.startsWith(up)&&kw!==up) suggestions.push({val:kw,kind:'keyword'});
+  for(const t of AC_TABLES) if(t.toLowerCase().startsWith(word.toLowerCase())&&t!==word) suggestions.push({val:t,kind:'table'});
+  for(const c of AC_COLS) if(c.toLowerCase().startsWith(word.toLowerCase())&&c!==word) suggestions.push({val:c,kind:'column'});
+  if(!suggestions.length){ac.style.display='none';return;}
+  ac.innerHTML=suggestions.slice(0,8).map((s,i)=>`<div class="ac-item${i===0?' sel':''}" onmousedown="applyAC(event,'${s.val}',${word.length})">${s.val}<span class="ac-kind">${s.kind}</span></div>`).join('');
+  // Position relative to editor wrapper
+  const wrapper=ed.parentElement;
+  const rect=ed.getBoundingClientRect();
+  const wRect=wrapper.getBoundingClientRect();
+  ac.style.bottom=(wRect.bottom-rect.bottom+ed.offsetHeight/2)+'px';
+  ac.style.left='14px';
+  ac.style.position='absolute';
+  ac.style.display='block';
+}
+
+function applyAC(e,val,wordLen){
+  e.preventDefault();
+  const ed=document.getElementById('editor');
+  const pos=ed.selectionStart;
+  ed.value=ed.value.substring(0,pos-wordLen)+val+ed.value.substring(pos);
+  ed.selectionStart=ed.selectionEnd=pos-wordLen+val.length;
+  document.getElementById('ac').style.display='none';
+  ed.focus();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// HELP PANE
+// ═══════════════════════════════════════════════════════════════
+function buildHelpPane(){
+  document.getElementById('help-pane').innerHTML=HELP_CONTENT.overview.body;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CELEBRATION
+// ═══════════════════════════════════════════════════════════════
+function celebrate(){
+  const el=document.getElementById('confetti');
+  el.style.display='block';
+  el.innerHTML='';
+  const colors=['#5dfdcb','#4a9eff','#ff6b9d','#ffd166','#b084ff','#a8edcc'];
+  for(let i=0;i<100;i++){
+    const p=document.createElement('div');
+    p.className='cpiece';
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${1.5+Math.random()*2.5}s;animation-delay:${Math.random()*1}s;width:${5+Math.random()*9}px;height:${5+Math.random()*9}px;border-radius:${Math.random()>0.5?'50%':'3px'}`;
+    el.appendChild(p);
+  }
+  setTimeout(()=>{el.style.display='none';},5000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// LOGGING
+// ═══════════════════════════════════════════════════════════════
+function addLog(type,msg){
+  const pane=document.getElementById('log-pane');
+  const t=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const el=document.createElement('div');
+  el.className='log-ln log-'+type;
+  el.innerHTML=`<span class="log-t">[${t}]</span><span class="log-m">${msg}</span>`;
+  pane.appendChild(el);
+  pane.scrollTop=pane.scrollHeight;
+}
+function okLog(m){addLog('ok',m);}
+function errLog(m){addLog('err',m);}
+function infoLog(m){addLog('info',m);}
+function warnLog(m){addLog('warn',m);}
+function cmdLog(m){addLog('cmd',m);}
+function sysLog(m){addLog('sys',m);}
+
+// ═══════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
