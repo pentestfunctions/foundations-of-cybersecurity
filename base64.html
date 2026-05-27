@@ -794,23 +794,34 @@ function renderBitsTable(codes, bits8) {
   const el = document.getElementById('bitsTable');
   el.innerHTML = codes.map((code, ci) => {
     const rowBits = userBits8[ci];
-    const sum = rowBits.includes(null) ? null :
-      rowBits.reduce((acc,b,i) => acc + b * W8[i], 0);
-    const sumCls = sum === null ? '' : (sum === code ? 'correct' : 'wrong');
-    const tick = sum === code ? ' <span class="tick">✓</span>' : (sum !== null ? ` <span style="color:var(--accent3)">(need ${code})</span>` : '');
+    // running total from whatever bits are toggled on (treat null as 0)
+    const running = rowBits.reduce((acc,b,i) => acc + (b===1 ? W8[i] : 0), 0);
+    const allFilled = !rowBits.includes(null);
+    const correct = allFilled && running === code;
+    const wrong = allFilled && running !== code;
 
     const cells = W8.map((w,bi) => {
       const v = rowBits[bi];
       return `<div class="bit-cell ${v===1?'on':''}" onclick="toggle8(${ci},${bi})" title="${w}">${v===null?'·':v}</div>`;
     }).join('');
 
+    // always show target; show running total once any bit is toggled
+    const anyToggled = rowBits.some(b => b !== null);
+    let sumHtml = `<span style="color:var(--text3);">target: <span style="color:var(--accent2);font-weight:700;">${code}</span></span>`;
+    if(anyToggled) {
+      const totalColor = correct ? 'var(--accent)' : (running > code ? 'var(--accent3)' : 'var(--text2)');
+      sumHtml += ` &nbsp;<span style="color:var(--text3);">got: <span style="color:${totalColor};font-weight:700;">${running}</span></span>`;
+      if(correct) sumHtml += ` <span class="tick">✓</span>`;
+      else if(running > code) sumHtml += ` <span style="color:var(--accent3);font-size:10px;">too high</span>`;
+    }
+
     return `
       <div class="bits-row-wrap">
         <div class="row-char">${word[ci]}</div>
         ${cells}
         <div></div>
-        <div class="row-sum ${sumCls}" style="font-size:0.72rem;">
-          <span class="val">= ${sum===null?'?':sum}</span>${tick}
+        <div class="row-sum" style="font-size:0.72rem;display:flex;flex-direction:column;gap:3px;">
+          ${sumHtml}
           <button class="solve-btn" onclick="solve8(${ci})">solve</button>
         </div>
       </div>`;
