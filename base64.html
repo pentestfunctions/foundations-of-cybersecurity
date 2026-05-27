@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Base64 Encoder — Interactive Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e28;
+    --surface3: #222736;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.13);
+    --accent: #6ee7b7;
+    --accent2: #818cf8;
+    --accent3: #f472b6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #475569;
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(110,231,183,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(110,231,183,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 1.5rem 6rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HERO */
+  .hero {
+    padding: 4rem 0 3rem;
+    text-align: center;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.1s forwards;
+  }
+
+  .hero h1 {
+    font-family: var(--mono);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.2s forwards;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--text2);
+    max-width: 520px;
+    margin: 0 auto 2.5rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s forwards;
+  }
+
+  /* STEP BADGES */
+  .step-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-badge::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 2rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+
+  .section.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .section-title {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .section-sub {
+    font-size: 0.875rem;
+    color: var(--text2);
+    margin-bottom: 1.25rem;
+    font-weight: 300;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+  }
+
+  /* INPUT AREA */
+  .input-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .input-wrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(110,231,183,0.08);
+  }
+
+  .input-prompt {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  #wordInput {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: var(--mono);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    caret-color: var(--accent);
+    min-width: 0;
+  }
+
+  #wordInput::placeholder { color: var(--text3); font-weight: 400; }
+
+  .input-hint {
+    font-size: 0.75rem;
+    color: var(--text3);
+    font-family: var(--mono);
+  }
+
+  /* PROGRESS */
+  .progress-track {
+    height: 2px;
+    background: var(--surface3);
+    border-radius: 2px;
+    margin: 1.75rem 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    width: 0%;
+  }
+
+  /* ASCII TABLE */
+  .ascii-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ascii-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.6rem 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: popIn 0.25s ease both;
+  }
+
+  .ascii-char {
+    font-family: var(--mono);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    min-width: 14px;
+    text-align: center;
+  }
+
+  .ascii-sep { color: var(--text3); font-size: 0.8rem; }
+
+  .ascii-num {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* BITS TABLE */
+  .bits-weights {
+    display: grid;
+    grid-template-columns: 44px repeat(8, 1fr) 1fr 100px;
+    gap: 4px;
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-align: center;
+  }
+
+  .bits-row-wrap {
+    display: grid;
+    grid-template-columns: 44px repeat(8, 1fr) 1fr 100px;
+    gap: 4px;
+    margin-bottom: 6px;
+    align-items: center;
+  }
+
+  .row-char {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent2);
+    text-align: center;
+    background: var(--surface3);
+    border-radius: 6px;
+    padding: 6px 0;
+  }
+
+  .bit-cell {
+    aspect-ratio: 1;
+    border-radius: 5px;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    color: var(--text3);
+    transition: all 0.12s;
+  }
+
+  .bit-cell:hover { border-color: var(--accent2); color: var(--accent2); }
+  .bit-cell.on { background: var(--accent2); border-color: var(--accent2); color: #fff; }
+
+  .row-spacer { /* empty */ }
+
+  .row-sum {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text2);
+  }
+
+  .row-sum .val { font-weight: 700; }
+  .row-sum.correct .val { color: var(--accent); }
+  .row-sum.wrong .val { color: var(--accent3); }
+  .row-sum .tick { color: var(--accent); }
+
+  .solve-btn {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 2px 7px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .solve-btn:hover { color: var(--accent2); border-color: var(--accent2); }
+
+  /* BIT STREAM */
+  .bit-stream-display {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    line-height: 2.2;
+    word-break: break-all;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--border);
+  }
+
+  .b1 { color: var(--accent); font-weight: 700; }
+  .b0 { color: var(--text3); }
+  .bunk { color: var(--text3); opacity: 0.4; }
+  .chunk-pipe { color: var(--surface3); margin: 0 3px; }
+  .chunk-highlight { background: rgba(110,231,183,0.06); border-radius: 3px; padding: 1px 2px; }
+
+  /* 6-BIT TABLE */
+  .sixbit-weights {
+    display: grid;
+    grid-template-columns: 36px repeat(6, 1fr) 1fr 110px;
+    gap: 4px;
+    margin-bottom: 6px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text3);
+    text-align: center;
+  }
+
+  .sixbit-row-wrap {
+    display: grid;
+    grid-template-columns: 36px repeat(6, 1fr) 1fr 110px;
+    gap: 4px;
+    margin-bottom: 6px;
+    align-items: center;
+  }
+
+  .grp-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-align: center;
+  }
+
+  /* B64 LOOKUP */
+  .lookup-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .lookup-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    animation: popIn 0.2s ease both;
+  }
+
+  .lookup-idx {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text3);
+  }
+
+  .lookup-char {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--accent);
+    transition: background 0.2s;
+  }
+
+  .lookup-char:hover { background: var(--surface3); }
+
+  /* RESULT */
+  .result-section {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(110,231,183,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .result-label {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .result-string {
+    font-family: var(--mono);
+    font-size: clamp(1.3rem, 4vw, 2rem);
+    font-weight: 700;
+    color: var(--accent);
+    word-break: break-all;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  .result-equation {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--text3);
+  }
+
+  .result-equation span { color: var(--text2); }
+
+  .copy-btn {
+    margin-top: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 8px 20px;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+
+  .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* REFERENCE TABLE */
+  .ref-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .ref-table-wrap {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .ref-table-head {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    text-transform: uppercase;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .ref-table-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    padding: 0.75rem 1rem;
+    gap: 2px 1.5rem;
+  }
+
+  .ref-item { display: flex; gap: 8px; }
+  .ref-char { color: var(--accent2); font-weight: 700; min-width: 12px; }
+  .ref-eq { color: var(--text3); }
+  .ref-val { color: var(--accent); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 3px; }
+
+  /* TOOLTIP */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface3);
+    color: var(--text2);
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    pointer-events: none;
+    border: 1px solid var(--border2);
+  }
+  .tooltip-wrap:hover .tooltip { visibility: visible; opacity: 1; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .bits-weights, .bits-row-wrap { grid-template-columns: 36px repeat(8, 1fr); }
+    .bits-weights span:last-child, .bits-row-wrap .row-sum { display: none; }
+    .ref-grid { grid-template-columns: 1fr; }
+    .sixbit-weights, .sixbit-row-wrap { grid-template-columns: 28px repeat(6, 1fr); }
+    .sixbit-weights span:last-child, .sixbit-row-wrap .row-sum { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">Interactive learning tool</div>
+    <h1>How does <span>Base64</span> work?</h1>
+    <p>Type a word and work through every step yourself — from ASCII values to binary bits to the final encoded string.</p>
+  </div>
+
+  <!-- STEP 1 — INPUT -->
+  <div class="section visible" style="opacity:1;transform:none;">
+    <div class="step-badge">Step 1</div>
+    <div class="section-title">Choose your word</div>
+    <div class="section-sub">Lowercase letters only. Try something short to start — "hack" is a classic.</div>
+    <div class="input-wrap">
+      <span class="input-prompt">&gt;_</span>
+      <input id="wordInput" type="text" placeholder="type here..." maxlength="16" autocomplete="off" spellcheck="false" />
+      <span class="input-hint" id="charCount">0 / 16</span>
+    </div>
+  </div>
+
+  <!-- DYNAMIC CONTENT -->
+  <div id="mainContent" style="display:none;">
+
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- STEP 2 — ASCII -->
+    <div class="section" id="secAscii">
+      <div class="step-badge">Step 2</div>
+      <div class="section-title">ASCII decimal lookup</div>
+      <div class="section-sub">Every character maps to a number. These are the decimal ASCII values for each letter in your word.</div>
+      <div class="card">
+        <div class="ascii-grid" id="asciiGrid"></div>
+        <div style="margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--border);">
+          <div style="font-size:0.78rem;color:var(--text3);font-family:var(--mono);margin-bottom:0.6rem;">QUICK REFERENCE — lowercase a–z</div>
+          <div id="asciiRef" style="font-family:var(--mono);font-size:0.78rem;display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--text2);"></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- STEP 3 — BINARY -->
+    <div class="section" id="secBits">
+      <div class="step-badge">Step 3</div>
+      <div class="section-title">Convert each ASCII value to 8-bit binary</div>
+      <div class="section-sub">Each bit position is a power of 2: 128 · 64 · 32 · 16 · 8 · 4 · 2 · 1. Click bits to toggle them, or hit <strong style="color:var(--accent2);">solve</strong> to reveal a row.</div>
+      <div class="card">
+        <div class="bits-weights">
+          <span></span>
+          <span>128</span><span>64</span><span>32</span><span>16</span><span>8</span><span>4</span><span>2</span><span>1</span>
+          <span></span><span></span>
+        </div>
+        <div id="bitsTable"></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- STEP 4 — BIT STREAM -->
+    <div class="section" id="secStream">
+      <div class="step-badge">Step 4</div>
+      <div class="section-title">Join all bits, then split into groups of 6</div>
+      <div class="section-sub" id="streamSub">Concatenate every binary value into one long stream, then rechunk into 6-bit groups for base64 encoding.</div>
+      <div class="card">
+        <div class="bit-stream-display" id="bitStreamDisplay"></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- STEP 5 — 6-BIT DECIMAL -->
+    <div class="section" id="sec6Bit">
+      <div class="step-badge">Step 5</div>
+      <div class="section-title">Decode each 6-bit group to a decimal value</div>
+      <div class="section-sub">Same idea, but now with only 6 bit positions: 32 · 16 · 8 · 4 · 2 · 1. Each gives you a number 0–63.</div>
+      <div class="card">
+        <div class="sixbit-weights">
+          <span></span>
+          <span>32</span><span>16</span><span>8</span><span>4</span><span>2</span><span>1</span>
+          <span></span><span></span>
+        </div>
+        <div id="sixBitTable"></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- STEP 6 — B64 LOOKUP -->
+    <div class="section" id="secLookup">
+      <div class="step-badge">Step 6</div>
+      <div class="section-title">Look up each value in the Base64 alphabet</div>
+      <div class="section-sub">0–25 maps to A–Z, 26–51 to a–z, 52–61 to 0–9, 62 = +, 63 = /</div>
+      <div class="card">
+        <div class="lookup-grid" id="lookupGrid"></div>
+        <!-- Full B64 reference -->
+        <div style="margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);">
+          <div style="font-size:0.78rem;color:var(--text3);font-family:var(--mono);margin-bottom:0.75rem;">FULL BASE64 ALPHABET</div>
+          <div id="b64RefGrid" style="font-family:var(--mono);font-size:0.78rem;display:flex;flex-wrap:wrap;gap:3px 12px;color:var(--text2);"></div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- RESULT -->
+    <div class="section" id="secResult">
+      <div class="step-badge">Result</div>
+      <div class="section-title">Your Base64 encoded string</div>
+      <div class="result-section">
+        <div class="result-label">btoa( <span id="rWord" style="color:var(--accent2);"></span> )</div>
+        <div class="result-string" id="rString"></div>
+        <div class="result-equation">= <span id="rChars"></span></div>
+        <div style="margin-top:1rem;font-size:0.78rem;color:var(--text3);font-family:var(--mono);" id="rVerify"></div>
+        <button class="copy-btn" onclick="copyResult()">⎘ Copy result</button>
+      </div>
+    </div>
+
+  </div><!-- /mainContent -->
+
+</div><!-- /container -->
+
+<script>
+const B64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+const W8 = [128,64,32,16,8,4,2,1];
+const W6 = [32,16,8,4,2,1];
+
+let word = '';
+let userBits8 = []; // [charIdx][bitIdx] = 0|1|null
+let userBits6 = []; // [groupIdx][bitIdx] = 0|1|null
+
+// ---- Input ----
+const wordInput = document.getElementById('wordInput');
+wordInput.addEventListener('input', () => {
+  const cleaned = wordInput.value.toLowerCase().replace(/[^a-z]/g,'');
+  if(cleaned !== wordInput.value) wordInput.value = cleaned;
+  word = cleaned;
+  document.getElementById('charCount').textContent = word.length + ' / 16';
+
+  if(word.length > 0) {
+    document.getElementById('mainContent').style.display = '';
+    initState();
+    renderAll();
+    revealSections();
+  } else {
+    document.getElementById('mainContent').style.display = 'none';
+  }
+});
+
+function initState() {
+  const codes = getCharCodes();
+  const bits8 = codes.map(c => W8.map(w => (c & w) ? 1 : 0));
+  const stream = bits8.flat();
+  const numGroups = Math.ceil(stream.length / 6);
+
+  // preserve existing user input where word hasn't changed length
+  if(userBits8.length !== word.length) {
+    userBits8 = bits8.map(b => b.map(() => null));
+  }
+  const groups6 = get6BitGroups(bits8);
+  if(userBits6.length !== groups6.length) {
+    userBits6 = groups6.map(g => g.map(() => null));
+  }
+}
+
+function getCharCodes() { return [...word].map(c => c.charCodeAt(0)); }
+
+function get6BitGroups(bits8) {
+  const flat = bits8.flat();
+  const groups = [];
+  for(let i=0; i<flat.length; i+=6) groups.push(flat.slice(i,i+6));
+  return groups;
+}
+
+// ---- Render ----
+function renderAll() {
+  const codes = getCharCodes();
+  const bits8 = codes.map(c => W8.map(w => (c & w) ? 1 : 0));
+  const groups6 = get6BitGroups(bits8);
+
+  renderAscii(codes);
+  renderBitsTable(codes, bits8);
+  renderBitStream(bits8);
+  renderSixBitTable(groups6);
+  renderLookup(groups6);
+  renderResult();
+  updateProgress(codes, groups6);
+}
+
+function renderAscii(codes) {
+  const grid = document.getElementById('asciiGrid');
+  grid.innerHTML = codes.map((code,i) => `
+    <div class="ascii-item" style="animation-delay:${i*0.04}s">
+      <span class="ascii-char">${word[i]}</span>
+      <span class="ascii-sep">=</span>
+      <span class="ascii-num">${code}</span>
+    </div>
+  `).join('');
+
+  // reference a-z
+  const ref = document.getElementById('asciiRef');
+  ref.innerHTML = 'abcdefghijklmnopqrstuvwxyz'.split('').map((c,i) => {
+    const isActive = word.includes(c);
+    return `<span style="color:${isActive?'var(--accent2)':'var(--text3)'};">${c}=<span style="color:${isActive?'var(--accent)':'var(--text3)'};">${97+i}</span></span>`;
+  }).join('');
+}
+
+function renderBitsTable(codes, bits8) {
+  const el = document.getElementById('bitsTable');
+  el.innerHTML = codes.map((code, ci) => {
+    const rowBits = userBits8[ci];
+    const sum = rowBits.includes(null) ? null :
+      rowBits.reduce((acc,b,i) => acc + b * W8[i], 0);
+    const sumCls = sum === null ? '' : (sum === code ? 'correct' : 'wrong');
+    const tick = sum === code ? ' <span class="tick">✓</span>' : (sum !== null ? ` <span style="color:var(--accent3)">(need ${code})</span>` : '');
+
+    const cells = W8.map((w,bi) => {
+      const v = rowBits[bi];
+      return `<div class="bit-cell ${v===1?'on':''}" onclick="toggle8(${ci},${bi})" title="${w}">${v===null?'·':v}</div>`;
+    }).join('');
+
+    return `
+      <div class="bits-row-wrap">
+        <div class="row-char">${word[ci]}</div>
+        ${cells}
+        <div></div>
+        <div class="row-sum ${sumCls}" style="font-size:0.72rem;">
+          <span class="val">= ${sum===null?'?':sum}</span>${tick}
+          <button class="solve-btn" onclick="solve8(${ci})">solve</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderBitStream(bits8) {
+  const el = document.getElementById('bitStreamDisplay');
+  const effective = bits8.map((b,ci) =>
+    userBits8[ci].includes(null) ? b.map(() => null) : userBits8[ci]
+  );
+  const flat = effective.flat();
+  const totalBits = flat.length;
+  const groups6 = [];
+  for(let i=0; i<totalBits; i+=6) groups6.push(flat.slice(i,i+6));
+
+  document.getElementById('streamSub').textContent =
+    `${word.length} characters × 8 bits = ${totalBits} bits total → ${groups6.length} groups of 6${totalBits%6!==0?' (padded with = signs in real base64)':''}`;
+
+  let html = groups6.map((grp, gi) => {
+    const bits = grp.map(b => {
+      if(b===null) return `<span class="bunk">·</span>`;
+      return `<span class="${b?'b1':'b0'}">${b}</span>`;
+    }).join('');
+    return `<span class="chunk-highlight">${bits}</span>`;
+  }).join(`<span class="chunk-pipe"> | </span>`);
+
+  el.innerHTML = html;
+}
+
+function renderSixBitTable(groups6) {
+  const el = document.getElementById('sixBitTable');
+  el.innerHTML = groups6.map((grp, gi) => {
+    const rowBits = userBits6[gi];
+    const correct = grp.reduce((a,b,i) => a+b*W6[i], 0);
+    const sum = rowBits.includes(null) ? null :
+      rowBits.reduce((a,b,i) => a+b*W6[i], 0);
+    const sumCls = sum===null?'':(sum===correct?'correct':'wrong');
+    const tick = sum===correct ? ' <span class="tick">✓</span>' : (sum!==null ? ` <span style="color:var(--accent3)">(need ${correct})</span>` : '');
+
+    const cells = W6.map((w,bi) => {
+      const v = rowBits[bi];
+      return `<div class="bit-cell ${v===1?'on':''}" onclick="toggle6(${gi},${bi})" title="${w}">${v===null?'·':v}</div>`;
+    }).join('');
+
+    return `
+      <div class="sixbit-row-wrap">
+        <div class="grp-label">#${gi+1}</div>
+        ${cells}
+        <div></div>
+        <div class="row-sum ${sumCls}" style="font-size:0.72rem;">
+          <span class="val">= ${sum===null?'?':sum}</span>${tick}
+          <button class="solve-btn" onclick="solve6(${gi})">solve</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderLookup(groups6) {
+  const indices = groups6.map(g => g.reduce((a,b,i)=>a+b*W6[i],0));
+
+  document.getElementById('lookupGrid').innerHTML = indices.map((idx,i) => `
+    <div class="lookup-item" style="animation-delay:${i*0.03}s">
+      <span class="lookup-idx">${idx}</span>
+      <div class="lookup-char tooltip-wrap">${B64[idx]}<span class="tooltip">index ${idx} → '${B64[idx]}'</span></div>
+    </div>
+  `).join('');
+
+  // Full b64 reference
+  const refEl = document.getElementById('b64RefGrid');
+  refEl.innerHTML = B64.split('').map((ch,i) => {
+    const active = indices.includes(i);
+    return `<span style="color:${active?'var(--accent2)':'var(--text3)'};">${i}=<span style="color:${active?'var(--accent)':'var(--text3)'};">${ch}</span></span>`;
+  }).join('');
+}
+
+function renderResult() {
+  const encoded = btoa(word);
+  document.getElementById('rWord').textContent = `"${word}"`;
+  document.getElementById('rString').textContent = encoded;
+  document.getElementById('rChars').textContent = encoded.split('').join(' · ');
+  document.getElementById('rVerify').textContent = `verified via btoa() — ${word.length} chars → ${encoded.length} chars`;
+}
+
+function updateProgress(codes, groups6) {
+  let done = 0, total = 0;
+  userBits8.forEach(row => row.forEach(b => { total++; if(b!==null) done++; }));
+  userBits6.forEach(row => row.forEach(b => { total++; if(b!==null) done++; }));
+  document.getElementById('progressFill').style.width = (total>0 ? Math.round(done/total*100) : 0) + '%';
+}
+
+// ---- Interaction ----
+window.toggle8 = function(ci, bi) {
+  if(userBits8[ci][bi]===null) userBits8[ci][bi]=1;
+  else if(userBits8[ci][bi]===1) userBits8[ci][bi]=0;
+  else userBits8[ci][bi]=1;
+  renderAll();
+};
+
+window.solve8 = function(ci) {
+  const codes = getCharCodes();
+  userBits8[ci] = W8.map(w => (codes[ci] & w) ? 1 : 0);
+  renderAll();
+};
+
+window.toggle6 = function(gi, bi) {
+  if(userBits6[gi][bi]===null) userBits6[gi][bi]=1;
+  else if(userBits6[gi][bi]===1) userBits6[gi][bi]=0;
+  else userBits6[gi][bi]=1;
+  renderAll();
+};
+
+window.solve6 = function(gi) {
+  const codes = getCharCodes();
+  const bits8 = codes.map(c => W8.map(w => (c & w) ? 1 : 0));
+  const groups6 = get6BitGroups(bits8);
+  userBits6[gi] = [...groups6[gi]];
+  renderAll();
+};
+
+window.copyResult = function() {
+  navigator.clipboard.writeText(btoa(word)).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.style.color = 'var(--accent)';
+    setTimeout(() => { btn.textContent = '⎘ Copy result'; btn.style.color = ''; }, 1800);
+  });
+};
+
+// ---- Scroll reveal ----
+function revealSections() {
+  const sections = document.querySelectorAll('#mainContent .section');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  sections.forEach(s => observer.observe(s));
+}
+</script>
+</body>
+</html>
